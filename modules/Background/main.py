@@ -23,26 +23,10 @@ filenames = filenames[:20]
 #Lendo o pickle e gerando o vessel_map
 idx = 1
 pickle_dir = f'{root_dir}\\Vessel_Models_pickle'
-
-img = np.array(Image.open(img_dir + f'{filenames[idx]}.tiff'))
-label = np.array(Image.open(lab_dir + f'{filenames[idx]}.png'))
 path = (pickle_dir + f'{filenames[idx]}_savedata1.pickle')
 arquivo = pickle.load(open(path, 'rb'))
 vessel_map = arquivo['vessel_model'].vessel_map
 mapa_original = vessel_map.mapped_values
-
-#Criando o Background
-tracemalloc.start()
-start_time = time.time()
-    
-generated_background = backgen.estimate_background(img, label)
-
-end_time = time.time()
-_, peak_memory = tracemalloc.get_traced_memory()
-execution_time = end_time - start_time
-
-print(f"The program ran in {execution_time} seconds, and the peak memory usage was {peak_memory/1024**3} GBs.")
-tracemalloc.stop()
 
 #Lendo o Json
 #arquivo = '/content/drive/MyDrive/Mestrado em Ciência da Computação/Artificial Lines/arquivo_quatro_pontos.json'
@@ -57,3 +41,7 @@ caminhos_transladados_interpolado = backgen.retorna_caminhos_transladados(medial
 
 vetor_pontos = backgen.construindo_caminhos(caminhos_transladados[0])
 vetor_pontos_interp = backgen.construindo_caminhos(caminhos_transladados_interpolado[0])
+
+linha_central,linha_offset_esquerda,linha_offset_direita, maior_tamanho = backgen.retorna_linhas_offset_posicao_tamanho(mapa_original,caminhos_transladados_interpolado[0])
+
+dst_array_np = backgen.retorna_dst_array_np(linha_central,linha_offset_esquerda,linha_offset_direita, maior_tamanho )

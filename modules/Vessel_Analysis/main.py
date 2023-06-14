@@ -12,7 +12,9 @@ import vessel_analysis as va
 
 if __name__ == '__main__':   
   
-  imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 4-20X'
+  #imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 4-20X'
+
+  imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 2-20X'
 
   pasta_mestrado ="C:\\Users\\adria\\Documents\\Mestrado\\texture_codes\\modules" 
  

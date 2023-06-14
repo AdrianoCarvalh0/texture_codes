@@ -1,9 +1,13 @@
+import sys
+sys.path.insert(0, "C:\\Users\\adria\\Documents\\Mestrado\\texture_codes\\modules")
+
 import json, tracemalloc, time
 from scipy.spatial import distance_matrix
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
 from Slice_mapper import slice_mapper_util as smutil
+from shapely.geometry import Point,LineString
 
 def retorna_paths(arq_json):
     """Função que lê um arquivo json retorna os paths 1 e 2 de uma ou várias marcações manuais dos vasos sanguíneos
@@ -126,12 +130,8 @@ def retorna_maior_linha(linha1,linha2,linha3):
   tam_linha2 = len(linha2.coords)
   tam_linha3 = len(linha3.coords)
   x = np.array([tam_linha1,tam_linha2,tam_linha3])
-  tam_max_linha = np.max(x)
-  indice_maior_linha = np.argmax(x)
-  vetor=["esquerda","centro","direita"]
-  elemento = vetor[indice_maior_linha]
-              
-  return elemento, tam_max_linha
+  tam_max_linha = np.max(x)              
+  return tam_max_linha
 
 def retorna_novos_pontos_das_linhas(distance,linha):  
   points = []
@@ -225,3 +225,33 @@ def estimate_background(image: np.ndarray, label: np.ndarray, window_size: int=1
         generated_background[fp[0], fp[1]] = image[sl[0], sl[1]]
     
     return generated_background
+
+def retorna_linhas_offset_posicao_tamanho(mapa,caminhos):
+  #Algoritmo usando LineString e OffsetCurve
+  mapa = np.array(mapa)
+  rows, cols = mapa.shape[0], mapa.shape[1]
+  distancia = (rows/2)
+  linha_c  = LineString(caminhos)
+  #import pdb; pdb.set_trace()
+  linha_offset_esq = linha_c.offset_curve(distance=-distancia,  join_style=1)
+  linha_offset_dir = linha_c.offset_curve(distance=distancia, join_style=1)
+
+  maior_tamanho = retorna_maior_linha(linha_offset_esq, linha_c, linha_offset_dir)
+
+  return linha_c,linha_offset_esq,linha_offset_dir, maior_tamanho
+
+def retorna_dst_array_np(linha_centro,linha_esquerda,linha_direita,maior_tam):
+  distance = np.linspace(0,1,maior_tam)
+  dst_array = []
+  vetor_linha_esquerda = retorna_novos_pontos_das_linhas(distance,linha_esquerda)
+  vetor_linha_central = retorna_novos_pontos_das_linhas(distance,linha_centro)
+  vetor_linha_direita = retorna_novos_pontos_das_linhas(distance,linha_direita)
+
+  for l_e in vetor_linha_esquerda:
+    dst_array.append(l_e)
+  for l_c in vetor_linha_central:
+    dst_array.append(l_c)
+  for l_d in vetor_linha_direita:
+    dst_array.append(l_d)
+  dst_arr_np = np.array(dst_array)
+  return dst_arr_np
