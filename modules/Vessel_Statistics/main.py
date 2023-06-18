@@ -1,14 +1,14 @@
 import sys
-sys.path.insert(0, "C:\\Users\\adria\\Documents\\Mestrado\\texture_codes\\modules")
+sys.path.insert(0, "/home/adriano/texture_codes/modules")
 
 import numpy as np
 import pickle
 import vessel_statistics as vs
 
 if __name__ == '__main__':
-    pasta_mestrado ='C:\\Users\\adria\\Documents\\Mestrado\\texture_codes\\modules'
+    pasta_mestrado ='/home/adriano/texture_codes/modules'
 
-    dir = f'{pasta_mestrado}\\Vessel_Models_pickle'
+    dir = f'{pasta_mestrado}/Vessel_Models_pickle'
    
     #coloca nas varíaveis nom e tam, os nomes dos arquivos que existem no diretório e pega a quantidade de itens que existem
     nom, tam = vs.ready_directory(dir)

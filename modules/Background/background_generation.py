@@ -1,12 +1,12 @@
 import sys
-sys.path.insert(0, "C:\\Users\\adria\\Documents\\Mestrado\\texture_codes\\modules")
+sys.path.insert(0, "/home/adriano/texture_codes/modules")
 
 import json, tracemalloc, time
 from scipy.spatial import distance_matrix
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
-from Slice_mapper import slice_mapper_util as smutil
+from  Slice_mapper import slice_mapper_util as smutil
 from shapely.geometry import Point,LineString
 
 def retorna_paths(arq_json):

@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, "C:\\Users\\adria\\Documents\\Mestrado\\texture_codes\\modules")
+sys.path.insert(0, "/home/adriano/texture_codes/modules")
 
 
 import numpy as np
@@ -14,13 +14,13 @@ if __name__ == '__main__':
   
   #imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 4-20X'
 
-  imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 2-20X'
+  imag = 'T-3 Weeks@Females@929 F@929-CTL-bottom-20X-03'
 
-  pasta_mestrado ="C:\\Users\\adria\\Documents\\Mestrado\\texture_codes\\modules" 
+  pasta_mestrado ="/home/adriano/texture_codes/modules" 
  
-  arquivo = f"{pasta_mestrado}\\Vetores_Extraidos_json\\{imag}.json"
+  arquivo = f"{pasta_mestrado}/Vetores_Extraidos_json/{imag}.json"
   
-  caminho_img = f"{pasta_mestrado}\\Imagens\\vessel_data\\images\\{imag}.tiff"
+  caminho_img = f"{pasta_mestrado}/Imagens/vessel_data/images/{imag}.tiff"
 
   #pega o arquivo e armazena em um array
   array_path = va.retorna_paths(arquivo)
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     
     #parte para salvar o .pickle
     data_dump = {"img_file": caminho_img, "vessel_model": vessel_mod, "primeiro_ponto": primeiro_ponto} 
-    savedata = f'{pasta_mestrado}\\Vessel_Models_pickle\\{imag}_savedata{i}.pickle'
+    savedata = f'{pasta_mestrado}/Vessel_Models_pickle/{imag}_savedata{i}.pickle'
     pickle.dump(data_dump, open(savedata,"wb"))  
     x+=2
 
