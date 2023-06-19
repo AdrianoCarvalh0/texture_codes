@@ -163,7 +163,7 @@ annotation_style = {
 
 imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 4-20X'
 
-pasta_mestrado ='C:\\Users\\adria\\Documents\\Mestrado\\texture_codes'
+pasta_mestrado ='C:\\Users\\adria\\Documents\\Mestrado\\projeto_mestrado'
 
 #arquivo = f'{pasta_mestrado}/Vetores_Extraidos_json/{imag}.json'
 

@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, "/home/adriano/texture_codes/modules")
+sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
 
 
 import numpy as np
@@ -12,11 +12,11 @@ import vessel_analysis as va
 
 if __name__ == '__main__':   
   
-  #imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 4-20X'
+  imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@75-Image 3-20X'
 
-  imag = 'T-3 Weeks@Females@929 F@929-CTL-bottom-20X-03'
+  #imag = '3D P0@CTL-3-FC-A'
 
-  pasta_mestrado ="/home/adriano/texture_codes/modules" 
+  pasta_mestrado ="/home/adriano/projeto_mestrado/modules" 
  
   arquivo = f"{pasta_mestrado}/Vetores_Extraidos_json/{imag}.json"
   
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     img, caminhos_transladados, primeiro_ponto = va.redimensiona_imagem(array_path[x:x+2], caminho_img)     
     alcance = va.setar_alcance(array_path[0], array_path[1])
     vessel_mod,  cross_t = va.gera_vessel_cross(img, caminhos_transladados[0], caminhos_transladados[1], alcance)   
-    va.plot_figure(img, vessel_mod, cross_t)
+    #va.plot_figure(img, vessel_mod, cross_t)
     #plot_figure2(img, vessel_mod, cross_t)
     
     #parte para salvar o .pickle

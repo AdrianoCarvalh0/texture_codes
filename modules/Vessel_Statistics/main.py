@@ -1,12 +1,12 @@
 import sys
-sys.path.insert(0, "/home/adriano/texture_codes/modules")
+sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
 
 import numpy as np
 import pickle
 import vessel_statistics as vs
 
 if __name__ == '__main__':
-    pasta_mestrado ='/home/adriano/texture_codes/modules'
+    pasta_mestrado ='/home/adriano/projeto_mestrado/modules'
 
     dir = f'{pasta_mestrado}/Vessel_Models_pickle'
    

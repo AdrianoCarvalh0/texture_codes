@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/")
+
 import numpy as np
 import matplotlib.pyplot as plt
 import json

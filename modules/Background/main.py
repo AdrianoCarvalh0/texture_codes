@@ -3,11 +3,11 @@ import tracemalloc, time
 import numpy as np
 from PIL import Image
 import sys
-sys.path.insert(0, "/home/adriano/texture_codes/modules")
+sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
 
 import background_generation as backgen
 
-root_dir = "/home/adriano/texture_codes/modules"
+root_dir = "/home/adriano/projeto_mestrado/modules"
 
 img_dir = root_dir + '/Imagens/vessel_data/images/'
 lab_dir = root_dir + '/Imagens/vessel_data/labels_20x/'
