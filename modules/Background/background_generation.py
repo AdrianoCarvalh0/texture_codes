@@ -288,10 +288,10 @@ def expandir_mapas_do_tamanho_do_tracado(mapa_original,maior_valor):
 
 def inserindo_vaso_no_fundo(img,img_label,point,backg):
 
-  img_out_sq = img.squeeze()
-  img_out_transf_sq = img_label.squeeze()
+  # img_out_sq = img.squeeze()
+  # img_out_transf_sq = img_label.squeeze()
 
-  non_zero = np.nonzero(img_out_transf_sq)
+  non_zero = np.nonzero(img_label)
   non_zero_t = np.transpose(non_zero)
   
   vetor_rows_back = []
@@ -311,6 +311,6 @@ def inserindo_vaso_no_fundo(img,img_label,point,backg):
     vetor_cols_back.append(cols_back)
   
   for i in range(len(vetor_rows_back)):
-    backg[vetor_rows_back[i],vetor_cols_back[i]] = img_out_sq[vetor_rows[i],vetor_cols[i]]
+    backg[vetor_rows_back[i],vetor_cols_back[i]] = img[vetor_rows[i],vetor_cols[i]]
   
   return backg
