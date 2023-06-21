@@ -255,3 +255,62 @@ def retorna_dst_array_np(linha_centro,linha_esquerda,linha_direita,maior_tam):
     dst_array.append(l_d)
   dst_arr_np = np.array(dst_array)
   return dst_arr_np
+
+
+def expandir_mapas_do_tamanho_do_tracado(mapa_original,maior_valor):
+
+  rows, cols = mapa_original.shape[0], mapa_original.shape[1]
+  div = maior_valor/cols
+  _, cols_new = mapa_original.shape[0],int(mapa_original.shape[1]*div)
+
+  vet = []
+  vet2 = []
+  aux = 0
+  vet.append(0)
+
+  for i in range(int(div)):
+    aux = aux + cols
+    if aux < cols_new:
+      vet.append(aux)
+      vet2.append(cols)
+  if div > int(div):
+    aux2 = div - int(div)
+    mult = int(aux2*cols)
+    vet.append(cols_new)
+    vet2.append(mult)
+
+  mapa_expandido = np.zeros((rows, cols_new))  
+
+  for i in range(len(vet)-1):
+    mapa_expandido[0:rows,vet[i]:vet[i+1]] = mapa_original[0:rows,0:vet2[i]]
+  
+  return mapa_expandido
+
+def inserindo_vaso_no_fundo(img,img_label,point,backg):
+
+  img_out_sq = img.squeeze()
+  img_out_transf_sq = img_label.squeeze()
+
+  non_zero = np.nonzero(img_out_transf_sq)
+  non_zero_t = np.transpose(non_zero)
+  
+  vetor_rows_back = []
+  vetor_cols_back = []
+  vetor_rows = []
+  vetor_cols = []
+
+  for i in range(len(non_zero_t)):
+    rows = non_zero_t[i][0]
+    cols = non_zero_t[i][1]
+    rows_back = rows + point[0]
+    vetor_rows.append(rows)
+    vetor_rows_back.append(rows_back)
+
+    cols_back = cols+point[1]
+    vetor_cols.append(cols)
+    vetor_cols_back.append(cols_back)
+  
+  for i in range(len(vetor_rows_back)):
+    backg[vetor_rows_back[i],vetor_cols_back[i]] = img_out_sq[vetor_rows[i],vetor_cols[i]]
+  
+  return backg
