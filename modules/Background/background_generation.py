@@ -109,7 +109,7 @@ def transform_v2(src, dst, img, order=0):
     if img.ndim==2:
         img_out = img_out[0]
         
-    return img_proper, img_out, src, dst
+    return img_proper, img_out, src, dst, tform
 
 
 def plot(img_proper, img_out, src, dst, vmax):
@@ -314,3 +314,18 @@ def inserindo_vaso_no_fundo(img,img_label,point,backg):
     backg[vetor_rows_back[i],vetor_cols_back[i]] = img[vetor_rows[i],vetor_cols[i]]
   
   return backg
+
+def delaunay_plot(img, img_out, tri, tri_inv):
+
+    plt.figure(figsize=[12,6])
+    ax = plt.subplot(121)
+    plt.imshow(img)
+    x, y = tri.points.T
+    ax.plot(x, y, 'o')
+    ax.triplot(x, y, tri.simplices.copy())
+
+    ax = plt.subplot(122)
+    plt.imshow(img_out)
+    x, y = tri_inv.points.T
+    ax.plot(x, y, 'o')
+    ax.triplot(x, y, tri_inv.simplices.copy())
