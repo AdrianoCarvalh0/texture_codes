@@ -1,4 +1,6 @@
 import sys
+
+import scipy
 sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/Slice_mapper")
 
 import json, tracemalloc, time
@@ -329,3 +331,35 @@ def delaunay_plot(img, img_out, tri, tri_inv):
     x, y = tri_inv.points.T
     ax.plot(x, y, 'o')
     ax.triplot(x, y, tri_inv.simplices.copy())
+
+
+def inserindo_vaso_fundo2(img,img_label,background,point,limiar):    
+    numero = 1.8*10e100
+    merged = np.full(shape = background.shape, fill_value=numero)
+    img_out_bin_large = np.full(shape = background.shape, fill_value=0)
+
+    img_out_large = np.full(shape = background.shape, fill_value=0)
+    rows_img_out_sq, cols_img_out_sq = img.shape    
+
+    merged[point[0]:(point[0]+rows_img_out_sq),point[0]:(point[0]+cols_img_out_sq)]=img
+    img_out_bin_large[point[0]:(point[0]+rows_img_out_sq),point[0]:(point[0]+cols_img_out_sq)]=img_label
+    img_out_large[point[0]:(point[0]+rows_img_out_sq),point[0]:(point[0]+cols_img_out_sq)]=img       
+    limiar_mask = merged <= limiar
+    merged[limiar_mask] = background[limiar_mask]
+    merged[merged==numero] = background[merged==numero]
+    merged[img_out_bin_large==1]=img_out_large[img_out_bin_large==1]
+
+    return merged
+
+def fill_holes(img_map_bin):
+  img_map_bin_inv = 1 - img_map_bin
+
+  s = [[1, 1, 1], [1, 1, 1], [1, 1, 1]]
+  img_label, num_comp = scipy.ndimage.label(img_map_bin_inv, s)
+  tam_comp = scipy.ndimage.sum_labels(img_map_bin_inv, img_label, range(1, num_comp+1))
+  inds = np.argsort(tam_comp)
+
+  for idx in inds[:-2]:
+      img_map_bin[img_label==idx+1] = 1
+
+  return img_map_bin
