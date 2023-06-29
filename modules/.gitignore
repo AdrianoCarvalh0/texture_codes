@@ -2,6 +2,8 @@
 venv/
 ../venv/
 .vscode/
+../.vscode/
+../venv/
 Background/__pycache__/background_generation.cpython-38.pyc
 Slice_mapper/__pycache__/slice_mapper.cpython-38.pyc
 Slice_mapper/__pycache__/slice_mapper_util.cpython-38.pyc
