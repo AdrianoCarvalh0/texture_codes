@@ -156,12 +156,19 @@ def retornar_imagem_binaria_sem_artefatos(vessel_map, img_bin):
 
   for num_row in range(int(linha_minima)):
     for num_col in range(num_cols):
-      imagem_binaria_sem_artefatos[num_row,num_col] = 0 
+      imagem_binaria_sem_artefatos[num_row,num_col] = 0  
 
   for i in range(linha_maxima, num_rows):
     for num_col in range(num_cols):
-      imagem_binaria_sem_artefatos[i,num_col] = 0
+      imagem_binaria_sem_artefatos[i,num_col] = 0      
   return imagem_binaria_sem_artefatos
+
+
+def mask_binary_vessel(img, vessel_map):
+   
+  linha_minima = int(np.min(np.rint(vessel_map.path2_mapped)))
+  linha_maxima  = int(np.max(np.rint(vessel_map.path1_mapped)))
+  mask_bin_vessel = np.ones(img.shape).astype('int32')
 
 
 #código gerado pelo Matheus
@@ -228,13 +235,11 @@ def estimate_background(image: np.ndarray, label: np.ndarray, window_size: int=1
     
     return generated_background
 
-def retorna_linhas_offset_posicao_tamanho(mapa,caminhos):
+def retorna_linhas_offset_posicao_tamanho(caminhos,distancia):
   #Algoritmo usando LineString e OffsetCurve
-  mapa = np.array(mapa)
-  rows, cols = mapa.shape[0], mapa.shape[1]
-  distancia = (rows/2)
+  
   linha_c  = LineString(caminhos)
-  #import pdb; pdb.set_trace()
+ 
   linha_offset_esq = linha_c.offset_curve(distance=-distancia,  join_style=1)
   linha_offset_dir = linha_c.offset_curve(distance=distancia, join_style=1)
 
