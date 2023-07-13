@@ -11,10 +11,21 @@ from skimage import draw
 from scipy import ndimage
 import re
 
+import sys
+
+sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/")
+
+
+root_dir ="/home/adriano/projeto_mestrado/modules"
+
+artificial_lines = root_dir + '/Artificial_lines'
+
 def gravar_array_arquivo(array_list, filename):
   
   lista2 = [item.tolist() for item in array_list]
-  json.dump(lista2, open(filename, 'w'), indent=2)
+  with open(filename, 'w') as file:
+    json.dump(lista2, file, indent=2)
+  #json.dump(lista2, open(filename, 'w'), indent=2)
 
 
 def path_to_floats(path):
@@ -164,11 +175,9 @@ annotation_style = {
 
 imag = Image.new('L', (1376, 1104), )
 
-pasta_mestrado ='/content/drive/MyDrive/Mestrado em Ciência da Computação/'
 
-arquivo = f'/Artificial_Lines/{imag}2.json'
 
-path = f'/Imagens/vessel_data/images/{imag}.tiff'
+arquivo = f'{root_dir}/Artificial_Lines/arquivo2.json'
 
 img = np.array(imag)
 
@@ -233,9 +242,7 @@ def on_new_annotation(relayout_data):
         shapes.append({'type':shape_type, 'coords':coords})
         lista.append(coords)
 
-        gravar_array_arquivo(lista, arquivo)
-
-        gravar_array_arquivo(lista, 'arquivo.json')        
+        gravar_array_arquivo(lista, arquivo)         
 
         img_roi = extract_intensities(img, shape_type, coords)
 

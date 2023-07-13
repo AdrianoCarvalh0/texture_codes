@@ -111,7 +111,7 @@ def transform_v2(src, dst, img, order=0):
     if img.ndim==2:
         img_out = img_out[0]
         
-    return img_proper, img_out, src, dst, tform
+    return img_proper, img_out, src, dst, tform, translation, new_origin
 
 
 def plot(img_proper, img_out, src, dst, vmax):
