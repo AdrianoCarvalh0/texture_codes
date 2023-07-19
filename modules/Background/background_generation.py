@@ -276,20 +276,23 @@ def expandir_mapas_do_tamanho_do_tracado(mapa_original,maior_valor):
   vet.append(0)
 
   for i in range(int(div)):
-    aux = aux + cols
-    if aux < cols_new:
-      vet.append(aux)
-      vet2.append(cols)
-  if div > int(div):
-    aux2 = div - int(div)
-    mult = int(aux2*cols)
-    vet.append(cols_new)
-    vet2.append(mult)
+      aux = aux + cols
+      if aux < cols_new:
+          vet.append(aux)
+          vet2.append(cols)
+      if div > int(div):
+          aux2 = div - int(div)
+          mult = int(aux2*cols)
+          vet.append(cols_new)
+          vet2.append(mult)
 
   mapa_expandido = np.zeros((rows, cols_new))  
 
   for i in range(len(vet)-1):
-    mapa_expandido[0:rows,vet[i]:vet[i+1]] = mapa_original[0:rows,0:vet2[i]]
+      if cols_new > cols:
+          mapa_expandido[0:rows,vet[i]:vet[i+1]] = mapa_original[0:rows,0:vet2[i]]
+      else:
+          mapa_expandido[0:rows,vet[i]:vet[i+1]] = mapa_original
   
   return mapa_expandido
 
