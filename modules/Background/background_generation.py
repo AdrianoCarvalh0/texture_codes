@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
 import slice_mapper_util as smutil
 from shapely.geometry import Point,LineString
+from PIL import Image
 
 def retorna_paths(arq_json):
     """Função que lê um arquivo json retorna os paths 1 e 2 de uma ou várias marcações manuais dos vasos sanguíneos
@@ -33,6 +34,30 @@ def retorna_paths(arq_json):
     #Função com uma linha para inverter todos os valores
     # path1 = [np.array(item)[:,::-1] for item in q]
     return array_paths
+
+def encontrar_pixel_mais_frequente(mapa):
+
+  image = Image.fromarray(mapa)
+
+  # Converte a imagem para escala de cinza
+  image_gray = image.convert("L")
+
+  # Obtém o histograma dos valores de pixel
+  histogram = image_gray.histogram()
+
+  # Cria uma lista de tuplas (valor de pixel, frequência)
+  pixel_freq_pairs = list(enumerate(histogram))
+
+  # Ordena a lista em ordem decrescente de frequência
+  sorted_pixel_freq_pairs = sorted(pixel_freq_pairs, key=lambda x: x[1], reverse=True)
+
+  # Separa os valores de pixel e as frequências
+  pixels, freqs = zip(*sorted_pixel_freq_pairs)
+
+  # Encontra o valor do pixel com a maior frequência
+  pixel_mais_frequente = pixels[0]
+
+  return pixel_mais_frequente
 
 def novos_pontos(caminho, escalar):
   novo_caminho = caminho.copy()

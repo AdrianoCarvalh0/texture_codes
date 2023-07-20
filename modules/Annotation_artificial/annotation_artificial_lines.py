@@ -177,7 +177,7 @@ imag = Image.new('L', (1376, 1104), )
 
 
 
-arquivo = f'{root_dir}/Artificial_Lines/arquivo3.json'
+arquivo = f'{root_dir}/Artificial_Lines/arquivo4.json'
 
 img = np.array(imag)
 
