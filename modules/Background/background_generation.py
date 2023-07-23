@@ -1,6 +1,7 @@
 import sys
 
 import scipy
+import skimage as ski
 sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/Slice_mapper")
 
 import json, tracemalloc, time
@@ -396,3 +397,100 @@ def fill_holes(img_map_bin):
       img_map_bin[img_label==idx+1] = 1
 
   return img_map_bin
+
+
+def retorna_dst_array_np_mapa_original(line_central, line_left, line_rigth, max_tam, map): 
+  rows, cols = map.shape[0], map.shape[1]
+  src_cols = np.linspace(0, cols, max_tam)
+  src_rows = np.linspace(0, rows, 3)
+  src_cols, src_rows = np.meshgrid(src_cols,src_rows)
+  src = np.dstack([src_cols.flat, src_rows.flat])[0]
+
+  dst_array_np = retorna_dst_array_np(line_central,line_left,line_rigth, max_tam)
+
+  return dst_array_np
+
+def rotacionando_mapa_expandido(map, dst, max_tam):
+
+  map_original_expanded = np.array(map)
+  
+  rows, cols = map_original_expanded.shape[0], map_original_expanded.shape[1]
+  src_cols = np.linspace(0, cols, max_tam)
+  src_rows = np.linspace(0, rows, 3)
+  src_cols, src_rows = np.meshgrid(src_cols,src_rows)
+  src = np.dstack([src_cols.flat, src_rows.flat])[0]
+
+  img_proper, img_out, new_src, new_dst, tform_out, translation, new_origin = transform_v2(src, dst, map_original_expanded)
+
+  return img_proper, img_out, new_src, new_dst, tform_out, translation, new_origin
+
+def criar_mascara_binaria_mapa(dst,img):
+  
+  tam = len(dst)
+  div = tam//3
+  vetor_div =[div,div*2,div*3]
+  parte_direita = dst[0:vetor_div[0]]
+  parte_esquerda = dst[vetor_div[1]:vetor_div[2]]
+
+  lista_somada = np.concatenate((parte_esquerda, parte_direita[::-1]))
+  polygon = np.array(lista_somada)[:,::-1]
+  mask_map = ski.draw.polygon2mask(img.shape, polygon)
+  mask_map.astype(int)
+  mask_map_sq = mask_map.squeeze()
+
+  return mask_map_sq
+
+def criar_mascara_binaria_vaso(ves_map, new_orig,caminhos,img):
+  linha_minima = int(np.min(np.rint(ves_map.path2_mapped)))
+  linha_maxima  = int(np.max(np.rint(ves_map.path1_mapped)))
+
+  diametro_maximo_vaso = (linha_maxima-linha_minima)/2
+
+  linha_mask_central,linha_mask_esquerda,linha_mask_direita, max_tam = retorna_linhas_offset_posicao_tamanho(caminhos,diametro_maximo_vaso)
+
+  dst_mask_np = retorna_dst_array_np(linha_mask_central,linha_mask_esquerda,linha_mask_direita, max_tam)
+ 
+  dst_mask_np -= new_orig
+
+  tam = len(dst_mask_np)
+
+  div = tam//3
+
+  vetor_div =[div,div*2,div*3]
+
+  parte_direita = dst_mask_np[0:vetor_div[0]]  
+  parte_esquerda = dst_mask_np[vetor_div[1]:vetor_div[2]] 
+
+  lista_somada = np.concatenate((parte_esquerda, parte_direita[::-1]))
+  polygon = np.array(lista_somada)[:,::-1]
+  mask_vessel = ski.draw.polygon2mask(img.shape, polygon) # type: ignore
+  mask_vessel.astype(int)
+  mask_vessel_sq = mask_vessel.squeeze()
+
+  return mask_vessel_sq
+
+def criar_vaso_binario_expandido(mapa_bin,dst,max_tam):
+  rows_bin, cols_bin = mapa_bin.shape[0], mapa_bin.shape[1]
+
+  src_cols_bin = np.linspace(0, cols_bin, max_tam)
+  src_rows_bin = np.linspace(0, rows_bin, 3)
+  src_cols_bin, src_rows_bin = np.meshgrid(src_cols_bin,src_rows_bin)
+  src_bin = np.dstack([src_cols_bin.flat, src_rows_bin.flat])[0]
+
+  _, img_out_bin,_, _, _, _, _ = transform_v2(src_bin, dst, mapa_bin)
+
+  return img_out_bin
+
+def retirar_artefatos(img,mask_map):
+  img_out_sq = img.squeeze()
+
+  img_sem_artefatos = np.zeros(img_out_sq.shape)
+
+  for i in range(img_sem_artefatos.shape[0]):
+      for j in range(img_sem_artefatos.shape[1]):
+          if mask_map[i, j] == True:  # Verifica se o pixel é branco na imagem booleana
+              # Inserindo o pixel quando a máscara tem True
+              img_sem_artefatos[i, j] = img_out_sq[i,j]
+
+  return img_sem_artefatos
+  
