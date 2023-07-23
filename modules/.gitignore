@@ -8,3 +8,5 @@ Background/__pycache__/background_generation.cpython-38.pyc
 Slice_mapper/__pycache__/slice_mapper.cpython-38.pyc
 Slice_mapper/__pycache__/slice_mapper_util.cpython-38.pyc
 Vessel_Analysis/__pycache__/vessel_analysis.cpython-38.pyc
+
+**/__pycache__
