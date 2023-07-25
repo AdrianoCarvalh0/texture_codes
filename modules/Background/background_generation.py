@@ -271,9 +271,9 @@ def retorna_linhas_offset_posicao_tamanho(caminhos,distancia):
 
   maior_tamanho = retorna_maior_linha(linha_offset_esq, linha_c, linha_offset_dir)
 
-  return linha_c,linha_offset_esq,linha_offset_dir, maior_tamanho
+  return linha_offset_esq, linha_c, linha_offset_dir, maior_tamanho
 
-def retorna_dst_array_np(linha_centro,linha_esquerda,linha_direita,maior_tam):
+def retorna_dst_array_np(linha_esquerda,linha_centro,linha_direita,maior_tam):
   distance = np.linspace(0,1,maior_tam)
   dst_array = []
   vetor_linha_esquerda = retorna_novos_pontos_das_linhas(distance,linha_esquerda)
@@ -398,17 +398,17 @@ def fill_holes(img_map_bin):
 
   return img_map_bin
 
+#Inútil
+# def retorna_dst_array_np_mapa_original(line_left, line_central, line_rigth, max_tam, map): 
+#   rows, cols = map.shape[0], map.shape[1]
+#   src_cols = np.linspace(0, cols, max_tam)
+#   src_rows = np.linspace(0, rows, 3)
+#   src_cols, src_rows = np.meshgrid(src_cols,src_rows)
+#   src = np.dstack([src_cols.flat, src_rows.flat])[0]
 
-def retorna_dst_array_np_mapa_original(line_central, line_left, line_rigth, max_tam, map): 
-  rows, cols = map.shape[0], map.shape[1]
-  src_cols = np.linspace(0, cols, max_tam)
-  src_rows = np.linspace(0, rows, 3)
-  src_cols, src_rows = np.meshgrid(src_cols,src_rows)
-  src = np.dstack([src_cols.flat, src_rows.flat])[0]
+#   dst_array_np = retorna_dst_array_np(line_left, line_central, line_rigth, max_tam)
 
-  dst_array_np = retorna_dst_array_np(line_central,line_left,line_rigth, max_tam)
-
-  return dst_array_np
+#   return dst_array_np
 
 def rotacionando_mapa_expandido(map, dst, max_tam):
 
