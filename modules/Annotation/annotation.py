@@ -162,17 +162,9 @@ annotation_style = {
 }
 
 imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 4-20X'
-
-pasta_mestrado ='C:\\Users\\adria\\Documents\\Mestrado\\projeto_mestrado'
-
-#arquivo = f'{pasta_mestrado}/Vetores_Extraidos_json/{imag}.json'
-
-#path = f'{pasta_mestrado}Imagens/vessel_data/images/{imag}.tiff'
-
-arquivo = f'{pasta_mestrado}\\Vetores_Extraidos_json\{imag}.json'
-
-path = f'{pasta_mestrado}\\Imagens\\vessel_data\\images\\{imag}.tiff'
-
+root_dir = f"/home/adriano/projeto_mestrado/modules"
+arquivo = f'{root_dir}/Vetores_Extraidos_json/teste{imag}.json'
+path = f'{root_dir}/Imagens/vessel_data/images/{imag}.tiff'
 img = np.array(Image.open(path))
 
 fig = px.imshow(img, color_continuous_scale='gray', zmin=0, zmax=100,
