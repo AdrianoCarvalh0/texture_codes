@@ -69,7 +69,7 @@ def retorna_caminhos_transladados(source, increase=None):
   if increase == None:
     # retorna as menores e as maiores linhas e colunas dos caminhos
     # menor_linha, menor_coluna = np.min(medial_path, axis=1), np.min(medial_path, axis=0)
-    min_coluna, min_linha = np.min(source[0], axis=0)
+    min_coluna, min_linha = np.min(source, axis=0)
 
     # pega o primeiro_ponto na posição da menor coluna, e da menor linha, decrescidos do padding
     primeiro_ponto = np.array([min_coluna, min_linha])
@@ -322,7 +322,7 @@ def expandir_mapas_do_tamanho_do_tracado(mapa_original,maior_valor):
 
   
  
-def inserindo_vaso_no_fundo(img,img_label,point,backg):
+def inserindo_vaso_no_fundo(img,img_label,backg,point):
 
   # img_out_sq = img.squeeze()
   # img_out_transf_sq = img_label.squeeze()
