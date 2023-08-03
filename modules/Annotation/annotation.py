@@ -161,9 +161,9 @@ annotation_style = {
     'opacity':1,
 }
 
-imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 4-20X'
+imag = 'T-3 Weeks@Females@391 F@391-CTL-Middle-20X-01'
 root_dir = f"/home/adriano/projeto_mestrado/modules"
-arquivo = f'{root_dir}/Vetores_Extraidos_json/teste{imag}.json'
+arquivo = f'{root_dir}/Vetores_Extraidos_json/teste/{imag}.json'
 path = f'{root_dir}/Imagens/vessel_data/images/{imag}.tiff'
 img = np.array(Image.open(path))
 
