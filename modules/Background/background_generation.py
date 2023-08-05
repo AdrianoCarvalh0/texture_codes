@@ -493,4 +493,17 @@ def retirar_artefatos(img,mask_map):
               img_sem_artefatos[i, j] = img_out_sq[i,j]
 
   return img_sem_artefatos
+
+def normaliza(img_fundo,img_mapa,mask_vaso):
   
+  ints_fundo = img_fundo.flatten()
+  ints_mapa = img_mapa[mask_vaso==0]
+  media_fundo = np.mean(ints_fundo)
+  std_fundo = np.std(ints_fundo)
+  media_mapa = np.mean(ints_mapa)
+  std_mapa = np.std(ints_mapa)
+
+  img_mapa_norm1 = (img_mapa - media_mapa)/std_mapa
+  img_mapa_norm = img_mapa_norm1*std_fundo + media_fundo
+
+  return img_mapa_norm
