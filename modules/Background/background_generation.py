@@ -60,6 +60,15 @@ def encontrar_pixel_mais_frequente(mapa):
 
   return pixel_mais_frequente
 
+
+def encontrar_mediana_fundo_mapa(img,img_label):
+    
+    ints_fundo_mapa = img[img_label==0]
+    threshold = np.median(ints_fundo_mapa)
+
+    return threshold
+   
+
 def novos_pontos(caminho, escalar):
   novo_caminho = caminho.copy()
   novo_caminho[:, 1] = caminho[:, 1] + escalar
