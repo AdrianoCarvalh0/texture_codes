@@ -516,3 +516,13 @@ def normaliza(img_fundo,img_mapa,mask_vaso):
   img_mapa_norm = img_mapa_norm1*std_fundo + media_fundo
 
   return img_mapa_norm
+
+
+def merge(img_fundo,img_mapa,mask_vaso,p):
+   pixeis =  np.nonzero(mask_vaso==0)
+   num_pix = int(len(pixeis)*p)
+   inds = np.random.choice(range(len(pixeis)), size=num_pix, replace=False)
+   pixeis_replace = pixeis[int(inds)]
+   img_mapa[pixeis_replace] = img_fundo[pixeis_replace]
+
+   return img_mapa
