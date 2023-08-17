@@ -12,13 +12,13 @@ import vessel_analysis as va
 
 if __name__ == '__main__':   
   
-  imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@75-Image 3-20X'
+  imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@45-Image 4-20X'
 
   #imag = '3D P0@CTL-3-FC-A'
 
   pasta_mestrado ="/home/adriano/projeto_mestrado/modules" 
  
-  arquivo = f"{pasta_mestrado}/Vetores_Extraidos_json/{imag}.json"
+  arquivo = f"{pasta_mestrado}/Vetores_Extraidos_json/novos/{imag}.json"
   
   caminho_img = f"{pasta_mestrado}/Imagens/vessel_data/images/{imag}.tiff"
 
@@ -41,8 +41,7 @@ if __name__ == '__main__':
     
     #parte para salvar o .pickle
     data_dump = {"img_file": caminho_img, "vessel_model": vessel_mod, "primeiro_ponto": primeiro_ponto} 
-    savedata = f'{pasta_mestrado}/Vessel_Models_pickle/{imag}_savedata{i}.pickle'
+    savedata = f'{pasta_mestrado}/Vessel_Models_pickle/novos/{imag}_savedata{i}.pickle'
     pickle.dump(data_dump, open(savedata,"wb"))  
     x+=2
-
 

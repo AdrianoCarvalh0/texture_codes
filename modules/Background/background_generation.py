@@ -522,7 +522,9 @@ def merge(img_fundo,img_mapa,mask_vaso,p):
    pixeis =  np.nonzero(mask_vaso==0)
    num_pix = int(len(pixeis)*p)
    inds = np.random.choice(range(len(pixeis)), size=num_pix, replace=False)
-   pixeis_replace = pixeis[int(inds)]
-   img_mapa[pixeis_replace] = img_fundo[pixeis_replace]
+   pixeis_replace_x = pixeis[0][inds]
+   pixeis_replace_y = pixeis[1][inds]
+
+   img_mapa[pixeis_replace_x,pixeis_replace_y] = img_fundo[pixeis_replace_x,pixeis_replace_y]
 
    return img_mapa
