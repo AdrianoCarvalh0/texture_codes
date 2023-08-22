@@ -12,6 +12,7 @@ from skimage.transform import PiecewiseAffineTransform, warp
 import slice_mapper_util as smutil
 from shapely.geometry import Point,LineString
 from PIL import Image
+from scipy import ndimage
 
 def retorna_paths(arq_json):
     """Função que lê um arquivo json retorna os paths 1 e 2 de uma ou várias marcações manuais dos vasos sanguíneos
@@ -393,6 +394,20 @@ def inserindo_vaso_fundo2(img,img_label,background,point,limiar):
     merged[img_out_bin_large==1]=img_out_large[img_out_bin_large==1]
 
     return merged
+
+def transf_map_dist(img_map,img_map_bin,img_vaso_bin,img_fundo):
+
+  img_dist = ndimage.distance_transform_edt(img_map_bin)
+  img_dist[img_vaso_bin] = 0
+  img_probs = img_dist/img_dist.max()
+  #img_probs[img_vaso_bin] = 2
+  img_probs[img_map_bin==0] = 2
+  img_rand = np.random.rand(img_map_bin.shape[0],img_map_bin.shape[1] )
+  inds = np.nonzero(img_rand>img_probs)
+  img_map[inds] = img_fundo[inds]
+
+  return img_map 
+  
 
 def fill_holes(img_map_bin):
   img_map_bin_inv = 1 - img_map_bin
