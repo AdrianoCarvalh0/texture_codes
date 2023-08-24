@@ -377,7 +377,8 @@ def delaunay_plot(img, img_out, tri, tri_inv):
     ax.triplot(x, y, tri_inv.simplices.copy())
 
 
-def inserindo_vaso_fundo2(img,img_label,background,point,limiar):    
+def inserindo_vaso_fundo2(possui_vasos, img,img_label,background,point,limiar):    
+    
     numero = 1.8*10e100
     merged = np.full(shape = background.shape, fill_value=numero)
     img_out_bin_large = np.full(shape = background.shape, fill_value=0)
@@ -388,23 +389,27 @@ def inserindo_vaso_fundo2(img,img_label,background,point,limiar):
     merged[point[0]:(point[0]+rows_img_out_sq),point[0]:(point[0]+cols_img_out_sq)]=img
     img_out_bin_large[point[0]:(point[0]+rows_img_out_sq),point[0]:(point[0]+cols_img_out_sq)]=img_label
     img_out_large[point[0]:(point[0]+rows_img_out_sq),point[0]:(point[0]+cols_img_out_sq)]=img       
-    limiar_mask = merged <= limiar
-    merged[limiar_mask] = background[limiar_mask]
+    limiar_mask = (merged <= limiar) #& (possui_vasos ==0)
+    merged[limiar_mask] = background[limiar_mask] 
     merged[merged==numero] = background[merged==numero]
     merged[img_out_bin_large==1]=img_out_large[img_out_bin_large==1]
 
-    return merged
+    return merged,img_out_bin_large
 
 def transf_map_dist(img_map,img_map_bin,img_vaso_bin,img_fundo):
-
+  
+  img_copy = img_map.copy()
+  img_vaso_bin_sq = img_vaso_bin.squeeze()
   img_dist = ndimage.distance_transform_edt(img_map_bin)
   img_dist[img_vaso_bin] = 0
   img_probs = img_dist/img_dist.max()
-  #img_probs[img_vaso_bin] = 2
+  img_probs[img_vaso_bin_sq] = 2
   img_probs[img_map_bin==0] = 2
   img_rand = np.random.rand(img_map_bin.shape[0],img_map_bin.shape[1] )
-  inds = np.nonzero(img_rand>img_probs)
+  inds = np.nonzero(img_rand>img_probs) 
   img_map[inds] = img_fundo[inds]
+
+  img_map[img_vaso_bin_sq==1]=img_copy[img_vaso_bin_sq==1]
 
   return img_map 
   
@@ -543,3 +548,32 @@ def merge(img_fundo,img_mapa,mask_vaso,p):
    img_mapa[pixeis_replace_x,pixeis_replace_y] = img_fundo[pixeis_replace_x,pixeis_replace_y]
 
    return img_mapa
+
+
+def histograma_matching(img_map,img_label_vaso, img_fundo):
+    img_label_vaso_sq = img_label_vaso.squeeze()
+    mapa_copia = img_map.copy()
+    pos_vaso = (img_label_vaso_sq==1)
+    mapa_copia[pos_vaso] = 0
+    histograma_alt = ski.exposure.match_histograms(mapa_copia, img_fundo)
+    histograma_alt[pos_vaso] = img_map[pos_vaso]
+    # usa histograma_alt para o resto do processamento
+
+    plt.figure(figsize=[10, 8])
+    plt.subplot(1,2,1)
+    plt.title("img_map")
+    plt.imshow(img_map, 'gray', vmin=0, vmax=60)
+
+    plt.subplot(1,2,2)
+    plt.title("histograma_alt")
+    plt.imshow(histograma_alt, 'gray', vmin=0, vmax=60)
+   
+
+    return histograma_alt
+
+
+def histograma_matching2():
+    pos_vaso = mapa[vaso==1]
+    histograma_alt = match_histograms(mapa, fundo)
+    histograma_alt[pos_vaso] = mapa[pos_vaso]
+    return histograma_alt
