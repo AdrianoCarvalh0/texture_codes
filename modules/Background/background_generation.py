@@ -577,3 +577,19 @@ def histograma_matching2():
     histograma_alt = match_histograms(mapa, fundo)
     histograma_alt[pos_vaso] = mapa[pos_vaso]
     return histograma_alt
+
+def inserir_mapa_no_fundo(fundo, mapa, mapa_bin, vaso_bin,limiar, possui_mapas, merged):
+  
+   img_back = mapa.copy()
+   
+   limiar_mask = (img_back <= limiar) & (mapa_bin == 1) & (vaso_bin == 0)
+   img_back[limiar_mask] = fundo
+
+   pix_map = np.nonzero(mapa_bin)
+   possui_mapas[pix_map] += 1 
+   merged[pix_map] += img_back[pix_map]
+
+   return merged, possui_mapas
+
+
+   
