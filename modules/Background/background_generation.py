@@ -590,6 +590,23 @@ def inserir_mapa_no_fundo(fundo, mapa, mapa_bin, vaso_bin,limiar, possui_mapas, 
    merged[pix_map] += img_back[pix_map]
 
    return merged, possui_mapas
+ 
+ 
+def inserir_mapa(background,img_vaso_bin,img_mapa,img_mapa_bin, limiar, possui_mapas):
+  merged = background.copy().astype('float64')      
+
+  #img_back = img_mapa.copy()
+  rows, cols = img_mapa.shape
+
+  limiar_mask = (img_mapa <= limiar) & (img_mapa_bin == 1) & (img_vaso_bin == 0)
+
+  img_mapa[limiar_mask] = background[0:rows,0:cols][limiar_mask]
+
+  pix_map = np.nonzero(img_mapa_bin)
+  possui_mapas[pix_map] += 1
+
+  merged[pix_map] += img_mapa[pix_map]
+  return merged 
 
 
    
