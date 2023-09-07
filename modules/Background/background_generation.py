@@ -389,7 +389,7 @@ def inserindo_vaso_fundo2(possui_vasos, img,img_label,background,point,limiar):
     merged[point[0]:(point[0]+rows_img_out_sq),point[0]:(point[0]+cols_img_out_sq)]=img
     img_out_bin_large[point[0]:(point[0]+rows_img_out_sq),point[0]:(point[0]+cols_img_out_sq)]=img_label
     img_out_large[point[0]:(point[0]+rows_img_out_sq),point[0]:(point[0]+cols_img_out_sq)]=img       
-    limiar_mask = (merged <= limiar) & (possui_vasos ==0)
+    limiar_mask = (merged <= limiar) #& (possui_vasos ==0)
     merged[limiar_mask] = background[limiar_mask] 
     merged[merged==numero] = background[merged==numero] 
     merged[img_out_bin_large==1]=img_out_large[img_out_bin_large==1]
