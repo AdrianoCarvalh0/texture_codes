@@ -401,7 +401,7 @@ def transf_map_dist(img_map,img_map_bin,img_vaso_bin,img_fundo):
   img_copy = img_map.copy()
   img_vaso_bin_sq = img_vaso_bin.squeeze()
   img_dist = ndimage.distance_transform_edt(img_map_bin)
-  img_dist[img_vaso_bin] = 0
+  img_dist[img_vaso_bin_sq] = 0
   img_probs = img_dist/img_dist.max()
   img_probs[img_vaso_bin_sq] = 2
   img_probs[img_map_bin==0] = 2
@@ -513,7 +513,7 @@ def criar_vaso_binario_expandido(mapa_bin,dst,max_tam):
 def retirar_artefatos(img,mask_map):
   img_out_sq = img.squeeze()
 
-  img_sem_artefatos = np.zeros(img_out_sq.shape)
+  img_sem_artefatos = np.zeros(img_out_sq.shape,dtype=np.uint8)
 
   for i in range(img_sem_artefatos.shape[0]):
       for j in range(img_sem_artefatos.shape[1]):
@@ -539,15 +539,16 @@ def normaliza(img_fundo,img_mapa,mask_vaso):
 
 
 def merge(img_fundo,img_mapa,mask_vaso,p):
+   img_map_copy = img_mapa.copy()
    pixeis =  np.nonzero(mask_vaso==0)
    num_pix = int(len(pixeis)*p)
    inds = np.random.choice(range(len(pixeis)), size=num_pix, replace=False)
    pixeis_replace_x = pixeis[0][inds]
    pixeis_replace_y = pixeis[1][inds]
 
-   img_mapa[pixeis_replace_x,pixeis_replace_y] = img_fundo[pixeis_replace_x,pixeis_replace_y]
+   img_map_copy[pixeis_replace_x,pixeis_replace_y] = img_fundo[pixeis_replace_x,pixeis_replace_y]
 
-   return img_mapa
+   return img_map_copy
 
 
 def histograma_matching(img_map,img_label_vaso, img_fundo):
@@ -593,20 +594,24 @@ def inserir_mapa_no_fundo(fundo, mapa, mapa_bin, vaso_bin,limiar, possui_mapas, 
  
  
 def inserir_mapa(background,img_vaso_bin,img_mapa,img_mapa_bin, limiar, possui_mapas):
-  merged = background.copy().astype('float64')      
+  merged_map = background.copy()#.astype('float64')
+  img_mapa_copy = img_mapa.copy()   
 
   #img_back = img_mapa.copy()
   rows, cols = img_mapa.shape
 
   limiar_mask = (img_mapa <= limiar) & (img_mapa_bin == 1) & (img_vaso_bin == 0)
 
-  img_mapa[limiar_mask] = background[0:rows,0:cols][limiar_mask]
+  img_mapa_copy[limiar_mask] = background[0:rows,0:cols][limiar_mask]
 
-  pix_map = np.nonzero(img_mapa_bin)
-  possui_mapas[pix_map] += 1
+  pix_map = np.nonzero(img_mapa_bin & (possui_mapas[0:rows,0:cols] == 0)) 
+  pix_vaso = np.nonzero(img_vaso_bin)
+  possui_mapas[pix_vaso] += 1
 
-  merged[pix_map] += img_mapa[pix_map]
-  return merged 
+  #merged_map[pix_map] = merged_map[pix_map] + img_mapa_copy[pix_map]
+  merged_map[pix_map] =  img_mapa_copy[pix_map]
+  
+  return merged_map 
 
 
    
