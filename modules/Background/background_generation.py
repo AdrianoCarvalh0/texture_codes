@@ -396,26 +396,26 @@ def inserindo_vaso_fundo2(possui_vasos, img,img_label,background,point,limiar):
 
     return merged,img_out_bin_large
 
-def transf_map_dist(img_map,img_map_bin,img_vaso_bin,img_fundo):
+def transf_map_dist(img_map,img_map_binario,img_vaso_bin,img_fundo):
   
   img_copy = img_map.copy()
   img_vaso_bin_sq = img_vaso_bin.squeeze()
-  img_dist = ndimage.distance_transform_edt(img_map_bin)
+  img_dist = ndimage.distance_transform_edt(img_map_binario)
   img_dist[img_vaso_bin_sq] = 0
   img_probs = img_dist/img_dist.max()
   img_probs[img_vaso_bin_sq] = 2
-  img_probs[img_map_bin==0] = 2
-  img_rand = np.random.rand(img_map_bin.shape[0],img_map_bin.shape[1] )
+  img_probs[img_map_binario==0] = 2
+  img_rand = np.random.rand(img_map_binario.shape[0],img_map_binario.shape[1] )
   inds = np.nonzero(img_rand>img_probs) 
-  img_map[inds] = img_fundo[inds]
+  img_copy[inds] = img_fundo[inds]
 
-  img_map[img_vaso_bin_sq==1]=img_copy[img_vaso_bin_sq==1]
+  img_copy[img_vaso_bin_sq==1]=img_map[img_vaso_bin_sq==1]
 
-  return img_map 
+  return img_copy 
   
 
-def fill_holes(img_map_bin):
-  img_map_bin_inv = 1 - img_map_bin
+def fill_holes(img_map_binario):
+  img_map_bin_inv = 1 - img_map_binario
 
   s = [[1, 1, 1], [1, 1, 1], [1, 1, 1]]
   img_label, num_comp = scipy.ndimage.label(img_map_bin_inv, s)
@@ -423,21 +423,10 @@ def fill_holes(img_map_bin):
   inds = np.argsort(tam_comp)
 
   for idx in inds[:-2]:
-      img_map_bin[img_label==idx+1] = 1
+      img_map_binario[img_label==idx+1] = 1
 
-  return img_map_bin
+  return img_map_binario
 
-#Inútil
-# def retorna_dst_array_np_mapa_original(line_left, line_central, line_rigth, max_tam, map): 
-#   rows, cols = map.shape[0], map.shape[1]
-#   src_cols = np.linspace(0, cols, max_tam)
-#   src_rows = np.linspace(0, rows, 3)
-#   src_cols, src_rows = np.meshgrid(src_cols,src_rows)
-#   src = np.dstack([src_cols.flat, src_rows.flat])[0]
-
-#   dst_array_np = retorna_dst_array_np(line_left, line_central, line_rigth, max_tam)
-
-#   return dst_array_np
 
 def rotacionando_mapa_expandido(map, dst, max_tam):
 
@@ -510,14 +499,14 @@ def criar_vaso_binario_expandido(mapa_bin,dst,max_tam):
 
   return img_out_bin
 
-def retirar_artefatos(img,mask_map):
+def retirar_artefatos(img,mask_mapa):
   img_out_sq = img.squeeze()
 
   img_sem_artefatos = np.zeros(img_out_sq.shape,dtype=np.uint8)
 
   for i in range(img_sem_artefatos.shape[0]):
       for j in range(img_sem_artefatos.shape[1]):
-          if mask_map[i, j] == True:  # Verifica se o pixel é branco na imagem booleana
+          if mask_mapa[i, j] == True:  # Verifica se o pixel é branco na imagem booleana
               # Inserindo o pixel quando a máscara tem True
               img_sem_artefatos[i, j] = img_out_sq[i,j]
 
@@ -558,46 +547,29 @@ def histograma_matching(img_map,img_label_vaso, img_fundo):
     mapa_copia[pos_vaso] = 0
     histograma_alt = ski.exposure.match_histograms(mapa_copia, img_fundo)
     histograma_alt[pos_vaso] = img_map[pos_vaso]
-    # usa histograma_alt para o resto do processamento
-
-    # plt.figure(figsize=[10, 8])
-    # plt.subplot(1,2,1)
-    # plt.title("img_map")
-    # plt.imshow(img_map, 'gray', vmin=0, vmax=60)
-
-    # plt.subplot(1,2,2)
-    # plt.title("histograma_alt")
-    # plt.imshow(histograma_alt, 'gray', vmin=0, vmax=60)
-   
 
     return histograma_alt
 
 
-def histograma_matching2():
-    pos_vaso = mapa[vaso==1]
-    histograma_alt = match_histograms(mapa, fundo)
-    histograma_alt[pos_vaso] = mapa[pos_vaso]
-    return histograma_alt
 
-def inserir_mapa_no_fundo(fundo, mapa, mapa_bin, vaso_bin,limiar, possui_mapas, merged):
+
+# def inserir_mapa_no_fundo(fundo, mapa, mapa_bin, vaso_bin,limiar, possui_mapas, merged):
   
-   img_back = mapa.copy()
+#    img_back = mapa.copy()
    
-   limiar_mask = (img_back <= limiar) & (mapa_bin == 1) & (vaso_bin == 0)
-   img_back[limiar_mask] = fundo
+#    limiar_mask = (img_back <= limiar) & (mapa_bin == 1) & (vaso_bin == 0)
+#    img_back[limiar_mask] = fundo
 
-   pix_map = np.nonzero(mapa_bin)
-   possui_mapas[pix_map] += 1 
-   merged[pix_map] += img_back[pix_map]
+#    pix_map = np.nonzero(mapa_bin)
+#    possui_mapas[pix_map] += 1 
+#    merged[pix_map] += img_back[pix_map]
 
-   return merged, possui_mapas
+#    return merged, possui_mapas
  
  
 def inserir_mapa(background,img_vaso_bin,img_mapa,img_mapa_bin, limiar, possui_mapas):
   merged_map = background.copy()#.astype('float64')
-  img_mapa_copy = img_mapa.copy()   
-
-  #img_back = img_mapa.copy()
+  img_mapa_copy = img_mapa.copy()     
   rows, cols = img_mapa.shape
 
   limiar_mask = (img_mapa <= limiar) & (img_mapa_bin == 1) & (img_vaso_bin == 0)
@@ -606,9 +578,7 @@ def inserir_mapa(background,img_vaso_bin,img_mapa,img_mapa_bin, limiar, possui_m
 
   pix_map = np.nonzero(img_mapa_bin & (possui_mapas[0:rows,0:cols] == 0)) 
   pix_vaso = np.nonzero(img_vaso_bin)
-  possui_mapas[pix_vaso] += 1
-
-  #merged_map[pix_map] = merged_map[pix_map] + img_mapa_copy[pix_map]
+  possui_mapas[pix_vaso] += 1 
   merged_map[pix_map] =  img_mapa_copy[pix_map]
   
   return merged_map 
