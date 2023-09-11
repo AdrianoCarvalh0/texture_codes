@@ -399,6 +399,7 @@ def inserindo_vaso_fundo2(possui_vasos, img,img_label,background,point,limiar):
 def transf_map_dist(img_map,img_map_binario,img_vaso_bin,img_fundo):
   
   img_copy = img_map.copy()
+  rows, cols = img_copy.shape
   img_vaso_bin_sq = img_vaso_bin.squeeze()
   img_dist = ndimage.distance_transform_edt(img_map_binario)
   img_dist[img_vaso_bin_sq] = 0
@@ -406,8 +407,11 @@ def transf_map_dist(img_map,img_map_binario,img_vaso_bin,img_fundo):
   img_probs[img_vaso_bin_sq] = 2
   img_probs[img_map_binario==0] = 2
   img_rand = np.random.rand(img_map_binario.shape[0],img_map_binario.shape[1] )
-  inds = np.nonzero(img_rand>img_probs) 
-  img_copy[inds] = img_fundo[inds]
+  print(img_rand)
+  inds = np.nonzero(img_rand>img_probs)
+  print(inds)
+  #TESTE[0:rows,0:cols]
+  img_copy[inds] = img_fundo[0:rows,0:cols][inds]
 
   img_copy[img_vaso_bin_sq==1]=img_map[img_vaso_bin_sq==1]
 
