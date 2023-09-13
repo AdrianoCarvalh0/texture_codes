@@ -406,11 +406,8 @@ def transf_map_dist(img_map,img_map_binario,img_vaso_bin,img_fundo):
   img_probs = img_dist/img_dist.max()
   img_probs[img_vaso_bin_sq] = 2
   img_probs[img_map_binario==0] = 2
-  img_rand = np.random.rand(img_map_binario.shape[0],img_map_binario.shape[1] )
-  print(img_rand)
-  inds = np.nonzero(img_rand>img_probs)
-  print(inds)
-  #TESTE[0:rows,0:cols]
+  img_rand = np.random.rand(img_map_binario.shape[0],img_map_binario.shape[1] )  
+  inds = np.nonzero(img_rand>img_probs)  
   img_copy[inds] = img_fundo[0:rows,0:cols][inds]
 
   img_copy[img_vaso_bin_sq==1]=img_map[img_vaso_bin_sq==1]
