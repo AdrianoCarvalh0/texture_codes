@@ -19,6 +19,12 @@ def gravar_array_arquivo(array_list, filename):
   lista2 = [item.tolist() for item in array_list]
   json.dump(lista2, open(filename, 'w'), indent=2)
 
+def gravar_dict_arquivo(dict, filename):
+  array_list = dict["curve"]
+  distancia = dict["distancia"]  
+  lista2 = [item.tolist() for item in array_list]  
+  json.dump(lista2, open(filename, 'w'), indent=2)
+
 
 def calcular_tempo_memoria(str, funcao):
     tracemalloc.start()

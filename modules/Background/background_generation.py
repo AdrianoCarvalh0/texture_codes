@@ -301,34 +301,15 @@ def retorna_dst_array_np(linha_esquerda,linha_centro,linha_direita,maior_tam):
 
 
 def expandir_mapas_do_tamanho_do_tracado(mapa_original,maior_valor):
+  rows, cols = mapa_original.shape
 
-  rows, cols = mapa_original.shape[0], mapa_original.shape[1]
-  div = maior_valor/cols
-  _, cols_new = mapa_original.shape[0],int(mapa_original.shape[1]*div)
+  fator = maior_valor/cols
+  fator_int = int(fator)
+  resto = fator - fator_int
+  #imagem_replicada = np.zeros((rows, cols+resto))
+  imagem_replicada = np.tile(mapa_original, (1,fator_int))
 
-  vet = []
-  vet2 = []
-  aux = 0
-  vet.append(0)
-
-  for i in range(int(div)):
-    aux = aux + cols
-    if aux < cols_new:
-      vet.append(aux)
-      vet2.append(cols)
-  if div > int(div):
-    aux2 = div - int(div)
-    mult = int(aux2*cols)
-    vet.append(cols_new)
-    vet2.append(mult)
-   
-  if cols_new <= cols:
-      return mapa_original
-  else:
-    mapa_expandido = np.zeros((rows, cols_new)) 
-    for i in range(len(vet)-1):
-      mapa_expandido[0:rows,vet[i]:vet[i+1]] = mapa_original[0:rows,0:vet2[i]]  
-    return mapa_expandido
+  return imagem_replicada
 
   
  
@@ -410,7 +391,7 @@ def transf_map_dist(img_map,img_map_binario,img_vaso_bin,img_fundo):
   inds = np.nonzero(img_rand>img_probs)  
   img_copy[inds] = img_fundo[0:rows,0:cols][inds]
 
-  #img_copy[img_vaso_bin_sq==1]=img_map[img_vaso_bin_sq==1]
+  img_copy[img_vaso_bin_sq==1]=img_map[img_vaso_bin_sq==1]
 
   return img_copy 
   
