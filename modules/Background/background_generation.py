@@ -410,7 +410,7 @@ def transf_map_dist(img_map,img_map_binario,img_vaso_bin,img_fundo):
   inds = np.nonzero(img_rand>img_probs)  
   img_copy[inds] = img_fundo[0:rows,0:cols][inds]
 
-  img_copy[img_vaso_bin_sq==1]=img_map[img_vaso_bin_sq==1]
+  #img_copy[img_vaso_bin_sq==1]=img_map[img_vaso_bin_sq==1]
 
   return img_copy 
   
