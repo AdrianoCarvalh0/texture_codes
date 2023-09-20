@@ -1,6 +1,6 @@
 import sys
-
 import scipy
+import pickle
 import skimage as ski
 sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/Slice_mapper")
 
@@ -563,7 +563,73 @@ def inserir_mapa(background,img_vaso_bin,img_mapa,img_mapa_bin, limiar, possui_m
   possui_mapas[pix_vaso] += 1 
   merged_map[pix_map] =  img_mapa_copy[pix_map]
   
-  return merged_map 
+  return merged_map
+
+
+def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_artif):   
+  n_random = np.random.randint(0, len(array_pickles))  
+  
+  path = (pickle_dir + f'/{array_pickles[n_random]}')
+  print(f'{array_pickles[n_random]}')
+
+  arquivo_pickle = pickle.load(open(path, 'rb')) 
+  vessel_map = arquivo_pickle['vessel_model'].vessel_map 
+  mapa_original = vessel_map.mapped_values
+  
+  imagem_binaria_original = vessel_map.mapped_mask_values 
+  imagem_binaria_sem_artefatos_laterais = retornar_imagem_binaria_sem_artefatos(vessel_map, imagem_binaria_original)
+  
+  imagem_binaria_sem_artefatos = fill_holes(imagem_binaria_sem_artefatos_laterais) 
+  
+  mapa_original_norm = normaliza(back_artif,mapa_original,imagem_binaria_sem_artefatos)
+  
+  rows, cols = mapa_original.shape  
+
+  distancia = (rows/2) 
+  
+  limiar1 = encontrar_pixel_mais_frequente(mapa_original_norm)  
+  
+  limiar2 = encontrar_mediana_fundo_mapa(mapa_original_norm,imagem_binaria_sem_artefatos)    
+   
+  maior_valor = int(distance)
+  print(maior_valor)
+       
+  mapa_expandido_original = expandir_mapas_do_tamanho_do_tracado(mapa_original_norm,maior_valor) 
+    
+  vaso_expandido_bin = expandir_mapas_do_tamanho_do_tracado(imagem_binaria_sem_artefatos,maior_valor)       
+      
+  linha_offset_esquerda, linha_central,linha_offset_direita, maior_tamanho = retorna_linhas_offset_posicao_tamanho(array_medial_path,distancia)  
+  
+  #Criação das linhas à direita, centro e à esquerda a partir do traçado originado pelas curvas de beizier
+  dst_array_np = retorna_dst_array_np(linha_offset_esquerda, linha_central,linha_offset_direita, maior_tamanho)
+
+  
+  #Execução do algoritmo que faz a transformação do mapa expandido
+  img_proper, img_out, new_src, new_dst, tform_out, translation, new_origin = rotacionando_mapa_expandido(mapa_expandido_original,dst_array_np,maior_tamanho)     
+  #Máscara do mapa
+  mask_map = criar_mascara_binaria_mapa(new_dst,img_out)
+  
+  #Máscara do vaso
+  mask_vaso = criar_mascara_binaria_vaso(vessel_map,new_origin,array_medial_path,img_out)   
+  
+  #Vaso binário rotacionado
+  vaso_binario_rotacionado = criar_vaso_binario_expandido(vaso_expandido_bin,dst_array_np,maior_tamanho)   
+  
+  #Mapa sem artefatos
+  mapa_sem_artefatos = retirar_artefatos(img_out,mask_map)  
+  
+  #Vaso binário expandido e rotacionado VER AQUI
+  img_out_bin = criar_vaso_binario_expandido(vaso_expandido_bin,dst_array_np,maior_tamanho)
+  
+  #Vaso binário rotacionado sem artefatos
+  vaso_sem_artefatos = retirar_artefatos(img_out_bin,mask_vaso)    
+  
+  try:
+    mapa_sem_artefatos = transf_map_dist(mapa_sem_artefatos,mask_map,vaso_sem_artefatos,back_artif)
+  except:
+    pass  
+
+  return  vaso_sem_artefatos,mapa_sem_artefatos,mask_map, limiar1
 
 
    
