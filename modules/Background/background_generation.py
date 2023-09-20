@@ -301,15 +301,24 @@ def retorna_dst_array_np(linha_esquerda,linha_centro,linha_direita,maior_tam):
 
 
 def expandir_mapas_do_tamanho_do_tracado(mapa_original,maior_valor):
+  #import pdb; pdb.set_trace()
   rows, cols = mapa_original.shape
-
   fator = maior_valor/cols
-  fator_int = int(fator)
+  fator_int = int(fator)  
   resto = fator - fator_int
-  #imagem_replicada = np.zeros((rows, cols+resto))
+  mult = int(resto*cols)
+  
   imagem_replicada = np.tile(mapa_original, (1,fator_int))
+  rows_rep, cols_rep = imagem_replicada.shape
 
-  return imagem_replicada
+  maior_valor_int = (cols_rep+mult)
+
+  imagem_replicada_total = np.zeros((rows, maior_valor_int))
+  
+  imagem_replicada_total[0:rows_rep,0:cols_rep] = imagem_replicada
+  imagem_replicada_total[0:rows_rep,cols_rep:maior_valor_int] = mapa_original[0:rows,0:mult]
+  
+  return imagem_replicada_total
 
   
  

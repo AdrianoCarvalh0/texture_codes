@@ -29,7 +29,7 @@ background = np.array(Image.open(f'{background_dir}/{array_backgrounds[n_backgro
 fundo_com_vasos = background.copy()
 possui_mapas =  np.full(shape = background.shape, fill_value=0)
 problema = 0
-for i in range(25):
+for i in range(10):
    
     n_tracados = np.random.randint(0, len(array_tracados))
     tracado = array_tracados[n_tracados]
