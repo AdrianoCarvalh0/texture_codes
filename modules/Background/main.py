@@ -29,26 +29,27 @@ background = np.array(Image.open(f'{background_dir}/{array_backgrounds[n_backgro
 fundo_com_vasos = background.copy()
 possui_mapas =  np.full(shape = background.shape, fill_value=0)
 problema = 0
-for i in range(10):
-   
-    n_tracados = np.random.randint(0, len(array_tracados))
-    tracado = array_tracados[n_tracados]
-
-    vetor_medial_path = backgen.retorna_paths(f'{tracados_dir}/{tracado}')
+for j in range(5):
+    for i in range(10):
     
-    vaso_sem_artefatos,mapa_sem_artefatos,mask_map, limiar1 = backgen.inserir_vasos(vetor_medial_path[0],vetor_medial_path[1],vetor_pickles,pickle_dir,background)
-    try:
-        fundo_com_vasos = backgen.inserir_mapa(fundo_com_vasos,vaso_sem_artefatos,mapa_sem_artefatos,mask_map, limiar1, possui_mapas)
-    except:
-        problema += 1
-    # i = i + 2
+        n_tracados = np.random.randint(0, len(array_tracados))
+        tracado = array_tracados[n_tracados]
 
-print(problema)
-plt.figure(figsize=[10, 8])
-plt.title("fundo_com_vasos")
-plt.imshow(fundo_com_vasos, 'gray', vmin=0, vmax=255)
-plt.plot()
+        vetor_medial_path = backgen.retorna_paths(f'{tracados_dir}/{tracado}')
+        
+        try:
+            vaso_sem_artefatos,mapa_sem_artefatos,mask_map, limiar1 = backgen.inserir_vasos(vetor_medial_path[0],vetor_medial_path[1],vetor_pickles,pickle_dir,background)
+            fundo_com_vasos = backgen.inserir_mapa(fundo_com_vasos,vaso_sem_artefatos,mapa_sem_artefatos,mask_map, limiar1, possui_mapas)
+        except:
+            problema += 1
+        # i = i + 2
 
-img1 = Image.fromarray(fundo_com_vasos.astype(np.uint8))
+    print(problema)
+    plt.figure(figsize=[10, 8])
+    plt.title("fundo_com_vasos")
+    plt.imshow(fundo_com_vasos, 'gray', vmin=0, vmax=255)
+    plt.plot()
 
-img = img1.save("teste99.tiff")
+    img1 = Image.fromarray(fundo_com_vasos.astype(np.uint8))
+    path = f'{root_dir}/Imagens/Fundo_com_vasos/img_com_vaso_{j}.tiff'
+    img = img1.save(path)
