@@ -29,7 +29,7 @@ background = np.array(Image.open(f'{background_dir}/{array_backgrounds[n_backgro
 fundo_com_vasos = background.copy()
 possui_mapas =  np.full(shape = background.shape, fill_value=0)
 problema = 0
-for j in range(5):
+for j in range(1):
     for i in range(10):
     
         n_tracados = np.random.randint(0, len(array_tracados))
@@ -39,6 +39,9 @@ for j in range(5):
         
         try:
             vaso_sem_artefatos,mapa_sem_artefatos,mask_map, limiar1 = backgen.inserir_vasos(vetor_medial_path[0],vetor_medial_path[1],vetor_pickles,pickle_dir,background)
+        except:    
+            problema += 1
+        try:
             fundo_com_vasos = backgen.inserir_mapa(fundo_com_vasos,vaso_sem_artefatos,mapa_sem_artefatos,mask_map, limiar1, possui_mapas)
         except:
             problema += 1
