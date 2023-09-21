@@ -503,7 +503,8 @@ def retirar_artefatos(img,mask_mapa):
 
   return img_sem_artefatos
 
-def normaliza(img_fundo,img_mapa,mask_vaso):
+def normaliza(img_fundo,img_mapa,mask_vaso, treshold):
+  
   
   ints_fundo = img_fundo.flatten()
   ints_mapa = img_mapa[mask_vaso==0]
@@ -511,11 +512,13 @@ def normaliza(img_fundo,img_mapa,mask_vaso):
   std_fundo = np.std(ints_fundo)
   media_mapa = np.mean(ints_mapa)
   std_mapa = np.std(ints_mapa)
-
-  img_mapa_norm1 = (img_mapa - media_mapa)/std_mapa
-  img_mapa_norm = img_mapa_norm1*std_fundo + media_fundo
-
-  return img_mapa_norm
+  
+  if abs(media_fundo-media_mapa) > treshold:
+    return None
+  else:
+    img_mapa_norm1 = (img_mapa - media_mapa)/std_mapa
+    img_mapa_norm = img_mapa_norm1*std_fundo + media_fundo
+    return img_mapa_norm
 
 
 def merge(img_fundo,img_mapa,mask_vaso,p):
@@ -575,7 +578,7 @@ def inserir_mapa(background,img_vaso_bin,img_mapa,img_mapa_bin, limiar, possui_m
   return merged_map
 
 
-def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_artif):   
+def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_artif,treshold):   
   n_random = np.random.randint(0, len(array_pickles))  
   
   path = (pickle_dir + f'/{array_pickles[n_random]}')
@@ -590,7 +593,10 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   
   imagem_binaria_sem_artefatos = fill_holes(imagem_binaria_sem_artefatos_laterais) 
   
-  mapa_original_norm = normaliza(back_artif,mapa_original,imagem_binaria_sem_artefatos)
+  mapa_original_norm = normaliza(back_artif,mapa_original,imagem_binaria_sem_artefatos,treshold)
+  
+  if mapa_original_norm is None:
+    return None
   
   rows, cols = mapa_original.shape  
 
@@ -639,6 +645,7 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
     pass  
 
   return  vaso_sem_artefatos,mapa_sem_artefatos,mask_map, limiar1
+  #return  mapa_original, mapa_original_norm
 
 
    
