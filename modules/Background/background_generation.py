@@ -187,7 +187,7 @@ def retornar_imagem_binaria_sem_artefatos(vessel_map, img_bin):
 
   linha_minima = int(np.min(np.rint(vessel_map.path2_mapped))-1)
   linha_maxima  = (np.max(np.rint(vessel_map.path1_mapped))+1)
-  if linha_maxima is not None:
+  if not np.isnan(linha_maxima):
     linha_maxima_int = int(linha_maxima)
   else:
     return None
@@ -406,7 +406,47 @@ def transf_map_dist(img_map,img_map_binario,img_vaso_bin,img_fundo):
 
   img_copy[img_vaso_bin_sq==1]=img_map[img_vaso_bin_sq==1]
 
-  return img_copy 
+  return img_copy
+
+
+def transf_map_dist2(mapa, binario_mapa, binario_vaso, fundo):
+    # Copia a imagem do mapa
+    img_copy = mapa.copy()
+
+    # Obtém o tamanho da imagem
+    rows, cols = img_copy.shape
+
+    # Transforma a imagem do vaso em uma matriz unidimensional
+    vaso_bin_sq = binario_vaso.squeeze()
+
+    # Calcula a transformação de distância
+    dist_map = ndimage.distance_transform_edt(binario_mapa)
+
+    # Define a distância para zero onde o vaso está presente
+    dist_map[vaso_bin_sq] = 0
+
+    # Calcula as probabilidades
+    probs = dist_map / dist_map.max()
+
+    # Define valores específicos para as regiões do vaso e fora do mapa
+    probs[vaso_bin_sq] = 2
+    probs[binario_mapa == 0] = 2
+
+    # Gera uma matriz de números aleatórios
+    rand_img = np.random.rand(rows,cols)
+
+    # Encontra os índices onde rand_img é maior que as probabilidades
+    inds = np.nonzero(rand_img > probs)
+
+    # Atualiza a imagem copiada com os valores do fundo onde rand_img > probs Não DEU
+    img_copy[inds] = fundo[:rows, :cols][inds]
+    #img_copy[:rows, :cols][inds] = fundo[:rows, :cols][inds]
+
+    # Atualiza os valores do vaso na imagem copiada
+    img_copy[vaso_bin_sq == 1] = mapa[vaso_bin_sq == 1]
+
+    return img_copy
+
   
 
 def fill_holes(img_map_binario):
@@ -615,7 +655,7 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   
   limiar1 = encontrar_pixel_mais_frequente(mapa_original_norm)  
   
-  limiar2 = encontrar_mediana_fundo_mapa(mapa_original_norm,imagem_binaria_sem_artefatos)    
+  #limiar2 = encontrar_mediana_fundo_mapa(mapa_original_norm,imagem_binaria_sem_artefatos)    
    
   maior_valor = int(distance)
   print(maior_valor)
@@ -638,8 +678,8 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   #Máscara do vaso
   mask_vaso = criar_mascara_binaria_vaso(vessel_map,new_origin,array_medial_path,img_out)   
   
-  #Vaso binário rotacionado
-  vaso_binario_rotacionado = criar_vaso_binario_expandido(vaso_expandido_bin,dst_array_np,maior_tamanho)   
+  #Vaso binário rotacionado - NÃO ESTAVA SENDO USADO
+  #vaso_binario_rotacionado = criar_vaso_binario_expandido(vaso_expandido_bin,dst_array_np,maior_tamanho)   
   
   #Mapa sem artefatos
   mapa_sem_artefatos = retirar_artefatos(img_out,mask_map)  
@@ -650,10 +690,10 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   #Vaso binário rotacionado sem artefatos
   vaso_sem_artefatos = retirar_artefatos(img_out_bin,mask_vaso)    
   
-  try:
-    mapa_sem_artefatos = transf_map_dist(mapa_sem_artefatos,mask_map,vaso_sem_artefatos,back_artif)
-  except:
-    pass  
+  #try:
+  mapa_sem_artefatos = transf_map_dist2(mapa_sem_artefatos,mask_map,vaso_sem_artefatos,back_artif)
+  # except:
+  #   pass  
 
   return  vaso_sem_artefatos,mapa_sem_artefatos,mask_map, limiar1
   #return  mapa_original, mapa_original_norm
