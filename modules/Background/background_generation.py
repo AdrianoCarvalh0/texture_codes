@@ -186,7 +186,11 @@ def retornar_imagem_binaria_sem_artefatos(vessel_map, img_bin):
   num_rows, num_cols = img_bin.shape
 
   linha_minima = int(np.min(np.rint(vessel_map.path2_mapped))-1)
-  linha_maxima  = int(np.max(np.rint(vessel_map.path1_mapped))+1)
+  linha_maxima  = (np.max(np.rint(vessel_map.path1_mapped))+1)
+  if linha_maxima is not None:
+    linha_maxima_int = int(linha_maxima)
+  else:
+    return None
 
   imagem_binaria_sem_artefatos = img_bin.copy().astype('int32')
 
@@ -194,7 +198,7 @@ def retornar_imagem_binaria_sem_artefatos(vessel_map, img_bin):
     for num_col in range(num_cols):
       imagem_binaria_sem_artefatos[num_row,num_col] = 0  
 
-  for i in range(linha_maxima, num_rows):
+  for i in range(linha_maxima_int, num_rows):
     for num_col in range(num_cols):
       imagem_binaria_sem_artefatos[i,num_col] = 0      
   return imagem_binaria_sem_artefatos
@@ -565,10 +569,14 @@ def inserir_mapa(background,img_vaso_bin,img_mapa,img_mapa_bin, limiar, possui_m
   merged_map = background.copy()#.astype('float64')
   img_mapa_copy = img_mapa.copy()     
   rows, cols = img_mapa.shape
-
+  print(f'rows:{rows}')
+  print(f'cols:{cols}')
   limiar_mask = (img_mapa <= limiar) & (img_mapa_bin == 1) & (img_vaso_bin == 0)
-
+  print(img_mapa_copy[limiar_mask].shape)
+  print(f'Com rows, cols: {background[0:rows,0:cols][limiar_mask].shape}')
+  #print(f'Sem rows, cols: {background[limiar_mask].shape}')
   img_mapa_copy[limiar_mask] = background[0:rows,0:cols][limiar_mask]
+  #img_mapa_copy[limiar_mask] = background[limiar_mask]
 
   pix_map = np.nonzero(img_mapa_bin & (possui_mapas[0:rows,0:cols] == 0)) 
   pix_vaso = np.nonzero(img_vaso_bin)
@@ -590,6 +598,9 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   
   imagem_binaria_original = vessel_map.mapped_mask_values 
   imagem_binaria_sem_artefatos_laterais = retornar_imagem_binaria_sem_artefatos(vessel_map, imagem_binaria_original)
+  
+  if imagem_binaria_sem_artefatos_laterais is None:
+    return None
   
   imagem_binaria_sem_artefatos = fill_holes(imagem_binaria_sem_artefatos_laterais) 
   
