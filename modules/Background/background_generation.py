@@ -185,8 +185,12 @@ def retornar_imagem_binaria_sem_artefatos(vessel_map, img_bin):
 
   num_rows, num_cols = img_bin.shape
 
-  linha_minima = int(np.min(np.rint(vessel_map.path2_mapped))-1)
+  linha_minima = (np.min(np.rint(vessel_map.path2_mapped))-1)
   linha_maxima  = (np.max(np.rint(vessel_map.path1_mapped))+1)
+  if not np.isnan(linha_minima):
+     linha_minima_int = int(linha_minima)
+  else:
+    return None
   if not np.isnan(linha_maxima):
     linha_maxima_int = int(linha_maxima)
   else:
@@ -194,7 +198,7 @@ def retornar_imagem_binaria_sem_artefatos(vessel_map, img_bin):
 
   imagem_binaria_sem_artefatos = img_bin.copy().astype('int32')
 
-  for num_row in range(int(linha_minima)):
+  for num_row in range(linha_minima_int):
     for num_col in range(num_cols):
       imagem_binaria_sem_artefatos[num_row,num_col] = 0  
 
@@ -439,13 +443,16 @@ def transf_map_dist2(mapa, binario_mapa, binario_vaso, fundo):
     inds = np.nonzero(rand_img > probs)
 
     # Atualiza a imagem copiada com os valores do fundo onde rand_img > probs Não DEU
-    img_copy[inds] = fundo[:rows, :cols][inds]
-    #img_copy[:rows, :cols][inds] = fundo[:rows, :cols][inds]
+    #img_copy[inds] = fundo[:rows, :cols][inds]
+    try:
+      img_copy[:rows, :cols][inds] = fundo[:rows, :cols][inds]
+      
+      # Atualiza os valores do vaso na imagem copiada
+      img_copy[vaso_bin_sq == 1] = mapa[vaso_bin_sq == 1]
 
-    # Atualiza os valores do vaso na imagem copiada
-    img_copy[vaso_bin_sq == 1] = mapa[vaso_bin_sq == 1]
-
-    return img_copy
+      return img_copy
+    except:
+       return None
 
   
 
@@ -609,13 +616,13 @@ def inserir_mapa(background,img_vaso_bin,img_mapa,img_mapa_bin, limiar, possui_m
   merged_map = background.copy()#.astype('float64')
   img_mapa_copy = img_mapa.copy()     
   rows, cols = img_mapa.shape
-  print(f'rows:{rows}')
-  print(f'cols:{cols}')
+  #print(f'rows:{rows}')
+  #print(f'cols:{cols}')
   limiar_mask = (img_mapa <= limiar) & (img_mapa_bin == 1) & (img_vaso_bin == 0)
-  print(img_mapa_copy[limiar_mask].shape)
-  print(f'Com rows, cols: {background[0:rows,0:cols][limiar_mask].shape}')
+  #print(img_mapa_copy[limiar_mask].shape)
+  #print(f'Com rows, cols: {background[0:rows,0:cols][limiar_mask].shape}')
   #print(f'Sem rows, cols: {background[limiar_mask].shape}')
-  img_mapa_copy[limiar_mask] = background[0:rows,0:cols][limiar_mask]
+  img_mapa_copy[0:rows, 0:cols][limiar_mask] = background[0:rows,0:cols][limiar_mask]
   #img_mapa_copy[limiar_mask] = background[limiar_mask]
 
   pix_map = np.nonzero(img_mapa_bin & (possui_mapas[0:rows,0:cols] == 0)) 
@@ -688,15 +695,10 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   img_out_bin = criar_vaso_binario_expandido(vaso_expandido_bin,dst_array_np,maior_tamanho)
   
   #Vaso binário rotacionado sem artefatos
-  vaso_sem_artefatos = retirar_artefatos(img_out_bin,mask_vaso)    
+  vaso_sem_artefatos = retirar_artefatos(img_out_bin,mask_vaso)  
   
-  #try:
-  mapa_sem_artefatos = transf_map_dist2(mapa_sem_artefatos,mask_map,vaso_sem_artefatos,back_artif)
-  # except:
-  #   pass  
-
-  return  vaso_sem_artefatos,mapa_sem_artefatos,mask_map, limiar1
-  #return  mapa_original, mapa_original_norm
-
-
-   
+  mapa_sem_artefatos_transf = transf_map_dist2(mapa_sem_artefatos,mask_map,vaso_sem_artefatos,back_artif)
+  if mapa_sem_artefatos_transf is not None:
+    return vaso_sem_artefatos,mapa_sem_artefatos_transf,mask_map, limiar1
+  else:
+     return  vaso_sem_artefatos, mapa_sem_artefatos, mask_map, limiar1
