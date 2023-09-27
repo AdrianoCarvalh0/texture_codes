@@ -617,12 +617,12 @@ def inserir_mapa(background,img_vaso_bin,img_mapa,img_mapa_bin, limiar, possui_m
   merged_map = background.copy()#.astype('float64')
   img_mapa_copy = img_mapa.copy()     
   rows, cols = img_mapa.shape
-  print(f'img_mapa.shape:{img_mapa.shape}')
-  print(f'img_vaso_bin.shape:{img_vaso_bin.shape}')
-  print(f'img_mapa_bin.shape:{img_mapa_bin.shape}')
+  #print(f'img_mapa.shape:{img_mapa.shape}')
+  #print(f'img_vaso_bin.shape:{img_vaso_bin.shape}')
+  #print(f'img_mapa_bin.shape:{img_mapa_bin.shape}')
   #print(f'cols:{cols}')
   limiar_mask = (img_mapa <= limiar) & (img_mapa_bin == 1) & (img_vaso_bin == 0)
-  print(f'limiar_mask: {limiar_mask}')
+  #print(f'limiar_mask: {limiar_mask}')
   #print(img_mapa_copy[limiar_mask].shape)
   #print(f'Com rows, cols: {background[0:rows,0:cols][limiar_mask].shape}')
   #print(f'Sem rows, cols: {background[limiar_mask].shape}')
@@ -669,13 +669,18 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   #limiar2 = encontrar_mediana_fundo_mapa(mapa_original_norm,imagem_binaria_sem_artefatos)    
    
   maior_valor = int(distance)
-  print(maior_valor)
+  #print(maior_valor)
        
-  mapa_expandido_original = expandir_mapas_do_tamanho_do_tracado(mapa_original_norm,maior_valor) 
+  mapa_expandido_original = expandir_mapas_do_tamanho_do_tracado(mapa_original_norm,maior_valor)
+  rows_exp, cols_exp = mapa_expandido_original.shape
+
+  rows_back, cols_back =back_artif.shape
+  if rows_exp >= rows_back or cols_exp >= cols_back:
+     return None
     
   vaso_expandido_bin = expandir_mapas_do_tamanho_do_tracado(imagem_binaria_sem_artefatos,maior_valor)       
       
-  linha_offset_esquerda, linha_central,linha_offset_direita, maior_tamanho = retorna_linhas_offset_posicao_tamanho(array_medial_path,distancia)  
+  linha_offset_esquerda, linha_central, linha_offset_direita, maior_tamanho = retorna_linhas_offset_posicao_tamanho(array_medial_path,distancia)  
   
   #Criação das linhas à direita, centro e à esquerda a partir do traçado originado pelas curvas de beizier
   dst_array_np = retorna_dst_array_np(linha_offset_esquerda, linha_central,linha_offset_direita, maior_tamanho)
