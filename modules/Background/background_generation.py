@@ -613,12 +613,16 @@ def histograma_matching(img_map,img_label_vaso, img_fundo):
  
  
 def inserir_mapa(background,img_vaso_bin,img_mapa,img_mapa_bin, limiar, possui_mapas):
+  
   merged_map = background.copy()#.astype('float64')
   img_mapa_copy = img_mapa.copy()     
   rows, cols = img_mapa.shape
-  #print(f'rows:{rows}')
+  print(f'img_mapa.shape:{img_mapa.shape}')
+  print(f'img_vaso_bin.shape:{img_vaso_bin.shape}')
+  print(f'img_mapa_bin.shape:{img_mapa_bin.shape}')
   #print(f'cols:{cols}')
   limiar_mask = (img_mapa <= limiar) & (img_mapa_bin == 1) & (img_vaso_bin == 0)
+  print(f'limiar_mask: {limiar_mask}')
   #print(img_mapa_copy[limiar_mask].shape)
   #print(f'Com rows, cols: {background[0:rows,0:cols][limiar_mask].shape}')
   #print(f'Sem rows, cols: {background[limiar_mask].shape}')
