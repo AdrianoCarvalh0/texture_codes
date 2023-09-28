@@ -617,9 +617,9 @@ def inserir_mapa(background,img_vaso_bin,img_mapa,img_mapa_bin, limiar, possui_m
   merged_map = background.copy()#.astype('float64')
   img_mapa_copy = img_mapa.copy()     
   rows, cols = img_mapa.shape
-  #print(f'img_mapa.shape:{img_mapa.shape}')
-  #print(f'img_vaso_bin.shape:{img_vaso_bin.shape}')
-  #print(f'img_mapa_bin.shape:{img_mapa_bin.shape}')
+  print(f'img_mapa.shape:{img_mapa.shape}')
+  print(f'img_vaso_bin.shape:{img_vaso_bin.shape}')
+  print(f'img_mapa_bin.shape:{img_mapa_bin.shape}')
   #print(f'cols:{cols}')
   limiar_mask = (img_mapa <= limiar) & (img_mapa_bin == 1) & (img_vaso_bin == 0)
   #print(f'limiar_mask: {limiar_mask}')
@@ -672,11 +672,6 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   #print(maior_valor)
        
   mapa_expandido_original = expandir_mapas_do_tamanho_do_tracado(mapa_original_norm,maior_valor)
-  rows_exp, cols_exp = mapa_expandido_original.shape
-
-  rows_back, cols_back =back_artif.shape
-  if rows_exp >= rows_back or cols_exp >= cols_back:
-     return None
     
   vaso_expandido_bin = expandir_mapas_do_tamanho_do_tracado(imagem_binaria_sem_artefatos,maior_valor)       
       
@@ -698,7 +693,13 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   #vaso_binario_rotacionado = criar_vaso_binario_expandido(vaso_expandido_bin,dst_array_np,maior_tamanho)   
   
   #Mapa sem artefatos
-  mapa_sem_artefatos = retirar_artefatos(img_out,mask_map)  
+  mapa_sem_artefatos = retirar_artefatos(img_out,mask_map)
+  
+  rows_art, cols_art = mapa_sem_artefatos.shape
+  
+  rows_back, cols_back =back_artif.shape
+  if rows_art >= rows_back or cols_art >= cols_back:
+     return None
   
   #Vaso binário expandido e rotacionado VER AQUI
   img_out_bin = criar_vaso_binario_expandido(vaso_expandido_bin,dst_array_np,maior_tamanho)
