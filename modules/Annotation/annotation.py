@@ -162,7 +162,7 @@ annotation_style = {
 }
 
 #imag = 'T-3 Weeks@Females@391 F@391-CTL-Middle-20X-01'
-imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@74-Image 2-20X'
+imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@74-Image 4-20X'
 root_dir = f"/home/adriano/projeto_mestrado/modules"
 arquivo = f'{root_dir}/Vetores_Extraidos_json/novos/{imag}.json'
 path = f'{root_dir}/Imagens/vessel_data/images/{imag}.tiff'
