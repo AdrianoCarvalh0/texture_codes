@@ -12,7 +12,7 @@ import vessel_analysis as va
 
 if __name__ == '__main__':   
   
-  imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@74-Image 4-20X'
+  imag = 'T-3 Weeks@Females@926 F@926-CTL-middle-20X-02'
 
   #imag = '3D P0@CTL-3-FC-A'
 
