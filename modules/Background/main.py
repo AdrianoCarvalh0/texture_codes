@@ -25,12 +25,14 @@ array_backgrounds = funcoes.ler_diretorios(background_dir)
 array_tracados = funcoes.ler_diretorios(tracados_dir)
 n_backgrounds = np.random.randint(0, len(array_backgrounds))
 
+n_vasos = np.random.randint(20, 50)
+
 background = np.array(Image.open(f'{background_dir}/{array_backgrounds[n_backgrounds]}'))
 fundo_com_vasos = background.copy()
 possui_mapas =  np.full(shape = background.shape, fill_value=0)
 problema = 0
-for j in range(1):
-    for i in range(10):
+for i in range(1):
+    for j in range(n_vasos):
     
         n_tracados = np.random.randint(0, len(array_tracados))
         tracado = array_tracados[n_tracados]
@@ -54,5 +56,5 @@ for j in range(1):
     plt.plot()
 
     img1 = Image.fromarray(fundo_com_vasos.astype(np.uint8))
-    path = f'{root_dir}/Imagens/Fundo_com_vasos/img_com_vaso_{j}.tiff'
+    path = f'{root_dir}/Imagens/Fundo_com_vasos/img_com_vaso_{i}.tiff'
     img = img1.save(path)
