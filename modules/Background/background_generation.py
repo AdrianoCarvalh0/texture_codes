@@ -2,7 +2,8 @@ import sys
 import scipy
 import pickle
 import skimage as ski
-sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/Slice_mapper")
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules\Slice_mapper")
+#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/Slice_mapper")
 
 import json, tracemalloc, time
 from scipy.spatial import distance_matrix
@@ -617,9 +618,9 @@ def inserir_mapa(background,img_vaso_bin,img_mapa,img_mapa_bin, limiar, possui_m
   merged_map = background.copy()#.astype('float64')
   img_mapa_copy = img_mapa.copy()     
   rows, cols = img_mapa.shape
-  print(f'img_mapa.shape:{img_mapa.shape}')
-  print(f'img_vaso_bin.shape:{img_vaso_bin.shape}')
-  print(f'img_mapa_bin.shape:{img_mapa_bin.shape}')
+  #print(f'img_mapa.shape:{img_mapa.shape}')
+  #print(f'img_vaso_bin.shape:{img_vaso_bin.shape}')
+  #print(f'img_mapa_bin.shape:{img_mapa_bin.shape}')
   #print(f'cols:{cols}')
   limiar_mask = (img_mapa <= limiar) & (img_mapa_bin == 1) & (img_vaso_bin == 0)
   #print(f'limiar_mask: {limiar_mask}')
@@ -634,6 +635,14 @@ def inserir_mapa(background,img_vaso_bin,img_mapa,img_mapa_bin, limiar, possui_m
   possui_mapas[pix_vaso] += 1 
   merged_map[pix_map] =  img_mapa_copy[pix_map]
   
+  return merged_map
+
+def inserir_mapa_bin(background, img_vaso_bin, possui_mapas):  
+  merged_map = background.copy()
+  img_vaso_copy = img_vaso_bin.copy() 
+  pix_vaso = np.nonzero(img_vaso_bin)
+  possui_mapas[pix_vaso] += 1 
+  merged_map[pix_vaso] =  img_vaso_copy[pix_vaso]# ==1
   return merged_map
 
 
