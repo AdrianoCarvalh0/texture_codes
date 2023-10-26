@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 import dash                                                                                                                                                 
 from dash import html,dcc
 from jupyter_dash import JupyterDash
@@ -161,9 +162,15 @@ annotation_style = {
     'opacity':1,
 }
 
-#imag = 'T-3 Weeks@Females@391 F@391-CTL-Middle-20X-01'
-imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@45-Image 1-20X'
-root_dir = f"/home/adriano/projeto_mestrado/modules"
+imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@75-Image 4-20X'
+
+#root_dir linux
+#root_dir ="/home/adriano/projeto_mestrado/modules"
+
+#root_dir windows
+root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+
+
 arquivo = f'{root_dir}/Vetores_Extraidos_json/novos/{imag}.json'
 path = f'{root_dir}/Imagens/vessel_data/images/{imag}.tiff'
 img = np.array(Image.open(path))

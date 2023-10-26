@@ -1,5 +1,11 @@
+from pathlib import Path
 import sys
-sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+
+#path linux
+#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+
+#path windows
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 
 import numpy as np
@@ -12,15 +18,19 @@ import vessel_analysis as va
 
 if __name__ == '__main__':   
   
-  imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@45-Image 1-20X'
+  imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 2-20X'
 
   #imag = '3D P0@CTL-3-FC-A'
 
-  pasta_mestrado ="/home/adriano/projeto_mestrado/modules" 
+  #root_dir linux
+  #root_dir ="/home/adriano/projeto_mestrado/modules"
+
+  #root_dir windows
+  root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
  
-  arquivo = f"{pasta_mestrado}/Vetores_Extraidos_json/novos/{imag}.json"
+  arquivo = f'{root_dir}/Vetores_Extraidos_json/{imag}.json'
   
-  caminho_img = f"{pasta_mestrado}/Imagens/vessel_data/images/{imag}.tiff"
+  caminho_img = f'{root_dir}/Imagens/vessel_data/images/{imag}.tiff'
 
   #pega o arquivo e armazena em um array
   array_path = va.retorna_paths(arquivo)
@@ -41,7 +51,7 @@ if __name__ == '__main__':
     
     #parte para salvar o .pickle
     data_dump = {"img_file": caminho_img, "vessel_model": vessel_mod, "primeiro_ponto": primeiro_ponto} 
-    savedata = f'{pasta_mestrado}/Vessel_Models_pickle/novos/{imag}_savedata{i}.pickle'
+    savedata = f'{root_dir}/Vessel_Models_pickle/novos/{imag}_savedata{i}.pickle'
     pickle.dump(data_dump, open(savedata,"wb"))  
     x+=2
 

@@ -1,5 +1,10 @@
 import sys
-sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/")
+
+#path linux
+#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+
+#path windows
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 import numpy as np
 import matplotlib.pyplot as plt
