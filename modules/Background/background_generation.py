@@ -646,11 +646,13 @@ def inserir_mapa_bin(background, img_vaso_bin, possui_mapas):
   return merged_map
 
 
-def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_artif,treshold):   
-  n_random = np.random.randint(0, len(array_pickles))  
-  
-  path = (pickle_dir + f'/{array_pickles[n_random]}')
-  print(f'{array_pickles[n_random]}')
+def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_artif,treshold,path_pickle=None):  
+  if path_pickle is not None:
+     path = path_pickle  
+  else:     
+    n_random = np.random.randint(0, len(array_pickles))  
+    path = (pickle_dir + f'/{array_pickles[n_random]}')
+  #print(f'{array_pickles[n_random]}')
 
   arquivo_pickle = pickle.load(open(path, 'rb')) 
   vessel_map = arquivo_pickle['vessel_model'].vessel_map 
