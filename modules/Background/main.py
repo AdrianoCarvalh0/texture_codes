@@ -18,28 +18,30 @@ lab_dir = f'{root_dir}/Imagens/vessel_data/labels_20x'
 trein_dir = f'{root_dir}/Treinamento_validacao'
 
 pickle_dir = f'{root_dir}/Vessel_Models_pickle'
-pickle_dir_10 = f'{trein_dir}/1_mapa_de_10_imagens_treinamento'
-pickle_dir_40 = f'{trein_dir}/4_mapas_de_40_imagens_treinamento'
+pickle_dir_5 = f'{trein_dir}/Mapas/5_mapas_de_5_imagens'
+pickle_dir_10 = f'{trein_dir}/Mapas/10_mapas_de_10_imagens'
+pickle_dir_40 = f'{trein_dir}/Mapas/160_mapas_de_40_imagens'
 
 background_dir = f'{root_dir}/Background/Mapas_gerados_artificialmente'
-background_dir_10 = f'{trein_dir}/10_backgrounds'
-background_dir_40 = f'{trein_dir}/40_backgrounds'
+background_dir_5 = f'{trein_dir}/Backgrounds/5_backgrounds'
+background_dir_10 = f'{trein_dir}/Backgrounds/10_backgrounds'
+background_dir_40 = f'{trein_dir}/Backgrounds/40_backgrounds'
 
 tracados_dir = root_dir/"Artificial_Lines/tracados_bezier"
 tracados_dir_maiores = root_dir/"Artificial_Lines/tracados_bezier_maiores"
 
-vetor_pickles = funcoes.ler_diretorios(pickle_dir_10)
-array_backgrounds = funcoes.ler_diretorios(background_dir_10)
-array_tracados = funcoes.ler_diretorios(tracados_dir)
+vetor_pickles = funcoes.ler_diretorios(pickle_dir_5)
+array_backgrounds = funcoes.ler_diretorios(background_dir_5)
+#array_tracados = funcoes.ler_diretorios(tracados_dir)
 array_tracados_maiores = funcoes.ler_diretorios(tracados_dir_maiores)
 
 problema = 0
 resultados_not_none = 0
 resultados_none = 0
 
-for j in range(57):
+for j in range(100):
     n_backgrounds = np.random.randint(0, len(array_backgrounds))
-    background = np.array(Image.open(f'{background_dir_10}/{array_backgrounds[n_backgrounds]}'))
+    background = np.array(Image.open(f'{background_dir_5}/{array_backgrounds[n_backgrounds]}'))
     nome_background = f'{array_backgrounds[n_backgrounds]}'
     background_recortado = background[0:1100,0:1370]
 
@@ -86,11 +88,11 @@ for j in range(57):
     fundo_recortado2 = fundo_com_vasos2[200:1304,200:1576]
 
     img1 = Image.fromarray(fundo_recortado.astype(np.uint8))
-    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_10_mapas/imagens_artificiais/{nome_background}_{j+43}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_5_mapas/imagens_artificiais/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img1.save(path)
 
     img2 = Image.fromarray(fundo_recortado2.astype(np.bool_))
-    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_10_mapas/labels/{nome_background}_{j+43}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_5_mapas/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img2.save(path)
 
     #plt.figure(figsize=[10, 8])

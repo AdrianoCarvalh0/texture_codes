@@ -18,7 +18,7 @@ import vessel_analysis as va
 
 if __name__ == '__main__':   
   
-  imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 2-20X'
+  imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 4-20X'
 
   #imag = '3D P0@CTL-3-FC-A'
 
@@ -28,7 +28,7 @@ if __name__ == '__main__':
   #root_dir windows
   root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
  
-  arquivo = f'{root_dir}/Vetores_Extraidos_json/{imag}.json'
+  arquivo = f'{root_dir}/Vetores_Extraidos_json/novos/{imag}.json'
   
   caminho_img = f'{root_dir}/Imagens/vessel_data/images/{imag}.tiff'
 

@@ -162,7 +162,7 @@ annotation_style = {
     'opacity':1,
 }
 
-imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@75-Image 4-20X'
+imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 4-20X'
 
 #root_dir linux
 #root_dir ="/home/adriano/projeto_mestrado/modules"
