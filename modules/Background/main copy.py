@@ -46,7 +46,10 @@ n_random = np.random.randint(0, len(vetor_pickles))
 path_pickle = (pickle_dir_50 + f'/{vetor_pickles[n_random]}')
 print(path_pickle)
 
-for j in range(97):
+for j in range(100):
+    n_random = np.random.randint(0, len(vetor_pickles))  
+    path_pickle = (pickle_dir_50 + f'/{vetor_pickles[n_random]}')
+    print(path_pickle)
     n_backgrounds = np.random.randint(0, len(array_backgrounds))
     background = np.array(Image.open(f'{background_dir_50}/{array_backgrounds[n_backgrounds]}'))
     nome_background = f'{array_backgrounds[n_backgrounds]}'
@@ -95,11 +98,11 @@ for j in range(97):
     fundo_recortado2 = fundo_com_vasos2[200:1304,200:1576]
 
     img1 = Image.fromarray(fundo_recortado.astype(np.uint8))
-    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack1/imagens_artificiais/{nome_background}_{j+3}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack1/imagens_artificiais/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img1.save(path)
 
     img2 = Image.fromarray(fundo_recortado2.astype(np.bool_))
-    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack1/labels/{nome_background}_{j+3}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack1/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img2.save(path)
 
     #plt.figure(figsize=[10, 8])
