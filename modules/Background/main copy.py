@@ -46,7 +46,7 @@ resultados_none = 0
 #path_pickle = (pickle_dir_50 + f'/{vetor_pickles[n_random]}')
 #print(path_pickle)
 
-for j in range(86):
+for j in range(64):
     n_random = np.random.randint(0, len(vetor_pickles))  
     path_pickle = (pickle_dir_50 + f'/{vetor_pickles[n_random]}')
     print(path_pickle)
@@ -98,16 +98,17 @@ for j in range(86):
     fundo_recortado2 = fundo_com_vasos2[200:1304,200:1576]
 
     img1 = Image.fromarray(fundo_recortado.astype(np.uint8))
-    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack3/imagens_artificiais/{nome_background}_{j+14}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack2/imagens_artificiais/{nome_background}_{j+36}_com_{n_vasos}.tiff'
     img = img1.save(path)
 
     img2 = Image.fromarray(fundo_recortado2.astype(np.bool_))
-    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack3/labels/{nome_background}_{j+14}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack2/labels/{nome_background}_{j+36}_com_{n_vasos}.tiff'
     img = img2.save(path)
 
     #plt.figure(figsize=[10, 8])
     #plt.title("img2")
     #plt.imshow(img2, 'gray', vmin=0, vmax=1)
+    print(f'laço: {j+36}')
 
 
 print(f'resultados_none: {resultados_none}')
