@@ -5,14 +5,20 @@ from PIL import Image
 import sys
 from matplotlib import pyplot as plt
 
-sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+
+
+#path linux
+sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+
+#path windows
+#sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 from Funcoes_gerais import funcoes
 
-import background_generation as backgen
+import background_generation2 as backgen
 
-#root_dir = f"/home/adriano/projeto_mestrado/modules"
-root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+root_dir = f"/home/adriano/projeto_mestrado/modules"
+#root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 img_dir = f'{root_dir}/Imagens/vessel_data/images'
 lab_dir = f'{root_dir}/Imagens/vessel_data/labels_20x'
 
@@ -31,8 +37,8 @@ pickle_dir_50 = f'{trein_dir}/Mapas/200_mapas_de_50_imagens'
 background_dir_50 = f'{trein_dir}/Backgrounds/50_backgrounds'
 
 
-tracados_dir = root_dir/"Artificial_Lines/tracados_bezier"
-tracados_dir_maiores = root_dir/"Artificial_Lines/tracados_bezier_maiores"
+tracados_dir = f'{root_dir}/Artificial_Lines/tracados_bezier'
+tracados_dir_maiores = f'{root_dir}/Artificial_Lines/tracados_bezier_maiores'
 
 vetor_pickles = funcoes.ler_diretorios(pickle_dir_50)
 array_backgrounds = funcoes.ler_diretorios(background_dir_50)
@@ -86,7 +92,7 @@ for j in range(100):
         n_tracados = np.random.randint(0, len(array_tracados_maiores))
         tracado = array_tracados_maiores[n_tracados]
         
-        vetor_medial_path = backgen.retorna_paths(tracados_dir_maiores/f"{tracado}")        
+        vetor_medial_path = backgen.retorna_paths(f'{tracados_dir_maiores}/{tracado}')        
        
         resultados = backgen.inserir_vasos(vetor_medial_path[0],vetor_medial_path[1],vetor_pickles,pickle_dir_50,background_com_pad,treshold=30,path_pickle=path_pickle)       
         if resultados is not None:

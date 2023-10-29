@@ -2,8 +2,8 @@ import sys
 import scipy
 import pickle
 import skimage as ski
-sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules\Slice_mapper")
-#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/Slice_mapper")
+#sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules\Slice_mapper")
+sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/Slice_mapper")
 
 import json, tracemalloc, time
 from scipy.spatial import distance_matrix
