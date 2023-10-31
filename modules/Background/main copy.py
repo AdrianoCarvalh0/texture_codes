@@ -48,24 +48,27 @@ resultados_none = 0
 #print(path_pickle)
 
 for j in range(100):
-    n_random = np.random.randint(0, len(vetor_pickles))  
-    path_pickle = (pickle_dir_50 + f'/{vetor_pickles[n_random]}')
-    print(path_pickle)
+    
+    imagem_binaria_sem_artefatos_laterais = None
+    while imagem_binaria_sem_artefatos_laterais is None:
+        n_random = np.random.randint(0, len(vetor_pickles))  
+        path_pickle = (pickle_dir_50 + f'/{vetor_pickles[n_random]}')
+        print(f'path_pickle: {path_pickle}')
 
-    arquivo_pickle = pickle.load(open(path_pickle, 'rb')) 
-    vessel_map = arquivo_pickle['vessel_model'].vessel_map 
-    mapa_original = vessel_map.mapped_values
+        arquivo_pickle = pickle.load(open(path_pickle, 'rb')) 
+        vessel_map = arquivo_pickle['vessel_model'].vessel_map 
+        mapa_original = vessel_map.mapped_values
 
-    mapa_original_norm = None
-    imagem_binaria_original = vessel_map.mapped_mask_values 
-    imagem_binaria_sem_artefatos_laterais = backgen.retornar_imagem_binaria_sem_artefatos(vessel_map, imagem_binaria_original)
-    imagem_binaria_sem_artefatos = backgen.fill_holes(imagem_binaria_sem_artefatos_laterais) 
+        mapa_original_norm = None
+        imagem_binaria_original = vessel_map.mapped_mask_values
+        imagem_binaria_sem_artefatos_laterais = backgen.retornar_imagem_binaria_sem_artefatos(vessel_map, imagem_binaria_original)
+    #imagem_binaria_sem_artefatos = backgen.fill_holes(imagem_binaria_sem_artefatos_laterais) 
 
     nro_norms_falhos = 0
     while mapa_original_norm is None:
         n_backgrounds = np.random.randint(0, len(array_backgrounds))
         background = np.array(Image.open(f'{background_dir_50}/{array_backgrounds[n_backgrounds]}'))        
-        mapa_original_norm = backgen.normaliza(background,mapa_original,imagem_binaria_sem_artefatos,treshold=30)
+        mapa_original_norm = backgen.normaliza(background,mapa_original,imagem_binaria_original,treshold=30)
         nro_norms_falhos +=1
    
     nome_background = f'{array_backgrounds[n_backgrounds]}'
@@ -108,11 +111,11 @@ for j in range(100):
     fundo_recortado2 = fundo_com_vasos2[200:1304,200:1576]
 
     img1 = Image.fromarray(fundo_recortado.astype(np.uint8))
-    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack8/imagens_artificiais/{nome_background}_{j}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack9/imagens_artificiais/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img1.save(path)
 
     img2 = Image.fromarray(fundo_recortado2.astype(np.bool_))
-    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack8/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack9/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img2.save(path)
 
     #plt.figure(figsize=[10, 8])
