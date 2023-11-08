@@ -1,0 +1,16 @@
+Todos os pickles
+
+{'linha_minima': nan, 'linha_maxima': 21.0, 'pickle': 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@59-Image 3-20X_savedata5.pickle'}
+{'linha_minima': nan, 'linha_maxima': 19.0, 'pickle': 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@74-Image 3-20X_savedata0.pickle'}
+{'linha_minima': nan, 'linha_maxima': 21.0, 'pickle': 'T-3 Weeks@Females@926 F@926-CTL-middle-20X-02_savedata0.pickle'}
+
+
+
+{'linha_minima': 6.0, 'linha_maxima': nan, 'pickle': 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@45-Image 4-20X_savedata5.pickle'}
+
+
+
+Nos 200 pickles
+
+{'linha_minima': nan, 'linha_maxima': 19.0, 'pickle': 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@74-Image 3-20X_savedata0.pickle'}
+{'linha_minima': nan, 'linha_maxima': 21.0, 'pickle': 'T-3 Weeks@Females@926 F@926-CTL-middle-20X-02_savedata0.pickle'}
