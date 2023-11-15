@@ -10,7 +10,7 @@ from scipy.spatial import distance_matrix
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
-import slice_mapper_util as smutil
+from Slice_mapper import slice_mapper_util as smutil
 from shapely.geometry import Point,LineString
 from PIL import Image
 from scipy import ndimage
