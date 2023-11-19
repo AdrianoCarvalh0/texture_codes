@@ -362,15 +362,15 @@ def inserindo_vaso_no_fundo(img,img_label,backg,point):
 
 def delaunay_plot(img, img_out, tri, tri_inv):
 
-    plt.figure(figsize=[12,6])
+    plt.figure(figsize=[100,80])
     ax = plt.subplot(121)
-    plt.imshow(img)
+    plt.imshow(img, 'gray')
     x, y = tri.points.T
     ax.plot(x, y, 'o')
     ax.triplot(x, y, tri.simplices.copy())
 
     ax = plt.subplot(122)
-    plt.imshow(img_out)
+    plt.imshow(img_out, 'gray')
     x, y = tri_inv.points.T
     ax.plot(x, y, 'o')
     ax.triplot(x, y, tri_inv.simplices.copy())
