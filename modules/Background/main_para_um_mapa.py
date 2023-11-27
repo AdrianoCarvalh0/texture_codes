@@ -7,14 +7,15 @@ from matplotlib import pyplot as plt
 
 #Modificada para pegar somente um mapa por imagem e fazer uma imagem com o mesmo mapa de forma aleatória(20 a 50).
 
-sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+#sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 from Funcoes_gerais import funcoes
 
-import background_generation as backgen
+import background_generation2 as backgen
 
-#root_dir = f"/home/adriano/projeto_mestrado/modules"
-root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+root_dir = f"/home/adriano/projeto_mestrado/modules"
+#root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 img_dir = f'{root_dir}/Imagens/vessel_data/images'
 lab_dir = f'{root_dir}/Imagens/vessel_data/labels_20x'
 
@@ -33,8 +34,8 @@ pickle_dir_50 = f'{trein_dir}/Mapas/200_mapas_de_50_imagens'
 background_dir_50 = f'{trein_dir}/Backgrounds/50_backgrounds'
 
 
-tracados_dir = root_dir/"Artificial_Lines/tracados_bezier"
-tracados_dir_maiores = root_dir/"Artificial_Lines/tracados_bezier_maiores"
+#tracados_dir = root_dir/"Artificial_Lines/tracados_bezier"
+tracados_dir_maiores = f'{root_dir}/Artificial_Lines/tracados_bezier_maiores'
 
 vetor_pickles = funcoes.ler_diretorios(pickle_dir_50)
 array_backgrounds = funcoes.ler_diretorios(background_dir_50)
@@ -45,17 +46,15 @@ problema = 0
 resultados_not_none = 0
 resultados_none = 0
 
-#n_random = np.random.randint(0, len(vetor_pickles))  
-#path_pickle = (pickle_dir_50 + f'/{vetor_pickles[n_random]}')
-#print(path_pickle)
+n_random = np.random.randint(0, len(vetor_pickles))  
+path_pickle = (pickle_dir_50 + f'/{vetor_pickles[n_random]}')
+print(path_pickle)
+
 
 for j in range(100):
     
     imagem_binaria_sem_artefatos_laterais = None
-    while imagem_binaria_sem_artefatos_laterais is None:
-        n_random = np.random.randint(0, len(vetor_pickles))  
-        path_pickle = (pickle_dir_50 + f'/{vetor_pickles[n_random]}')
-        print(f'path_pickle: {path_pickle}')
+    while imagem_binaria_sem_artefatos_laterais is None:        
 
         arquivo_pickle = pickle.load(open(path_pickle, 'rb')) 
         vessel_map = arquivo_pickle['vessel_model'].vessel_map 
@@ -91,7 +90,7 @@ for j in range(100):
         n_tracados = np.random.randint(0, len(array_tracados_maiores))
         tracado = array_tracados_maiores[n_tracados]
         
-        vetor_medial_path = backgen.retorna_paths(tracados_dir_maiores/f"{tracado}")        
+        vetor_medial_path = backgen.retorna_paths(f'{tracados_dir_maiores}/{tracado}')        
        
         resultados = backgen.inserir_vasos(vetor_medial_path[0],vetor_medial_path[1],vetor_pickles,pickle_dir_50,background_com_pad,treshold=30,path_pickle=path_pickle)       
         if resultados is not None:
@@ -105,19 +104,16 @@ for j in range(100):
         else:
             resultados_none += 1
   
-    # plt.figure(figsize=[10, 8])
-    # plt.title("fundo_com_vasos")
-    # plt.imshow(fundo_com_vasos, 'gray', vmin=0, vmax=255)
-    # plt.plot()
+    
     fundo_recortado = fundo_com_vasos[200:1304,200:1576]
     fundo_recortado2 = fundo_com_vasos2[200:1304,200:1576]
 
     img1 = Image.fromarray(fundo_recortado.astype(np.uint8))
-    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack9/imagens_artificiais/{nome_background}_{j}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack1/imagens_artificiais/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img1.save(path)
 
     img2 = Image.fromarray(fundo_recortado2.astype(np.bool_))
-    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack9/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_1_mapa/pack1/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img2.save(path)
 
     #plt.figure(figsize=[10, 8])
