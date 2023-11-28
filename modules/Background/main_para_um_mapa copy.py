@@ -110,11 +110,11 @@ for j in range(100):
     fundo_recortado2 = fundo_com_vasos2[200:1304,200:1576]
 
     img1 = Image.fromarray(fundo_recortado.astype(np.uint8))
-    path = f'{trein_dir}/Imagens_Artificiais/Home/pack2/imagens_artificiais/{nome_background}_{j}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Imagens_Artificiais/Home/pack4/imagens_artificiais/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img1.save(path)
 
     img2 = Image.fromarray(fundo_recortado2.astype(np.bool_))
-    path = f'{trein_dir}/Imagens_Artificiais/Home/pack2/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Imagens_Artificiais/Home/pack4/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img2.save(path)
 
     #plt.figure(figsize=[10, 8])
