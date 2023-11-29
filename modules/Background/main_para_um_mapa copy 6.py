@@ -47,12 +47,12 @@ problema = 0
 resultados_not_none = 0
 resultados_none = 0
 
-n_random = np.random.randint(0, len(vetor_pickles))  
-path_pickle = (pickle_dir_50 + f'/{vetor_pickles[n_random]}')
+#n_random = np.random.randint(0, len(vetor_pickles))  
+path_pickle = (pickle_dir_50 + f'/T-3 Weeks@Females@397 F@397-stroke-middle-20X-03_savedata1.pickle')
 print(path_pickle)
 
 
-for j in range(100):
+for j in range(66):
     
     imagem_binaria_sem_artefatos_laterais = None
     while imagem_binaria_sem_artefatos_laterais is None:        
@@ -110,17 +110,17 @@ for j in range(100):
     fundo_recortado2 = fundo_com_vasos2[200:1304,200:1576]
 
     img1 = Image.fromarray(fundo_recortado.astype(np.uint8))
-    path = f'{trein_dir}/Imagens_Artificiais/Home/pack6/imagens_artificiais/{nome_background}_{j}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Imagens_Artificiais/Home/pack6/imagens_artificiais/{nome_background}_{j+66}_com_{n_vasos}.tiff'
     img = img1.save(path)
 
     img2 = Image.fromarray(fundo_recortado2.astype(np.bool_))
-    path = f'{trein_dir}/Imagens_Artificiais/Home/pack6/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Imagens_Artificiais/Home/pack6/labels/{nome_background}_{j+66}_com_{n_vasos}.tiff'
     img = img2.save(path)
 
     #plt.figure(figsize=[10, 8])
     #plt.title("img2")
     #plt.imshow(img2, 'gray', vmin=0, vmax=1)
-    print(f'laço: {j}')
+    print(f'laço: {j+66}')
     print(f"número de falhas na normalização: {nro_norms_falhos}")
 
 
