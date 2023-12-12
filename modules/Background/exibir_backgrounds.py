@@ -18,22 +18,22 @@ back_artif3 = np.array(Image.open(f'{root_dir}/Background/Mapas_gerados_artifici
 back_artif4 = np.array(Image.open(f'{root_dir}/Background/Mapas_gerados_artificialmente/{back4}'))
 
 
-plt.figure(figsize=[15, 15])
+plt.figure(figsize=[10, 10])
 plt.imshow(back_artif1, 'gray', vmin=0, vmax=60)
 plt.savefig('back_artif1.tiff')
 plt.plot()
 
-plt.figure(figsize=[15, 15])
+plt.figure(figsize=[10, 10])
 plt.imshow(back_artif2, 'gray', vmin=0, vmax=60)
 plt.savefig('back_artif2.tiff')
 plt.plot()
 
-plt.figure(figsize=[15, 15])
+plt.figure(figsize=[10, 10])
 plt.imshow(back_artif3, 'gray', vmin=0, vmax=60)
 plt.savefig('back_artif3.tiff')
 plt.plot()
 
-plt.figure(figsize=[15, 15])
+plt.figure(figsize=[10, 10])
 plt.imshow(back_artif4, 'gray', vmin=0, vmax=60)
 plt.savefig('back_artif4.tiff')
 plt.plot()
