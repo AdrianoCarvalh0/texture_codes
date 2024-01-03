@@ -898,7 +898,7 @@ def find_best_angles(medial_path, medial_normals, path1, path2, angles, reach, n
     """
 
     # os caminhos 1 e 2 são interpolados e as suas tangentes são criadas
-    path1_interp, tangents1 = smutil.increase_path_resolution(path1, path_res_factor)
+    path1_interp, tangents1 = smutil.increase_path_resolution(path1,  Uti)
     path2_interp, tangents2 = smutil.increase_path_resolution(path2, path_res_factor)
 
     # o objeto do tipo LineString é criado passando o caminho interpolado
