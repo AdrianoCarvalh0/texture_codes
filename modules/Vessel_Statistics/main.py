@@ -53,42 +53,46 @@ if __name__ == '__main__':
         std_dev2 = np.std(vessel_map.mapped_values, axis=0)    
 
         #plot of the vessel map, min value is 0 and max value is 60
-        vs.plot_vessel_map(vessel_map) 
+        # vs.plot_vessel_map(vessel_map) 
 
-        #plot do recorte
-        vs.plot_clipping(vessel_map)
+        # #plot do recorte
+        # vs.plot_clipping(vessel_map)
         
-        #plot da intensidade das linhas interemediária, uma acima e uma abaixo
-        vs.plot_intensity_lines(vessel_map, half_size_vessel_map) 
+        # #plot da intensidade das linhas interemediária, uma acima e uma abaixo
+        # vs.plot_intensity_lines(vessel_map, half_size_vessel_map) 
 
-        #plot mostrando a diferença entre a média e o desvio padrão
-        vs.plot_fill_means_std_dev(means, std_dev)
+        # #plot mostrando a diferença entre a média e o desvio padrão
+        # vs.plot_fill_means_std_dev(means, std_dev)
 
-        #tentativa de plotar a diferença entre o desvio padrão com a coluna normalizada
-        #plot_fill_means_std_dev_normal(intensity_cols_values_all[0], std_dev2)
+        # #tentativa de plotar a diferença entre o desvio padrão com a coluna normalizada
+        # #plot_fill_means_std_dev_normal(intensity_cols_values_all[0], std_dev2)
         
-        #plota o diâmetro do vaso
+        # #plota o diâmetro do vaso
         vs.plot_diameter_vessel(vessel_map)  
 
-        #plota a intensidade das colunas, exibe onde começa e termina o vaso
-        vs.plot_intensity_cols_with_line_vessel(vessel_map)
+        # #plota a intensidade das colunas, exibe onde começa e termina o vaso
+        # vs.plot_intensity_cols_with_line_vessel(vessel_map)
 
-        #plota a intensidade das colunas normalizadas com a linha do centro (metade dos índices das colunas), 
-        #exibe onde começa e termina o vaso, retirando a dependência de se começar do ponto (0,0)
-        vs.plot_intensity_cols_with_line_vessel_normal(vessel_map)
+        # #plota a intensidade das colunas normalizadas com a linha do centro (metade dos índices das colunas), 
+        # #exibe onde começa e termina o vaso, retirando a dependência de se começar do ponto (0,0)
+        # vs.plot_intensity_cols_with_line_vessel_normal(vessel_map)
 
-        #plota todas as intensidades normalizadas
-        intensities_common_axis, l2_chapeu_axis = vs.return_all_instisitys_normal(vessel_map)
+        # #plota todas as intensidades normalizadas
+        # intensities_common_axis, l2_chapeu_axis = vs.return_all_instisitys_normal(vessel_map)
 
-        vs.plot_all_intensities_columns(intensities_common_axis, l2_chapeu_axis)
+        # vs.plot_all_intensities_columns(intensities_common_axis, l2_chapeu_axis)
 
-        #plot_fill_means_std_dev_normal_all(intensities_common_axis)
+        # #plot_fill_means_std_dev_normal_all(intensities_common_axis)
 
-        #plota a diferença entre os máximos e mínimos de todas as extrações
-        vs.plot_min_max_medial_line(minimum,maximum)
+        # #plota a diferença entre os máximos e mínimos de todas as extrações
+        # vs.plot_min_max_medial_line(minimum,maximum)
 
         #VER plt.xaxis.set_Visible(False)
 
         #usar o inkscape - software de imagens
+        diameter = np.abs(vessel_map.path1_mapped - vessel_map.path2_mapped)
+        a = np.array(diameter)
+        media = np.mean(a)
+        vetor_diametros.append(media)
 
 
