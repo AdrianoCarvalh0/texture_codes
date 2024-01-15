@@ -1,5 +1,10 @@
 from pathlib import Path
 import sys
+import numpy as np
+import pickle
+from PIL import Image
+import vessel_analysis as va
+
 
 #path linux
 #sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
@@ -7,14 +12,6 @@ import sys
 #path windows
 sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
-
-import numpy as np
-import pickle
-
-from PIL import Image
-# This is a sample Python script.
-
-import vessel_analysis as va
 
 if __name__ == '__main__':   
   
