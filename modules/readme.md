@@ -2,6 +2,6 @@
 
 ## Contéudo das pastas
 
-> Annotation ==> Dashboard
+> Annotation ==> Dashboard <br>
 Cria uma interface (Dashboard) onde é possível demarcar um ou mais vasos. Os vasos demarcados vão ser gravados e um arquivo .json que contém as coordendadas dos polígonos demarcados. 
 
