@@ -3,14 +3,19 @@ from pathlib import Path
 import sys
 import numpy as np
 from PIL import Image
+from pathlib import Path
 
 fundo1 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@75-Image 3-20X_21_com_49.tiff'
 fundo2 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@74-Image 1-20X_32_com_20.tiff'
 fundo3 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 1-20X_39_com_49.tiff'
 fundo4 = 'T-3 Weeks@Females@397 F@397-stroke-middle-20X-03_22_com_20.tiff'
 
-
+#windows
 root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+
+#linux
+#root_dir = f"/home/adriano/projeto_mestrado/modules"
+
 
 trein_dir1 = 'Treinamento_validacao/Imagens_Artificiais\Geradas_a_partir_de_1_mapa\pack5\imagens_artificiais'
 trein_dir2 = 'Treinamento_validacao/Imagens_Artificiais\Geradas_a_partir_de_5_mapas\imagens_artificiais'

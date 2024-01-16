@@ -12,19 +12,16 @@ import vessel_analysis as va
 #path windows
 sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
+# windows
+root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+
+# linux
+#root_dir = f"/home/adriano/projeto_mestrado/modules"
 
 if __name__ == '__main__':   
   
   imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 4-20X'
 
-  #imag = '3D P0@CTL-3-FC-A'
-
-  #root_dir linux
-  #root_dir ="/home/adriano/projeto_mestrado/modules"
-
-  #root_dir windows
-  root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
- 
   arquivo = f'{root_dir}/Vetores_Extraidos_json/novos/{imag}.json'
   
   caminho_img = f'{root_dir}/Imagens/vessel_data/images/{imag}.tiff'

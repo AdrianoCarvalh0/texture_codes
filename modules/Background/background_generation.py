@@ -1,11 +1,5 @@
-import sys
-import scipy
-import pickle
+import sys, scipy, pickle, json
 import skimage as ski
-sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules\Slice_mapper")
-#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/Slice_mapper")
-
-import json, tracemalloc, time
 from scipy.spatial import distance_matrix
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,6 +8,13 @@ import slice_mapper_util as smutil
 from shapely.geometry import Point,LineString
 from PIL import Image
 from scipy import ndimage
+
+# windows
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules\Slice_mapper")
+
+# linux
+#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/Slice_mapper")
+
 
 def retorna_paths(arq_json):
     """Função que lê um arquivo json retorna os paths 1 e 2 de uma ou várias marcações manuais dos vasos sanguíneos
@@ -208,12 +209,6 @@ def retornar_imagem_binaria_sem_artefatos(vessel_map, img_bin):
       imagem_binaria_sem_artefatos[i,num_col] = 0      
   return imagem_binaria_sem_artefatos
 
-
-def mask_binary_vessel(img, vessel_map):
-   
-  linha_minima = int(np.min(np.rint(vessel_map.path2_mapped)))
-  linha_maxima  = int(np.max(np.rint(vessel_map.path1_mapped)))
-  mask_bin_vessel = np.ones(img.shape).astype('int32')
 
 
 #código gerado pelo Matheus

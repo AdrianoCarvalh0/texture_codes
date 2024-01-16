@@ -10,3 +10,6 @@ Slice_mapper/__pycache__/slice_mapper_util.cpython-38.pyc
 Vessel_Analysis/__pycache__/vessel_analysis.cpython-38.pyc
 .venv
 **/__pycache__
+.idea
+.vscode
+.venv
