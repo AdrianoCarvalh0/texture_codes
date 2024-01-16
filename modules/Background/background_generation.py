@@ -210,9 +210,10 @@ def retornar_imagem_binaria_sem_artefatos(vessel_map, img_bin):
   return imagem_binaria_sem_artefatos
 
 
-
-#código gerado pelo Matheus
 def estimate_background(image: np.ndarray, label: np.ndarray, window_size: int=15) -> np.ndarray:
+    """Função que cria um background artificial
+    
+    """
 
     contains_foreground_pixels = lambda target_label: np.count_nonzero(target_label) > 0
 
