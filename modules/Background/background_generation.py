@@ -4,16 +4,17 @@ from scipy.spatial import distance_matrix
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
+
+# linux
+sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/Slice_mapper")
+
+# windows
+#sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules\Slice_mapper")
+
 import slice_mapper_util as smutil
 from shapely.geometry import Point,LineString
 from PIL import Image
 from scipy import ndimage
-
-# windows
-sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules\Slice_mapper")
-
-# linux
-#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/Slice_mapper")
 
 
 def retorna_paths(arq_json):
