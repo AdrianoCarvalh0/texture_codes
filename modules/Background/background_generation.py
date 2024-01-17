@@ -63,48 +63,6 @@ def encontrar_pixel_mais_frequente(mapa):
 
   return pixel_mais_frequente
 
-
-def encontrar_mediana_fundo_mapa(img,img_label):
-    
-    ints_fundo_mapa = img[img_label==0]
-    threshold = np.median(ints_fundo_mapa)
-
-    return threshold
-   
-
-def novos_pontos(caminho, escalar):
-  novo_caminho = caminho.copy()
-  novo_caminho[:, 1] = caminho[:, 1] + escalar
-  return novo_caminho
-
-def retorna_caminhos_transladados(source, increase=None):
-  if increase == None:
-    # retorna as menores e as maiores linhas e colunas dos caminhos
-    # menor_linha, menor_coluna = np.min(medial_path, axis=1), np.min(medial_path, axis=0)
-    min_coluna, min_linha = np.min(source, axis=0)
-
-    # pega o primeiro_ponto na posição da menor coluna, e da menor linha, decrescidos do padding
-    primeiro_ponto = np.array([min_coluna, min_linha])
-
-    # # absorve os valores dos caminhos decrescidos do primmeiro ponto, varrendo todos os dois vetores
-    caminhos_transl = [caminho - primeiro_ponto for caminho in source]
-
-    return caminhos_transl
-
-  else:
-    res_factor = increase
-    caminho_interp = smutil.increase_path_resolution(source, res_factor=res_factor)
-   
-    min_coluna, min_linha = np.min(caminho_interp[0], axis=0)
-
-    # pega o primeiro_ponto na posição da menor coluna, e da menor linha, decrescidos do padding
-    primeiro_ponto = np.array([min_coluna, min_linha])
-
-    # # absorve os valores dos caminhos decrescidos do primmeiro ponto, varrendo todos os dois vetores
-    caminhos_transl_interp = [caminho - primeiro_ponto for caminho in caminho_interp]
-
-    return caminhos_transl_interp
-
 def plotar_pontos(x,y, titulo=None):  
   idx = range(len(x))
   fig, ax = plt.subplots()
@@ -306,7 +264,7 @@ def retorna_dst_array_np(linha_esquerda,linha_centro,linha_direita,maior_tam):
 
 
 def expandir_mapas_do_tamanho_do_tracado(mapa_original,maior_valor):
-  #import pdb; pdb.set_trace()
+  
   rows, cols = mapa_original.shape
   fator = maior_valor/cols
   fator_int = int(fator)  
@@ -323,38 +281,8 @@ def expandir_mapas_do_tamanho_do_tracado(mapa_original,maior_valor):
   imagem_replicada_total[0:rows_rep,0:cols_rep] = imagem_replicada
   imagem_replicada_total[0:rows_rep,cols_rep:maior_valor_int] = mapa_original[0:rows,0:mult]
   
-  return imagem_replicada_total
-
-  
+  return imagem_replicada_total  
  
-def inserindo_vaso_no_fundo(img,img_label,backg,point):
-
-  # img_out_sq = img.squeeze()
-  # img_out_transf_sq = img_label.squeeze()
-
-  non_zero = np.nonzero(img_label)
-  non_zero_t = np.transpose(non_zero)
-  
-  vetor_rows_back = []
-  vetor_cols_back = []
-  vetor_rows = []
-  vetor_cols = []
-
-  for i in range(len(non_zero_t)):
-    rows = non_zero_t[i][0]
-    cols = non_zero_t[i][1]
-    rows_back = rows + point[0]
-    vetor_rows.append(rows)
-    vetor_rows_back.append(rows_back)
-
-    cols_back = cols+point[1]
-    vetor_cols.append(cols)
-    vetor_cols_back.append(cols_back)
-  
-  for i in range(len(vetor_rows_back)):
-    backg[vetor_rows_back[i],vetor_cols_back[i]] = img[vetor_rows[i],vetor_cols[i]]
-  
-  return backg
 
 def delaunay_plot(img, img_out, tri, tri_inv):
 
@@ -450,7 +378,6 @@ def transf_map_dist2(mapa, binario_mapa, binario_vaso, fundo):
       return img_copy
     except:
        return None
-
   
 
 def fill_holes(img_map_binario):
@@ -551,8 +478,7 @@ def retirar_artefatos(img,mask_mapa):
 
   return img_sem_artefatos
 
-def normaliza(img_fundo,img_mapa,mask_vaso, treshold):
-  
+def normaliza(img_fundo,img_mapa,mask_vaso, treshold):  
   
   ints_fundo = img_fundo.flatten()
   ints_mapa = img_mapa[mask_vaso==0]
@@ -569,18 +495,6 @@ def normaliza(img_fundo,img_mapa,mask_vaso, treshold):
     return img_mapa_norm
 
 
-def merge(img_fundo,img_mapa,mask_vaso,p):
-   img_map_copy = img_mapa.copy()
-   pixeis =  np.nonzero(mask_vaso==0)
-   num_pix = int(len(pixeis)*p)
-   inds = np.random.choice(range(len(pixeis)), size=num_pix, replace=False)
-   pixeis_replace_x = pixeis[0][inds]
-   pixeis_replace_y = pixeis[1][inds]
-
-   img_map_copy[pixeis_replace_x,pixeis_replace_y] = img_fundo[pixeis_replace_x,pixeis_replace_y]
-
-   return img_map_copy
-
 
 def histograma_matching(img_map,img_label_vaso, img_fundo):
     img_label_vaso_sq = img_label_vaso.squeeze()
@@ -591,40 +505,15 @@ def histograma_matching(img_map,img_label_vaso, img_fundo):
     histograma_alt[pos_vaso] = img_map[pos_vaso]
 
     return histograma_alt
-
-
-
-
-# def inserir_mapa_no_fundo(fundo, mapa, mapa_bin, vaso_bin,limiar, possui_mapas, merged):
-  
-#    img_back = mapa.copy()
-   
-#    limiar_mask = (img_back <= limiar) & (mapa_bin == 1) & (vaso_bin == 0)
-#    img_back[limiar_mask] = fundo
-
-#    pix_map = np.nonzero(mapa_bin)
-#    possui_mapas[pix_map] += 1 
-#    merged[pix_map] += img_back[pix_map]
-
-#    return merged, possui_mapas
  
  
 def inserir_mapa(background,img_vaso_bin,img_mapa,img_mapa_bin, limiar, possui_mapas):
   
-  merged_map = background.copy()#.astype('float64')
+  merged_map = background.copy()
   img_mapa_copy = img_mapa.copy()     
-  rows, cols = img_mapa.shape
-  #print(f'img_mapa.shape:{img_mapa.shape}')
-  #print(f'img_vaso_bin.shape:{img_vaso_bin.shape}')
-  #print(f'img_mapa_bin.shape:{img_mapa_bin.shape}')
-  #print(f'cols:{cols}')
-  limiar_mask = (img_mapa <= limiar) & (img_mapa_bin == 1) & (img_vaso_bin == 0)
-  #print(f'limiar_mask: {limiar_mask}')
-  #print(img_mapa_copy[limiar_mask].shape)
-  #print(f'Com rows, cols: {background[0:rows,0:cols][limiar_mask].shape}')
-  #print(f'Sem rows, cols: {background[limiar_mask].shape}')
+  rows, cols = img_mapa.shape  
+  limiar_mask = (img_mapa <= limiar) & (img_mapa_bin == 1) & (img_vaso_bin == 0) 
   img_mapa_copy[0:rows, 0:cols][limiar_mask] = background[0:rows,0:cols][limiar_mask]
-  #img_mapa_copy[limiar_mask] = background[limiar_mask]
 
   pix_map = np.nonzero(img_mapa_bin & (possui_mapas[0:rows,0:cols] == 0)) 
   pix_vaso = np.nonzero(img_vaso_bin)
@@ -647,8 +536,7 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
      path = path_pickle  
   else:     
     n_random = np.random.randint(0, len(array_pickles))  
-    path = (pickle_dir + f'/{array_pickles[n_random]}')
-  #print(f'{array_pickles[n_random]}')
+    path = (pickle_dir + f'/{array_pickles[n_random]}') 
 
   arquivo_pickle = pickle.load(open(path, 'rb')) 
   vessel_map = arquivo_pickle['vessel_model'].vessel_map 
@@ -694,11 +582,8 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   mask_map = criar_mascara_binaria_mapa(new_dst,img_out)
   
   #Máscara do vaso
-  mask_vaso = criar_mascara_binaria_vaso(vessel_map,new_origin,array_medial_path,img_out)   
-  
-  #Vaso binário rotacionado - NÃO ESTAVA SENDO USADO
-  #vaso_binario_rotacionado = criar_vaso_binario_expandido(vaso_expandido_bin,dst_array_np,maior_tamanho)   
-  
+  mask_vaso = criar_mascara_binaria_vaso(vessel_map,new_origin,array_medial_path,img_out)     
+   
   #Mapa sem artefatos
   mapa_sem_artefatos = retirar_artefatos(img_out,mask_map)
   
@@ -708,7 +593,7 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   if rows_art >= rows_back or cols_art >= cols_back:
      return None
   
-  #Vaso binário expandido e rotacionado VER AQUI
+  #Vaso binário expandido e rotacionado
   img_out_bin = criar_vaso_binario_expandido(vaso_expandido_bin,dst_array_np,maior_tamanho)
   
   #Vaso binário rotacionado sem artefatos

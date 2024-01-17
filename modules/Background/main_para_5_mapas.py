@@ -82,7 +82,6 @@ for j in range(100):
     possui_mapas =  np.full(shape = background_com_pad.shape, fill_value=0)
     possui_mapas2 =  np.full(shape = background_bin.shape, fill_value=0)
     n_vasos = np.random.randint(20, 50)    
-    #n_vasos = 1
     contador = 0
     while contador < n_vasos:
     
@@ -101,12 +100,8 @@ for j in range(100):
             fundo_com_vasos2 = backgen.inserir_mapa_bin(fundo_com_vasos2,vaso_sem_artefatos,possui_mapas2)
             contador +=1
         else:
-            resultados_none += 1
-  
-    # plt.figure(figsize=[10, 8])
-    # plt.title("fundo_com_vasos")
-    # plt.imshow(fundo_com_vasos, 'gray', vmin=0, vmax=255)
-    # plt.plot()
+            resultados_none += 1  
+   
     fundo_recortado = fundo_com_vasos[200:1304,200:1576]
     fundo_recortado2 = fundo_com_vasos2[200:1304,200:1576]
 
@@ -116,11 +111,7 @@ for j in range(100):
 
     img2 = Image.fromarray(fundo_recortado2.astype(np.bool_))
     path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_5_mapas/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
-    img = img2.save(path)
-
-    #plt.figure(figsize=[10, 8])
-    #plt.title("img2")
-    #plt.imshow(img2, 'gray', vmin=0, vmax=1)
+    img = img2.save(path)   
     print(f'laço: {j}')
     print(f"número de falhas na normalização: {nro_norms_falhos}")
 
