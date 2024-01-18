@@ -477,6 +477,7 @@ def find_vessel_bounds_in_map(path1_interp, path2_interp, cross_paths, delta_eva
         else:
             # sh_path1_cross_coord recebe o retorno da distância ao longo deste objeto geométrico até um ponto mais próximo do outro objeto.
             sh_path1_cross_coord = sh_cross_path.project(path_lim)
+            #TESTE
             path1_mapped.append(np.array(sh_path1_cross_coord))
         path_lim = find_envelop_cross_path_intersection(sh_cross_path, sh_path2_interp)
 
@@ -525,9 +526,10 @@ def find_envelop_cross_path_intersection(sh_cross_path, sh_path_interp, max_dist
         if path_lim.geom_type == 'MultiPoint':
             # Os caminhos se cruzam em mais de um ponto, é necessário encontrar o ponto mais próximo do meio
             distances = []
-            for point in path_lim:
+            #TESTANDO GEOMS
+            for point in path_lim.geoms:
                 distances.append(sh_middle_cross_point.distance(point))
-            path_lim = path_lim[np.argmin(distances)]
+            path_lim = path_lim.geoms[np.argmin(distances)]
 
         min_distance = sh_middle_cross_point.distance(sh_path_interp)
         distance_path_lim = sh_middle_cross_point.distance(path_lim)
@@ -862,7 +864,7 @@ def create_cross_versors(medial_path, medial_normals, path1, path2, reach, norma
             sh_normalm = geometry.Point(normalm)
             # faz a rotação encontrando os melhores ângulos
             sh_normalm_rotated = affinity.rotate(sh_normalm, angles[idx_best_angle], origin=(0, 0))
-            normalm_rotated = np.array(sh_normalm_rotated)
+            normalm_rotated = np.array(sh_normalm_rotated.coords)[0]
             cross_versors.append(normalm_rotated)
     return cross_versors
 
@@ -897,8 +899,9 @@ def find_best_angles(medial_path, medial_normals, path1, path2, angles, reach, n
         lista contendo os valores dos melhores ângulos
     """
 
+    #VER DEPOIS
     # os caminhos 1 e 2 são interpolados e as suas tangentes são criadas
-    path1_interp, tangents1 = smutil.increase_path_resolution(path1,  Uti)
+    path1_interp, tangents1 = smutil.increase_path_resolution(path1,  path_res_factor)
     path2_interp, tangents2 = smutil.increase_path_resolution(path2, path_res_factor)
 
     # o objeto do tipo LineString é criado passando o caminho interpolado
@@ -928,7 +931,7 @@ def find_best_angles(medial_path, medial_normals, path1, path2, angles, reach, n
         else:
             idx_best_angles.append(idx_max)
             sh_candidate_line_rotated = affinity.rotate(sh_candidate_line, angles[idx_max])
-            candidate_line_rotated = np.array(sh_candidate_line_rotated)
+            candidate_line_rotated = np.array(sh_candidate_line_rotated.coords)
     return idx_best_angles
 
 
@@ -965,8 +968,9 @@ def measure_fitness(sh_candidate_line, normalm, sh_path1, normals1, sh_path2, no
     if sh_path1_point is None or sh_path2_point is None:
         fitness = -1
     else:
-        path1_point = np.array(sh_path1_point)
-        path2_point = np.array(sh_path2_point)
+        #import pdb; pdb.set_trace()
+        path1_point = np.array(sh_path1_point.coords)[0]
+        path2_point = np.array(sh_path2_point.coords)[0]
         idx_path1_point = smutil.find_point_idx(sh_path1, path1_point)
         normal1 = normals1[idx_path1_point]
         idx_path2_point = smutil.find_point_idx(sh_path2, path2_point)

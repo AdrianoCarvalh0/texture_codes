@@ -12,7 +12,7 @@ sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
 
 from Funcoes_gerais import funcoes
 
-import background_generation2 as backgen
+import background_generation as backgen
 
 root_dir = f"/home/adriano/projeto_mestrado/modules"
 #root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
