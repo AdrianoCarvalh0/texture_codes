@@ -1,14 +1,19 @@
 import sys, pickle
 from matplotlib import pyplot as plt
+from pathlib import Path
 
-sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+# linux
+#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+#root_dir = f"/home/adriano/projeto_mestrado/modules"
 
-from modules.Utils import functions
+# path windows
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+
+from Utils import functions
 
 
-root_dir = f"/home/adriano/projeto_mestrado/modules"
-
-pickle_dir = f'{root_dir}/Vessel_Models_pickle/'
+pickle_dir = f'{root_dir}/Vessel_models_pickle/novos/'
 
 vector_pickles = functions.read_directories(pickle_dir)
 

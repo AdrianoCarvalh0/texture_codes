@@ -4,17 +4,19 @@ import sys
 import numpy as np
 from PIL import Image
 
+# Linux
+# sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+# root_dir = f"/home/adriano/projeto_mestrado/modules"
+
+# Windows
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+
 # Image file names for different backgrounds with vessels
 background1 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@75-Image 3-20X_21_com_49.tiff'
 background2 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@74-Image 1-20X_32_com_20.tiff'
 background3 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 1-20X_39_com_49.tiff'
 background4 = 'T-3 Weeks@Females@397 F@397-stroke-middle-20X-03_22_com_20.tiff'
-
-# Windows
-root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
-
-# Linux
-# root_dir = f"/home/adriano/projeto_mestrado/modules"
 
 # Directories for artificial images generated from different numbers of maps
 train_dir1 = 'Training_validation/Artificial_Images\Generated_from_1_map\pack5\artificial_images'
