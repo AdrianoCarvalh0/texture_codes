@@ -1,7 +1,13 @@
 from pathlib import Path
 import sys
-#path linux
+
+# linux
 sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+root_dir = f"/home/adriano/projeto_mestrado/modules"
+
+#path windows
+#sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+#root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 from Slice_mapper import slice_mapper
 import numpy as np
@@ -10,25 +16,13 @@ from PIL import Image
 import vessel_analysis as va
 
 
-#path linux
-#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
-
-#path windows
-#sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
-
-# windows
-#root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
-
-# linux
-root_dir = f"/home/adriano/projeto_mestrado/modules"
-
 if __name__ == '__main__':   
   
-  imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 4-20X'
+  image = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 4-20X'
 
-  arquivo = f'{root_dir}/Vetores_Extraidos_json/{imag}.json'
+  arquivo = f'{root_dir}/Vetores_Extraidos_json/{image}.json'
   
-  caminho_img = f'{root_dir}/Imagens/vessel_data/images/{imag}.tiff'
+  caminho_img = f'{root_dir}/Imagens/vessel_data/images/{image}.tiff'
 
   #pega o arquivo e armazena em um array
   array_path = va.retorna_paths(arquivo)

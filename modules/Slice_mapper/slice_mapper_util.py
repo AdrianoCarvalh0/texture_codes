@@ -4,100 +4,96 @@ from scipy.interpolate import splprep, splev
 from scipy.spatial import Voronoi
 from shapely import geometry, ops as shops
 
-
 def arc_length(path):
-    """Calcula o comprimento de arco acumulado, entre dois pontos
+    """Calculate the accumulated arc length between two points
 
-    Parâmetros:
+    Parameters:
     -----------
     path: ndarray
-        Lista de pontos contendo o caminho.
+        List of points containing the path.
 
-    Retorno:
+    Returns:
     -----------
-    l: np.array, contendo valores float
-        array contendo as informações acumuladas parciais das somas dos valores verificados.
-        O último valor da lista representa o somatório total de todas as diferenças somadas anteriormente.
+    l: np.array, containing float values
+        Array containing partially accumulated information of the sums of checked values.
+        The last value in the list represents the total sum of all previously added differences.
     """
 
-    # verifica  a diferença entre os segmentos, eleva ao quadrado e tira a raiz. Faz o cálculo 
-    # da hipotenusa quando os pixels estão em diagonal, se estiverem na horizontal este valor dá 1
-    # dl faz a soma das diferenças de um ponto a outro
+    # Calculate the difference between segments, square it, and take the square root.
+    # It calculates the hypotenuse when pixels are diagonal; if they are horizontal, this value is 1.
     dl = np.sqrt(np.sum(np.diff(path, axis=0) ** 2, axis=1))
 
-    # l é a soma acumulada entre os valores do dl, transformados em lista
+    # l is the cumulative sum of the values of dl, transformed into a list
     l = np.cumsum(dl).tolist()
 
-    # acréscimo do valor zero para termos o mesmo número de pontos com os comprimentos de arco. O zero seria a diferença do primeiro ponto.
+    # Add the value zero to have the same number of points with arc lengths. Zero would be the difference from the first point.
     l = np.array([0] + l)
 
-    # retorno dos valores de todos os comprimentos de arco
+    # Return the values of all arc lengths
     return l
 
-
 def interpolate(path, delta_eval=2., smoothing=0.1, k=3, return_params=False):
-    """Interpola uma lista de pontos
+    """Interpolate a list of points
 
-    Parâmetros:
+    Parameters:
     -----------
     path: ndarray
-        Lista de pontos contendo o caminho.
+        List of points containing the path.
     delta_eval: float
-        Variável responsável por criar pontos entre um segmento e outro.
+        Variable responsible for creating points between segments.
     smoothing: float
-        Grau de suavização.
+        Degree of smoothing.
     k: int
-        Parâmetro da interpolação cúbica.
+        Parameter for cubic interpolation.
     return_params: boolean
-        Parâmetro setado como false. Se true retorna valores a mais.
+        Parameter set to false. If true, it returns additional values.
 
-    Retorno:
+    Returns:
     -----------
-    path_interp:ndarray, contendo valores float
-        array contendo as informações acumuladas parciais das somas dos valores verificados.
-        O último valor da lista representa o somatório total de todas as diferenças somadas anteriormente.
+    path_interp: ndarray, containing float values
+        Array containing partially accumulated information of the sums of checked values.
+        The last value in the list represents the total sum of all previously added differences.
     tangent: ndarray
-        vetor contendo a listas de tangentes
+        Vector containing a list of tangents.
     tck: list
-        lista contendo características da curva
+        List containing curve characteristics.
     u: ndarray
-        contém valores entre o intervalo 0-1 e com num_points de índices
-
+        Contains values between the interval 0-1 and with num_points indices
     """
 
-    # transforma o path em np.array
+    # Convert the path to np.array
     path = np.array(path)
 
-    # absorve o comprimento do arco acumulado. Todas as posições do comprimento do arco.
+    # Absorb the accumulated arc length. All positions of the arc length.
     l = arc_length(path)
 
-    # numero de pontos absorve o tamanho do path
+    # Number of points absorbs the size of the path
     num_points = len(path)
 
-    # tck características da curva
-    # utilização do splprep do scipy para fazer a interpolação
+    # tck curve characteristics
+    # Use splprep from scipy to perform interpolation
     (tck, u), fp, ier, msg = splprep(path.T, s=smoothing * num_points, k=k, full_output=True)
 
-    # o l na última posição é o valor acumulado de todas as somas do comprimento do arco
-    # o delta_eval_norm é a divisão entre o delta_eval e o comprimento total do arco
+    # The l in the last position is the accumulated value of all sums of arc length
+    # Delta_eval_norm is the division between delta_eval and the total length of the arc
     delta_eval_norm = delta_eval / l[-1]
 
-    # eval_points ==> variação entre 0, intervalo, de delta_eval_norm em delta_eval_norm
+    # Eval_points ==> variation between 0, interval, of delta_eval_norm in delta_eval_norm
     eval_points = np.arange(0, 1 + 0.75 * delta_eval_norm, delta_eval_norm)
 
-    # pontos interpolados
+    # Interpolated points
     x_interp, y_interp = splev(eval_points, tck, ext=3)
 
-    # derivadas dos pontos interpolados, der=1, tem-se a derivada e não o ponto
+    # Derivatives of interpolated points, der=1, gives the derivative instead of the point
     dx_interp, dy_interp = splev(eval_points, tck, der=1, ext=3)
 
-    # .T inverte ao invés de ter duas linhas e num_points colunas, vira num_points linhas e duas colunas
+    # .T inverts instead of having two rows and num_points columns, it becomes num_points rows and two columns
     path_interp = np.array([x_interp, y_interp]).T
 
-    # vetor de tangentes transpostas através das derivadas de x e y
+    # Transposed tangent vectors through the derivatives of x and y
     tangent = np.array([dx_interp, dy_interp]).T
 
-    # normalizando as tangentes, para ter no máximo tamanho 1 e não haver preocupação com tamanho
+    # Normalize tangents to have a maximum size of 1 and not worry about size
     t_norm = np.sqrt(np.sum(tangent ** 2, axis=1))
     tangent = tangent / t_norm[None].T
 
@@ -107,31 +103,32 @@ def interpolate(path, delta_eval=2., smoothing=0.1, k=3, return_params=False):
         return path_interp, tangent
 
 
-def two_stage_interpolate(path, delta_eval=2., smoothing=0.1, k=3):
-    """Interpolar o caminho em dois estágios. Primeiro, uma interpolação linear é aplicada para que
-    pontos intermediários sejam gerados. Então, uma interpolação cúbica é aplicada. Isso é útil
-    porque a interpolação cúbica garante que o spline passe próximo aos pontos originais
-    no caminho, mas pode estar longe da curva original entre dois pontos originais. Fazendo
-    primeiro uma interpolação linear seguida por uma cúbica, o spline resultante não pode ser
-    muito longe do caminho original.
 
-    Parâmetros:
+def two_stage_interpolate(path, delta_eval=2., smoothing=0.1, k=3):
+    """Interpolate the path in two stages. First, a linear interpolation is applied to generate
+    intermediate points. Then, a cubic interpolation is applied. This is useful
+    because cubic interpolation ensures that the spline passes close to the original points
+    on the path but may be far from the original curve between two original points. By doing
+    a linear interpolation first followed by a cubic one, the resulting spline cannot be
+    too far from the original path.
+
+    Parameters:
     -----------
     path: ndarray
-        Lista de pontos contendo o caminho a ser integrado.
-    delta_eval : float
-        O intervalo para avaliar a interpolação.
+        List of points containing the path to be interpolated.
+    delta_eval: float
+        The interval to evaluate the interpolation.
     smoothing: float
-        Fator de suavização. 0 significa que o spline passará por todos os pontos interpolados linearmente.
-    k : int
-        O grau da segunda interpolação - que no caso é cúbica.
+        Smoothing factor. 0 means the spline will pass through all points linearly interpolated.
+    k: int
+        The degree of the second interpolation - which in this case is cubic.
 
-    Retorno:
+    Returns:
     -----------
     path_interp: ndarray, float
-        caminho interpolado de forma linear e depois de forma cúbica.
+        Interpolated path first linearly and then cubically.
     tangent: ndarray, float
-        ndarray de tangentes
+        ndarray of tangents
     """
 
     path_interp_linear, _ = interpolate(path, delta_eval=delta_eval, smoothing=0, k=1)
@@ -141,28 +138,28 @@ def two_stage_interpolate(path, delta_eval=2., smoothing=0.1, k=3):
 
 
 def get_normals(tangents):
-    """Pega vetores normais mediante uma lista de vetores tangentes
+    """Get normal vectors based on a list of tangent vectors
 
-    Parâmetros:
+    Parameters:
     -----------
     tangents: ndarray, float
-        ndarray de tangentes
+        ndarray of tangents
 
-    Retorno:
+    Returns:
     -----------
     normals: ndarray, float
-        ndarray de normais
+        ndarray of normals
     """
-    # criação de matriz de zeros com duas colunas e do tamanho do vetor de tangents
+    # Create a matrix of zeros with two columns and the size of the tangents vector
     normals = np.zeros((len(tangents), 2))
 
-    # laço que pega os índices e os valores das tangentes, idx ==> índice e t ==> valores
+    # Loop that retrieves the indices and values of the tangents, idx ==> index and t ==> values
     for idx, t in enumerate(tangents):
 
-        # tx e ty absorvem os valores das tangents
+        # tx and ty absorb the values of the tangents
         tx, ty = t
 
-        # se o ty tem um valor muito próximo de zero
+        # If ty has a value very close to zero
         if ty < 1e-3:
             n2 = 1
             n1 = -ty * n2 / tx
@@ -170,16 +167,16 @@ def get_normals(tangents):
             n1 = 1
             n2 = -tx * n1 / ty
 
-        # aplicando a normalização
+        # Applying normalization
         norm = np.sqrt(n1 ** 2 + n2 ** 2)
         n = np.array([n1 / norm, n2 / norm])
 
-        # np.cross ==> retorna o produto cruzado de dois vetores
-        # np.sign ==> retorna -1 se x<0, 0 se x==0 e 1 se x>0
+        # np.cross ==> returns the cross product of two vectors
+        # np.sign ==> returns -1 if x<0, 0 if x==0, and 1 if x>0
         orient = np.sign(np.cross(t, n))
         if idx > 0:
             if orient != prev_orient:
-                # Se a orientação do vetor for diferente do vetor anterior, existe a inverção da orientação
+                # If the orientation of the vector is different from the previous vector, there is a change in orientation
                 n *= -1
                 orient *= -1
         prev_orient = orient
@@ -188,60 +185,61 @@ def get_normals(tangents):
     return normals
 
 
-def dist(p1, p2):
-    """Calcula a distância Euclidiana entre dois pontos
 
-    Parâmetros:
+def dist(p1, p2):
+    """Calculate the Euclidean distance between two points
+
+    Parameters:
     -----------
     p1: array
-        posição 1 de um vetor
+        Position 1 of a vector
     p2: array
-        posição 2 de um vetor
+        Position 2 of a vector
 
-    Retorno:
+    Returns:
     -----------
-    o cálculo da distância
+    The calculation of the distance
     """
     return math.sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
 
 
 def medial_voronoi_ridges(path1, path2):
-    """Extração das arestas mediais de Voronoi entre o caminho1 e caminho2. Diagramas de Voronoi podem ser
-    usados para representar o caminho medial de uma estrutura tubular
+    """Extraction of the medial edges of Voronoi between path1 and path2. Voronoi diagrams can be
+    used to represent the medial path of a tubular structure.
 
-    Parâmetros:
+    Parameters:
     -----------
     path1: array
-        vetor 1
+        Vector 1
     path2: array
-        vetor 2
-    Retorno:
+        Vector 2
+    Returns:
     -----------
-    vor: objeto Voronoi
-        objeto do tipo Voronoi que contém informações sobre a região
+    vor: Voronoi object
+        Voronoi object containing information about the region
     idx_medial_vertices: ndarray
-        índices dos vértices mediais
+        Indices of medial vertices
     point_relation: ndarray
-        pontos de relação entre uma aresta medial e outra
+        Relationship points between one medial edge and another
     """
 
-    # cria novo array concatenado entre os caminhos ao longo das linhas
+    # Create a new array concatenated between the paths along the rows
     all_points = np.concatenate((path1, path2), axis=0)
 
-    # ordena todos os pontos
+    # Sort all points
     all_points_ordered = np.concatenate((path1, path2[::-1]), axis=0)
 
-    # criação do objeto vor, passando todos os pontos concatenados ao longo das linhas
+    # Create the voronoi object, passing all concatenated points along the rows
     vor = Voronoi(all_points)
 
-    # número de pontos do caminho1
+    # Number of points in path1
     num_points_path1 = len(path1)
 
-    # cria uma região tubular passando todos os pontos ordenados
+    # Create a tubular region passing all ordered points
     tube_region = geometry.Polygon(all_points_ordered)
 
     idx_internal_vertices = set()
-    # Pega os vértices de Vornoi dentro do tubo
+    # Get Voronoi vertices inside the tube
     for idx_vertex, vertex in enumerate(vor.vertices):
         if tube_region.contains(geometry.Point(vertex)):
             idx_internal_vertices.add(idx_vertex)
@@ -253,10 +251,10 @@ def medial_voronoi_ridges(path1, path2):
         first_is_path1 = True if ridge[0] < num_points_path1 else False
         second_is_path1 = True if ridge[1] < num_points_path1 else False
         if (first_is_path1 + second_is_path1) == 1:
-            # Verificação se a aresta medial está entre um ponto no caminho1 e outro no caminho2
+            # Check if the medial edge is between a point in path1 and another in path2
             idx_ridge_vertices = vor.ridge_vertices[idx]
             if idx_ridge_vertices[0] in idx_internal_vertices and idx_ridge_vertices[1] in idx_internal_vertices:
-                # cuidado para que o índice -1 em idx_ridge_vertices não esteja nos pontos terminais
+                # Be careful that -1 in idx_ridge_vertices is not in the terminal points
                 idx_medial_vertices.append(idx_ridge_vertices)
                 if ridge[0] < num_points_path1:
                     point_relation.append((ridge[0], ridge[1]))
@@ -270,17 +268,18 @@ def medial_voronoi_ridges(path1, path2):
 
 
 def order_ridge_vertices(idx_vertices):
-    """Ordena os vértices das arestas mediais de Voronoi. Uma lista de arestas mediais de Voronoi, que não estão ordenados, são passados
-    como parâmetro e na execução da função temos a ordenação destes vértices que definem um caminho por partes.
+    """Sorts the vertices of Voronoi medial edges. A list of Voronoi medial edges, which are not ordered, is passed
+    as a parameter, and when the function is executed, these vertices defining a path are ordered.
 
-    Parâmetros:
+    Parameters:
     -----------
     idx_vertices: ndarray, int
-        índices dos vértices
-    Retorno:
+        Indices of vertices
+
+    Returns:
     -----------
     ordered_vertices: ndarray, int
-        vértices ordenados
+        Ordered vertices
     """
 
     idx_vertices = list(map(tuple, idx_vertices))
@@ -333,99 +332,102 @@ def order_ridge_vertices(idx_vertices):
     return ordered_vertices
 
 
-def invert_if_oposite(path1, path2):
-    """Inverte o caminho2, se o caminho1 e o caminho2 forem demarcados em direções opostas.
-    Isto acontece quando demarcamos os vasos um da direita para a esquerda e outro da esquerda para a direita, ou vice-versa.
+def invert_if_opposite(path1, path2):
+    """Inverts path2 if path1 and path2 are marked in opposite directions.
+    This happens when we mark the vessels from right to left and the other from left to right, or vice versa.
 
-    Parâmetros:
+    Parameters:
     -----------
     path1: ndarray, float
-        vetor do caminho 1
+        Path 1 vector
     path2: ndarray, float
-        vetor do caminho 2
-    Retorno:
+        Path 2 vector
+
+    Returns:
     -----------
     path2: ndarray, float
-        vetor do caminho 2 invertido ou não, conforme as verificações
+        Inverted or not inverted path2, according to the checks
     """
 
-    # verifica qual o menor tamanho entre os dois paths
+    # Check the minimum size between the two paths
     min_size = min([len(path1), len(path2)])
 
-    # verificações da distância entre os pontos. Se a distância invertida for maior o path2 será invertido
+    # Check distances between points. If the inverted distance is greater, path2 will be inverted
     avg_dist = np.sum(np.sqrt(np.sum((path1[:min_size] - path2[:min_size]) ** 2, axis=1)))
     avg_dist_inv = np.sum(np.sqrt(np.sum((path1[:min_size] - path2[::-1][:min_size]) ** 2, axis=1)))
     if avg_dist_inv < avg_dist:
-        # Inverção do vetor de caminhos2
+        # Invert the path2 vector
         path2 = path2[::-1]
 
-    # retorno do path2
+    # Return path2
     return path2
 
 
 def increase_path_resolution(path, res_factor):
-    """Incrementa a resolução de um dado caminho, através da aplicação de um fator.
+    """Increases the resolution of a given path by applying a factor.
 
-    Parâmetros:
+    Parameters:
     -----------
     path: ndarray, float
-        vetor do caminho
+        Path vector
     res_factor: int
-       valor que determina o quanto a resolução do caminho será aumentada. Quanto maior este valor, mais pontos serão
-       criados
-    Retorno:
+       Value determining how much the path resolution will be increased. The higher this value, the more points will be created.
+
+    Returns:
     -----------
     path_interp: ndarray, float
-        caminho interpolado
+        Interpolated path
     tangents: ndarray, float
-        vetor de tangentes criadas a partir do path, absorvendo os valores contidos nas tangentes em x e y
+        Tangent vector created from the path, absorbing the values contained in the tangents in x and y
     """
 
-    # x absorve os valores das linhas do caminho
-    # y absorve os valores das colunas do caminho
+    # x absorbs the values from the path rows
+    # y absorbs the values from the path columns
     x, y = path.T
 
-    # número de pontos absorve o tamanho do caminho
+    # number of points absorbs the size of the path
     num_points = len(path)
 
     indices = list(range(num_points))
-    # Define a variável paramétrica certificando-se de que ela passe por todo o ponto original
+    # Define the parametric variable making sure it passes through every original point
     tck, _ = splprep(path.T, u=indices, s=0, k=3)
 
-    # eval_points é uma variação do valor de num_points*res_factor - (res_factor-1), sendo de 0 até num_points -1
+    # eval_points is a variation of the value num_points*res_factor - (res_factor-1), ranging from 0 to num_points -1
     eval_points = np.linspace(0, num_points - 1, num_points * res_factor - (res_factor - 1))
 
-    # interporlação de x e y
+    # interpolation of x and y
     x_interp, y_interp = splev(eval_points, tck, der=0)
 
-    # criação da tangente em x e y
+    # creation of the tangent in x and y
     x_tangents, y_tangents = splev(eval_points, tck, der=1)
 
-    # criação do caminho interpolado
+    # creation of the interpolated path
     path_interp = np.array([x_interp, y_interp]).T
 
-    # criação das tangentes
+    # creation of the tangents
     tangents = np.array([x_tangents, y_tangents]).T
 
     return path_interp, tangents
 
 
 def find_point_idx(sh_path, point):
-    """Encontra índice do point em sh_path
+    """Finds the index of the point in sh_path.
 
-     Parâmetros:
+     Parameters:
     -----------
     sh_path: ndarray, float
-        vetor do caminho
+        Path vector
     point: int
-        índice do ponto
-    Retorno:
+        Index of the point
+
+    Returns:
     -----------
-        distâncias mínimas entre o caminho e o ponto
+        Minimum distances between the path and the point
     """
 
-    # aplicação da distância Euclidiana para encontrar as menores distâncias entre dois pontos
+    # application of Euclidean distance to find the minimum distances between two points
     dists = np.sqrt((sh_path.xy[0] - point[0]) ** 2 + (sh_path.xy[1] - point[1]) ** 2)
 
-    # retorna as distâncias mínimas
+    # return the minimum distances
     return np.argmin(dists)
+

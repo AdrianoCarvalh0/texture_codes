@@ -82,7 +82,7 @@ def create_points(num_points):
         distance = np.sqrt((p1x - p2x) ** 2 + (p1y - p2y) ** 2)
 
         # only add elements to the points array whose distance is greater than 300 pixels and less than 500
-        if 300 < distance < 500:
+        if 500 < distance < 1300:
             p1 = np.array((p1x, p1y))
             p2 = np.array((p2x, p2y))
 

@@ -19,7 +19,7 @@ root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 img_dir = f'{root_dir}/Imagens/vessel_data/images'
 lab_dir = f'{root_dir}/Imagens/vessel_data/labels_20x'
 
-trein_dir = f'{root_dir}/Treinamento_validacao'
+trein_dir = f'{root_dir}/Training_validation'
 pickle_dir_50 = f'{trein_dir}/Mapas/200_mapas_de_50_imagens'
 background_dir_50 = f'{trein_dir}/Backgrounds/50_backgrounds'
 
@@ -98,11 +98,11 @@ for j in range(100):
     fundo_recortado2 = fundo_com_vasos2[200:1304,200:1576]
 
     img1 = Image.fromarray(fundo_recortado.astype(np.uint8))
-    path = f'{trein_dir}/Imagens_Artificiais/Home/pack8/imagens_artificiais/{nome_background}_{j}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Artificial_Images/Home/pack8/Artificial_Images/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img1.save(path)
 
     img2 = Image.fromarray(fundo_recortado2.astype(np.bool_))
-    path = f'{trein_dir}/Imagens_Artificiais/Home/pack8/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Artificial_Images/Home/pack8/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img2.save(path)
 
     #plt.figure(figsize=[10, 8])

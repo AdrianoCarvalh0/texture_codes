@@ -17,7 +17,7 @@ root_dir = f"/home/adriano/projeto_mestrado/modules"
 
 img_dir = f'{root_dir}/Imagens/vessel_data/images'
 lab_dir = f'{root_dir}/Imagens/vessel_data/labels_20x'
-training_dir = f'{root_dir}/Treinamento_validacao'
+training_dir = f'{root_dir}/Training_validation'
 
 pickle_dir_5 = f'{training_dir}/Maps/5_maps_de_images'
 pickle_dir_10 = f'{training_dir}/Maps/10_maps_10_images'
