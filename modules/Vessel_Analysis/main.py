@@ -2,12 +2,12 @@ from pathlib import Path
 import sys
 
 # linux
-sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
-root_dir = f"/home/adriano/projeto_mestrado/modules"
+#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+#root_dir = f"/home/adriano/projeto_mestrado/modules"
 
 # path windows
-# sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
-# root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 from Slice_mapper import slice_mapper
 import numpy as np
@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     image = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 4-20X'
 
-    file_path = f'{root_dir}/Extracted_Json_Vectors/{image}.json'
+    file_path = f'{root_dir}/Extracted_json_vectors/novos/{image}.json'
 
     image_path = f'{root_dir}/Images/vessel_data/images/{image}.tiff'
 
@@ -42,6 +42,6 @@ if __name__ == '__main__':
 
         # section to save the .pickle file
         data_dump = {"img_file": image_path, "vessel_model": vessel_model, "first_point": first_point}
-        save_data = f'{root_dir}/Vessel_Models_Pickle/new/{image}_savedata{i}.pickle'
+        save_data = f'{root_dir}/Vessel_models_pickle/novos/{image}_savedata{i}.pickle'
         pickle.dump(data_dump, open(save_data, "wb"))
         x += 2

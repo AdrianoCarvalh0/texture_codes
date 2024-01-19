@@ -163,16 +163,16 @@ annotation_style = {
 image = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 4-20X'
 
 #root_dir linux
-root_dir ="/home/adriano/projeto_mestrado/modules"
+#root_dir ="/home/adriano/projeto_mestrado/modules"
 
 #root_dir windows
-#root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 # Path where the JSON file will be saved
-file = f'{root_dir}/Vetores_Extraidos_json/novos/{image}.json'
+file = f'{root_dir}/Extracted_json_vectors/novos/{image}.json'
 
 # path of the image to be read
-path = f'{root_dir}/Imagens/vessel_data/images/{image}.tiff'
+path = f'{root_dir}/Images/vessel_data/images/{image}.tiff'
 
 # converting image to numpy array
 img = np.array(Image.open(path))
