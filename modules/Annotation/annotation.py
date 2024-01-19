@@ -12,23 +12,21 @@ from skimage import draw
 from scipy import ndimage
 import re
 
-def gravar_array_arquivo(array_list, filename):
-  """Função para gravar um array em um arquivo JSON """
-  lista2 = [item.tolist() for item in array_list]
-  json.dump(lista2, open(filename, 'w'), indent=2)
+def record_vector_file(array_list, filename):
+  """Function to write an array to a JSON file"""
+  array = [item.tolist() for item in array_list]
+  json.dump(array, open(filename, 'w'), indent=2)
 
 
 def path_to_floats(path):
-    """Converte o caminho SVG para um vetor numpy de coordenadas, onde cada linha se torne um ponto float (linha, coluna)  
-    """
+    """Converts the SVG path to a numpy vector of coordinates, where each line becomes a float point (row, column)"""
     indices_str = [
         el.replace("M", "").replace("Z", "").split(",") for el in path.split("L")
     ]
     return np.array(indices_str, dtype=float)
 
 def path_to_indices(path):
-    """Converte o caminho SVG para um vetor numpy de coordenadas, onde cada linha se torne um ponto inteiro (linha, coluna)    
-    """
+    """Converts the SVG path to a numpy vector of coordinates, where each line becomes an integer point (row, column)"""
     indices_str = [
         el.replace("M", "").replace("Z", "").split(",") for el in path.split("L")
     ]
@@ -36,9 +34,8 @@ def path_to_indices(path):
 
 
 def path_to_mask(path, shape):
-    """Converte o caminho SVG em uma matriz booleana onde todos os pixels incluídos no caminho
-    são verdadeiros e os outros pixels são falsos.
-    """
+    """Converts the SVG path to a boolean array where all pixels included in the path
+    are true and the other pixels are false."""
     cols, rows = path_to_indices(path).T
     rr, cc = draw.polygon(rows, cols)
     mask = np.zeros(shape, dtype=np.bool)
@@ -47,8 +44,8 @@ def path_to_mask(path, shape):
     return mask
 
 def process_shape(shape):
-    """Obtém as coordenadas de uma forma desenhada no aplicativo Dash. Também retorna o tipo da forma
-    como uma das seguintes strings: rect, line, circle, closed_path e open_path."""
+    """Gets the coordinates of a shape drawn in the Dash app. Also returns the type of the shape
+    as one of the following strings: rect, line, circle, closed_path and open_path."""
 
     if shape['type']=='rect' or shape['type']=='line' or shape['type']=='circle':
 
@@ -86,7 +83,7 @@ def process_shape(shape):
     return shape_type, coords
 
 def regexp_updated_shape(key):
-    """Função para identificar o índice e o atributo de uma forma que foi atualizada"""
+    """Function to identify the index and attribute of a form that has been updated"""
 
     m = re.match(r'shapes\[(\d+)\]\.(\S+)', key)
     if m is None:
@@ -98,7 +95,7 @@ def regexp_updated_shape(key):
     return shape_idx, att
 
 def process_shape_update(relayout_data):
-    """Retorna as coordenadas e o tipo da forma que foi atualizada na dash app."""
+    """Returns the coordinates and type of the shape that was updated in the dash app."""
 
     shape = {}
     first_key = list(relayout_data.keys())[0]
@@ -121,10 +118,8 @@ def process_shape_update(relayout_data):
     return shape_type, coords
 
 def extract_intensities(img, shape_type, coords, flat=True):
-    """Extrai as intensidades da imagen dentro da forma selecionada."""
-
-    #coords = np.rint(coords).astype(np.int)
-    #Alterei esta parte para int
+    """Extracts the image intensities within the selected shape."""
+   
     coords = np.rint(coords).astype(int)
     img_shape = img.shape
 
@@ -157,7 +152,7 @@ def extract_intensities(img, shape_type, coords, flat=True):
 
     return img_roi
 
-# Estilo de anotação para desenho na imagem
+# Annotation style for drawing on image
 annotation_style = {
     'line_color': 'red',
     'line_width': 2,
@@ -165,7 +160,7 @@ annotation_style = {
     'opacity':1,
 }
 
-imag = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 4-20X'
+image = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 4-20X'
 
 #root_dir linux
 root_dir ="/home/adriano/projeto_mestrado/modules"
@@ -173,16 +168,16 @@ root_dir ="/home/adriano/projeto_mestrado/modules"
 #root_dir windows
 #root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
-# Caminho onde vai ser gravado o arquivo JSON
-arquivo = f'{root_dir}/Vetores_Extraidos_json/novos/{imag}.json'
+# Path where the JSON file will be saved
+file = f'{root_dir}/Vetores_Extraidos_json/novos/{image}.json'
 
-# caminho da imagem a ser lida
-path = f'{root_dir}/Imagens/vessel_data/images/{imag}.tiff'
+# path of the image to be read
+path = f'{root_dir}/Imagens/vessel_data/images/{image}.tiff'
 
-# conversão da imagem em array numpy
+# converting image to numpy array
 img = np.array(Image.open(path))
 
-# Configuração da imagem inicial no Plotly Express
+# Initial image setup in Plotly Express
 fig = px.imshow(img, color_continuous_scale='gray', zmin=0, zmax=100,
         binary_string=True, binary_compression_level=0)
 fig.update_layout(dragmode="drawopenpath", coloraxis_showscale=False,
@@ -191,10 +186,10 @@ fig.update_layout(dragmode="drawopenpath", coloraxis_showscale=False,
 # Configure tooltip
 fig.update_traces(hovertemplate="x: %{x} <br> y: %{y} <br> z: %{z} <br> color: %{color}")
 
-# Histograma inicial
+# Initial histogram
 fig_hist = px.histogram(img.ravel(), height=700)
 
-# Configurações do Dash
+# Dash Settings
 config = {
     # Toolbar buttons
     "modeBarButtonsToAdd": [
@@ -209,13 +204,13 @@ config = {
     'displaylogo': False,
 }
 
-# Componentes do Dash
+# Dash Components
 dash_graph = dcc.Graph(id="graph-picture", figure=fig, config=config)
 
-# Instancia um objeto app da classe JupyterDash
+# Instantiates an app object of the JupyterDash class
 app = JupyterDash(__name__)
 
-# Informações da Dash, título, tamanho da tela
+# Dash information, title, screen size
 app.layout = html.Div(
     [
         html.H3("Drag a rectangle to show the histogram of the ROI"),
@@ -243,26 +238,26 @@ shapes = []
 def on_new_annotation(relayout_data):
 
     if "shapes" in relayout_data and len(relayout_data['shapes'])>0:        
-        # Uma forma foi desenhada na figura
+        #A shape has been drawn in the figure
         last_shape = relayout_data["shapes"][-1]
         shape_type, coords = process_shape(last_shape)
 
-        # Adiciona as formas, armazenando o tipo e as coordenadas
+        # Adds shapes, storing type and coordinates
         shapes.append({'type':shape_type, 'coords':coords})
 
-        # Adiciona as coordenadas em um array
-        lista.append(coords)
+        # Add coordinates to an array
+        list_array.append(coords)
 
-        # Grava o array em um arquivo .json
-        gravar_array_arquivo(lista, arquivo)
+        #Writes the array to a .json file
+        record_vector_file(list_array, file)
         
-        # Extrai as intensidades para passar para o histograma
+        # Extracts the intensities to pass to the histogram
         img_roi = extract_intensities(img, shape_type, coords)
 
         return px.histogram(img_roi), json.dumps(relayout_data['shapes'], indent=2)
 
     elif any([re.match(r'shapes\[\d+\]\.', key) is not None for key in relayout_data]): 
-        # Encontra Strings tipo 'shapes[3].x0` or `shapes[5].path`
+        # Finds Strings like `shapes[3].x0` or `shapes[5].path`
 
         shape_type, coords = process_shape_update(relayout_data)
         img_roi = extract_intensities(img, shape_type, coords)
@@ -271,7 +266,7 @@ def on_new_annotation(relayout_data):
     else:
         return (dash.no_update,)*2
 
-# Método principal do Dash app. Cria um endereço acessível em navegador para a demarcação do(s) vaso(s).
+# Dash app main method. Creates a browser-accessible address for demarcating the vessel(s).
 if __name__ == "__main__":
-    lista = []
+    list_array = []
     app.run_server(mode='external')
