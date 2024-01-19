@@ -4,7 +4,7 @@ import sys
 
 # Linux
 sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/")
-from General_Functions import functions  # Importing functions from the specified module
+from modules.Utils import functions  # Importing functions from the specified module
 from pathlib import Path
 
 # Linux

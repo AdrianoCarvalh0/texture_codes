@@ -1,9 +1,9 @@
 import sys
 
-#path linux
-#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+# Linux path
+# sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
 
-#path windows
+# Windows path
 sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 import numpy as np
@@ -12,256 +12,258 @@ import json
 from Slice_mapper import slice_mapper as slice_mapper
 from PIL import Image
 
-# lê um arquivo e retorna um array dos dados do arquivo
-# O array está no formato coluna/linha. O código que faz a extração grava no formato coluna/linha
-# Tem várias partes do vessel analysis e do slice_mapper que usam desta forma.
-def retorna_paths(arq_json):
-    """Função que lê um arquivo json retorna os paths 1 e 2 de uma ou várias marcações manuais dos vasos sanguíneos
+# reads a file and returns an array of the file data
+# The array is in column/row format. The code that performs the extraction writes in column/row format
+# Several parts of vessel analysis and slice_mapper use this format.
+def return_paths(json_file):
+    """Function that reads a JSON file and returns paths 1 and 2 for one or multiple manual blood vessel markings.
 
-    Parâmetros:
+    Parameters:
     -----------
-    arq_json: str
-        arquivo que contém as coordenadas, linhas e colunas da localização do vaso sanguíneo com extensão .json
-    Retorno:
+    json_file: str
+        File containing the coordinates, rows, and columns of the blood vessel location with a .json extension.
+    Returns:
     -----------
-    array_paths: list, contendo ndarray
-        retorna path1 e path2 de um ou vários vasos extraídos.
-        Os valores armazenados no path1 e path2 são as demarcações manuais feitas nos vasos.
+    array_paths: list, containing ndarray
+        Returns path1 and path2 for one or multiple extracted vessels.
+        The values stored in path1 and path2 are manual markings made on the vessels.
     """
-    # leitura do json
-    q = json.load(open(arq_json, 'r'))
+    # Read JSON file
+    data = json.load(open(json_file, 'r'))
 
-    # transforma todos os itens lidos em np.array
-    array_paths = [np.array(item) for item in q]
+    # Convert all items read into np.array
+    array_paths = [np.array(item) for item in data]
 
-    # Função com uma linha para inverter todos os valores
-    # path1 = [np.array(item)[:,::-1] for item in q]
+    # Function with one line to reverse all values
+    # path1 = [np.array(item)[:,::-1] for item in data]
     return array_paths
 
 
-def setar_alcance(array_1, array_2, alcance_extra=6):
-    """ Função que pega os dois primeiros valores das linhas e colunas dos vetores passados por parâmetro e
-        retorna o alcance. Calcula a distância Euclidiana entre os quatro pontos.
+def set_range(array_1, array_2, extra_range=6):
+    """Function that takes the first two values of the rows and columns of the vectors passed as parameters and
+       returns the range. It calculates the Euclidean distance between the four points.
 
-    Parâmetros:
+    Parameters:
     -----------
     array_1: ndarray, float
-        vetor do caminho 1
+        Vector for path 1
     array_2: ndarray, float
-        vetor do caminho 2
-    Retorno:
+        Vector for path 2
+    Returns:
     -----------
-    alcance: int
-        Retorna o valor inteiro do cálculo da distância Euclidiana.
-        Serve para delimitar a região que será exibida da imagem.
+    range_value: int
+        Returns the integer value of the Euclidean distance calculation.
+        It is used to delimit the region that will be displayed in the image.
     """
-    # pega a coluna 1 do vetor 1
-    coluna1 = array_1[0][0]
+    # Get column 1 of vector 1
+    column1 = array_1[0][0]
 
-    # pega a linha 1 do vetor 1
-    linha1 = array_1[0][1]
+    # Get row 1 of vector 1
+    row1 = array_1[0][1]
 
-    # pega a coluna 2 do vetor 2
-    coluna2 = array_2[0][0]
+    # Get column 2 of vector 2
+    column2 = array_2[0][0]
 
-    # pega a linha 2 do vetor 2
-    linha2 = array_2[0][1]
+    # Get row 2 of vector 2
+    row2 = array_2[0][1]
 
-    # O alcance vai ser a raiz quadrada do resultado da diferença quadrática entre os dois pontos dos dois vetores - distância Euclidiana
-    # A variável alcance_extra permite que a região setada pelo alcance seja um pouco maior. O alcance é aumentado, tanto acima, como abaixo dos valores mapeados
-    alcance = int(np.sqrt((linha1 - linha2) ** 2 + (coluna1 - coluna2) ** 2) + alcance_extra)
+    # Range is the square root of the result of the quadratic difference between the two points of the two vectors - Euclidean distance
+    # The extra_range variable allows the region set by the range to be slightly larger. The range is increased both above and below the mapped values
+    range_value = int(np.sqrt((row1 - row2) ** 2 + (column1 - column2) ** 2) + extra_range)
 
-    return alcance
+    return range_value
 
 
-def retorna_linhas_colunas(caminhos):
-    """ Função que retorna os valores mínimos e máximos de dois vetores
+def return_rows_columns(paths):
+    """Function that returns the minimum and maximum values of two vectors.
 
-    Parâmetros:
+    Parameters:
     -----------
-    caminhos: list, contendo ndarray
-        lista que contém dois vetores ndarray (path1 e path2)
-    Retorno:
+    paths: list, containing ndarray
+        List containing two ndarray vectors (path1 and path2)
+    Returns:
     -----------
-    min_linha: int
-        valor mínimo encontrado entre as linhas
-    min_coluna: int
-        valor mínimo encontrado entre as colunas
-    max_linha: int
-        valor máximo encontrado entre as linhas
-    max_coluna: int
-        valor máximo encontrado entre as colunas
+    min_row: int
+        Minimum value found among the rows
+    min_column: int
+        Minimum value found among the columns
+    max_row: int
+        Maximum value found among the rows
+    max_column: int
+        Maximum value found among the columns
     """
-    # pega a primeira posição do vetor
-    caminho1 = caminhos[0]
+    # Get the first position of the vector
+    path1 = paths[0]
 
-    # pega a segunda posição do vetor
-    caminho2 = caminhos[1]
+    # Get the second position of the vector
+    path2 = paths[1]
 
-    min_coluna1, min_linha1 = np.min(caminho1, axis=0)
-    min_coluna2, min_linha2 = np.min(caminho2, axis=0)
+    min_column1, min_row1 = np.min(path1, axis=0)
+    min_column2, min_row2 = np.min(path2, axis=0)
 
-    max_coluna1, max_linha1 = np.max(caminho1, axis=0)
-    max_coluna2, max_linha2 = np.max(caminho2, axis=0)
+    max_column1, max_row1 = np.max(path1, axis=0)
+    max_column2, max_row2 = np.max(path2, axis=0)
 
-    min_coluna = int(np.min([min_coluna1, min_coluna2]))
-    min_linha = int(np.min([min_linha1, min_linha2]))
-    max_coluna = int(np.max([max_coluna1, max_coluna2]))
-    max_linha = int(np.max([max_linha1, max_linha2]))
+    min_column = int(np.min([min_column1, min_column2]))
+    min_row = int(np.min([min_row1, min_row2]))
+    max_column = int(np.max([max_column1, max_column2]))
+    max_row = int(np.max([max_row1, max_row2]))
 
-    return min_linha, min_coluna, max_linha, max_coluna
+    return min_row, min_column, max_row, max_column
 
 
-def redimensiona_imagem(caminhos, caminho_da_img):
-    """ Função que pega um vetor, contendo os paths 1, 2 e o endereço de uma imagem, recriando sua dimensão para
-     as setadas pelas variáveis que contém os maiores e menores valores das linhas e colunas contidas nos paths 1 e 2
+def resize_image(paths, image_path):
+    """Function that takes a vector containing paths 1, 2 and the address of an image, resizing its dimensions to
+     those set by the variables containing the smallest and largest values of the rows and columns contained in paths 1 and 2.
 
-    Parâmetros:
+    Parameters:
     -----------
-    caminhos: list, contendo ndarray
-        lista que contém dois vetores ndarray (path1 e path2)
-    caminho_da_img: str
-        endereço da imagem que exibe a sua loclização
-    Retorno:
+    paths: list, containing ndarray
+        List containing two ndarray vectors (path1 and path2)
+    image_path: str
+        Image address that displays its location
+    Returns:
     -----------
     img1: ndarray, image
-        imagem redimensionada
-    caminhos_transladados: list, float
-        lista contendo um par de vetores que foram transladados a partir do primeiro ponto da menor linha
-        e coluna, menos um padding, para encaixar na imagem redimensionada
-    primeiro_ponto: ndarray
-        contém as informações da menor linha e coluna, menos um padding da imagem original
+        Resized image
+    translated_paths: list, float
+        List containing a pair of vectors that have been translated from the first point of the smallest row
+        and column, minus padding, to fit in the resized image
+    first_point: ndarray
+        Contains information from the smallest row and column, minus padding of the original image
     """
-    # padding setado para mostrar uma região um pouco maior do que a do vaso em questão
+    # Padding set to show a region slightly larger than the vessel in question
     padding = 5
 
-    # retorna as menores e as maiores linhas e colunas dos caminhos
-    menor_linha, menor_coluna, maior_linha, maior_coluna = retorna_linhas_colunas(caminhos)
+    # Returns the smallest and largest rows and columns of the paths
+    min_row, min_column, max_row, max_column = return_rows_columns(paths)
 
-    # pega o primeiro_ponto na posição da menor coluna, e da menor linha, decrescidos do padding
-    primeiro_ponto = np.array([menor_coluna - padding, menor_linha - padding])
+    # Get the first_point at the position of the smallest column and the smallest row, decreased by padding
+    first_point = np.array([min_column - padding, min_row - padding])
 
-    # absorve os valores dos caminhos decrescidos do primmeiro ponto, varrendo todos os dois vetores
-    caminhos_transladados = [caminho - primeiro_ponto for caminho in caminhos]
+    # Absorb the values of the paths decreased from the first point, sweeping both vectors
+    translated_paths = [path - first_point for path in paths]
 
-    # imagem que absorve a img_path e mostra a região delimitada pelos parâmetros pelas menores e maiores linhas/colunas
-    # o parâmetro "-padding" permite que seja pega uma região um pouco maior em todos os valores das linhas/colunas
-    img1 = np.array(Image.open(caminho_da_img))[menor_linha - padding:maior_linha + padding,
-           menor_coluna - padding:maior_coluna + padding]
+    # Image that absorbs img_path and shows the region delimited by the parameters by the smallest and largest rows/columns
+    # The "-padding" parameter allows a slightly larger region to be taken in all values of rows/columns
+    img1 = np.array(Image.open(image_path))[min_row - padding:max_row + padding,
+           min_column - padding:max_column + padding]
 
-    return img1, caminhos_transladados, primeiro_ponto
+    return img1, translated_paths, first_point
 
 
-def gera_vessel_cross(img, caminhos_trans0, caminhos_trans1, alcance, delta_eval=1.,smoothing=0.01):
-    """ Função que cria o modelo de vaso e os caminhos transversais
-   
-    Parâmetros:
+
+def generate_vessel_cross(img, trans_paths_0, trans_paths_1, range_value, delta_eval=1., smoothing=0.01):
+    """Function that creates the vessel model and transversal paths.
+
+    Parameters:
     -----------
     img: ndarray, float
-       imagem redimensionada contendo a área do vaso extraído
-    caminhos_trans0: ndarray, float
-        caminhos transladados na posição 0 do vetor de caminhos transladados
-    caminhos_trans1: ndarray, float
-        caminhos transladados na posição 1 do vetor de caminhos transladados
-    alcance: int
-        variável que define o quanto de limite superior e inferior a imagem terá, tem implicação direta com a quantidade de linhas do mapa criado
+        Resized image containing the area of the extracted vessel.
+    trans_paths_0: ndarray, float
+        Translated paths at position 0 of the translated paths vector.
+    trans_paths_1: ndarray, float
+        Translated paths at position 1 of the translated paths vector.
+    range_value: int
+        Variable that defines how much upper and lower limit the image will have, directly related to the number of lines in the created map.
     delta_eval: float
-        variável que define os intervalos
+        Variable that defines the intervals.
     smoothing: float
-        variável que define o grau da suavização
-    Retorno:
+        Variable that defines the degree of smoothing.
+    Returns:
     -----------
-    vessel_model: obejct VesselModel
-        retorna o modelo do vaso com um objeto instanciado da classe VesselModel
+    vessel_model: object VesselModel
+        Returns the vessel model with an instantiated object of the VesselModel class.
     cross_paths: ndarray, float
-        caminhos transversais
+        Transversal paths.
     """
-    vessel_model, cross_paths = slice_mapper.map_slices(img, caminhos_trans0, caminhos_trans1, delta_eval, smoothing, alcance)
+    vessel_model, cross_paths = slice_mapper.map_slices(img, trans_paths_0, trans_paths_1, delta_eval, smoothing, range_value)
 
     return vessel_model, cross_paths
-def plot_figure(img, vessel_model, cross_paths):       
-    """ Função que cria o modelo de vaso e os caminhos transversais
 
-    Parâmetros:
+def plot_figure(img, vessel_model, cross_paths):
+    """Function that creates the vessel model and transversal paths.
+
+    Parameters:
     -----------
     img: ndarray, float
-       imagem redimensionada contendo a área do vaso extraído
-    vessel_model: obejct VesselModel
-        retorna o modelo do vaso com um objeto instanciado da classe VesselModel
+        Resized image containing the area of the extracted vessel.
+    vessel_model: object VesselModel
+        Returns the vessel model with an instantiated object of the VesselModel class.
     cross_paths: ndarray, float
-        caminhos transversais
-    Retorno:
+        Transversal paths.
+    Returns:
     -----------
-        plota a imagem redimensionada, juntamente com o modelo do vaso, os caminhos tranversais, os paths 1 e 2
-        transladados, de três maneiras diferentes:
-        1 - com os valores mapeados tendo o mínimo em 0 e máximo em 60
-        2 - valores mapeados no padrão, de 0 a 255
-        3 - valores mapeados entre o mínimo 0 e máximo nos valores encontrados no mapeamento
+        Plots the resized image, along with the vessel model, transversal paths, and translated paths 1 and 2,
+        in three different ways:
+        1 - with the mapped values having the minimum at 0 and maximum at 60
+        2 - values mapped in the standard range, from 0 to 255
+        3 - values mapped between the minimum 0 and maximum in the values found in the mapping
     """
 
     vessel_map = vessel_model.vessel_map
     fig = plt.figure(figsize=[12, 10])
     ax = fig.add_subplot()
-    slice_mapper.plot_model(img, vessel_model, cross_paths, ax)   
-    #plt.title("Imagem analisada")
+    slice_mapper.plot_model(img, vessel_model, cross_paths, ax)
+    #plt.title("Analyzed Image")
     norm = ax.images[0].norm
     norm.vmin, norm.vmax = 0, 60
     plt.axis('off')
-    #arquivo_modelo = f'{pasta_mestrado}/Imagens/mapas/modelo/{imag}_{x}.png'
-    #plt.imsave(arquivo_modelo, vessel_map.mapped_values, cmap='gray', vmin=0, vmax=60)  
-     
-    
+    #model_file = f'{master_folder}/Images/maps/model/{imag}_{x}.png'
+    #plt.imsave(model_file, vessel_map.mapped_values, cmap='gray', vmin=0, vmax=60)
+
     plt.figure(figsize=[12, 10])
-    #plt.title("Vmin=0 e Vmax=60")
+    #plt.title("Vmin=0 and Vmax=60")
     plt.plot()
     plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=60)
     #plt.plot(vessel_map.path1_mapped, c='green')
     #plt.plot(vessel_map.path2_mapped, c='green')
-    plt.axis('off') 
+    plt.axis('off')
     #plt.imsave(imag+'.png', vessel_map.mapped_values, cmap='gray', vmin=0, vmax=60)
-    #arquivo_min0max60 = f'{pasta_mestrado}/Imagens/mapas/min0max60/{imag}_{x}.png'
-    #plt.imsave(arquivo_min0max60, vessel_map.mapped_values, cmap='gray', vmin=0, vmax=60)     
- 
+    #file_min0max60 = f'{master_folder}/Images/maps/min0max60/{imag}_{x}.png'
+    #plt.imsave(file_min0max60, vessel_map.mapped_values, cmap='gray', vmin=0, vmax=60)
+
     plt.figure(figsize=[12, 10])
-    plt.title("Vmin=0 e Vmax=255")
+    plt.title("Vmin=0 and Vmax=255")
     plt.plot()
     plt.imshow(vessel_map.mapped_values[::-1], 'gray', vmin=0, vmax=255)
     #plt.plot(vessel_map.path1_mapped, c='green')
     #plt.plot(vessel_map.path2_mapped, c='green')
     plt.axis('off')
-    #arquivo_min0max255 = f'{pasta_mestrado}/Imagens/mapas/min0max255/{imag}_{x}.tiff'
-    #plt.imsave(arquivo_min0max255, vessel_map.mapped_values, cmap='gray', vmin=0, vmax=255)
+    #file_min0max255 = f'{master_folder}/Images/maps/min0max255/{imag}_{x}.tiff'
+    #plt.imsave(file_min0max255, vessel_map.mapped_values, cmap='gray', vmin=0, vmax=255)
     #image = np.array(vessel_map.mapped_values, dtype=np.uint8)
-    #imsave(arquivo_min0max255, image)  
+    #imsave(file_min0max255, image)
 
     plt.figure(figsize=[12, 10])
-    plt.title("Vmin=0 e Vmax=maximo valor mapeado")
+    plt.title("Vmin=0 and Vmax=max mapped value")
     plt.plot()
-    plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=vessel_map.mapped_values.max())     
+    plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=vessel_map.mapped_values.max())
     #plt.plot(vessel_map.path1_mapped, c='green')
     #plt.plot(vessel_map.path2_mapped, c='green')
     plt.axis('off')
-    #arquivo_min0max = f'{pasta_mestrado}/Imagens/mapas/min0maxmapeado/{imag}_{x}.png'
-    #plt.imsave(arquivo_min0max, vessel_map.mapped_values, cmap='gray', vmin=0, vmax=vessel_map.mapped_values.max())
+    #file_min0max = f'{master_folder}/Images/maps/min0maxmapped/{imag}_{x}.png'
+    #plt.imsave(file_min0max, vessel_map.mapped_values, cmap='gray', vmin=0, vmax=vessel_map.mapped_values.max())
+
     
 def plot_figure2(img, vessel_model, cross_paths):       
-    """ Função que cria o modelo de vaso e os caminhos transversais
+    """Function that creates the vessel model and transversal paths.
 
-    Parâmetros:
+    Parameters:
     -----------
     img: ndarray, float
-       imagem redimensionada contendo a área do vaso extraído
-    vessel_model: obejct VesselModel
-        retorna o modelo do vaso com um objeto instanciado da classe VesselModel
+        Resized image containing the area of the extracted vessel.
+    vessel_model: object VesselModel
+        Returns the vessel model with an instantiated object of the VesselModel class.
     cross_paths: ndarray, float
-        caminhos transversais
-    Retorno:
+        Transversal paths.
+    Returns:
     -----------
-        plota a imagem redimensionada, juntamente com o modelo do vaso, os caminhos tranversais, os paths 1 e 2
-        transladados, de três maneiras diferentes:
-        1 - com os valores mapeados tendo o mínimo em 0 e máximo em 60
-        2 - valores mapeados no padrão, de 0 a 255
-        3 - valores mapeados entre o mínimo 0 e máximo nos valores encontrados no mapeamento
+        Plots the resized image, along with the vessel model, transversal paths, and translated paths 1 and 2,
+        in three different ways:
+        1 - with the mapped values having the minimum at 0 and maximum at 60
+        2 - values mapped in the standard range, from 0 to 255
+        3 - values mapped between the minimum 0 and maximum in the values found in the mapping
     """
 
     vessel_map = vessel_model.vessel_map
@@ -270,30 +272,31 @@ def plot_figure2(img, vessel_model, cross_paths):
     slice_mapper.plot_model(img, vessel_model, cross_paths, ax)        
     norm = ax.images[0].norm
     norm.vmin, norm.vmax = 0, 60
-    #arquivo_modelo = f'{pasta_mestrado}/Imagens/plots/modelo/{imag}_{x}.png'
-    #plt.savefig(arquivo_modelo)  
+    #model_file = f'{master_folder}/Images/plots/model/{imag}_{x}.png'
+    #plt.savefig(model_file)  
     
     plt.figure(figsize=[12, 10])    
     plt.plot()
     plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=60)
     plt.plot(vessel_map.path1_mapped, c='green')
     plt.plot(vessel_map.path2_mapped, c='green')
-    #arquivo_min0max60 = f'{pasta_mestrado}/Imagens/plots/min0max60/{imag}_{x}.png'
-    #plt.savefig(arquivo_min0max60)
+    #file_min0max60 = f'{master_folder}/Images/plots/min0max60/{imag}_{x}.png'
+    #plt.savefig(file_min0max60)
 
     plt.figure(figsize=[12, 10])    
     plt.plot()
     plt.imshow(vessel_map.mapped_values[::-1], 'gray', vmin=0, vmax=255)
     plt.plot(vessel_map.path1_mapped, c='green')
     plt.plot(vessel_map.path2_mapped, c='green')    
-    #arquivo_min0max255 = f'{pasta_mestrado}/Imagens/plots/min0max255/{imag}_{x}.png'
-    #plt.savefig(arquivo_min0max255)
+    #file_min0max255 = f'{master_folder}/Images/plots/min0max255/{imag}_{x}.png'
+    #plt.savefig(file_min0max255)
 
     plt.figure(figsize=[12, 10])   
     plt.plot()
     plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=vessel_map.mapped_values.max())     
     plt.plot(vessel_map.path1_mapped, c='green')
     plt.plot(vessel_map.path2_mapped, c='green')    
-    #arquivo_min0max = f'{pasta_mestrado}/Imagens/plots/min0maxmapeado/{imag}_{x}.png'
-    #plt.savefig(arquivo_min0max)
+    #file_min0max = f'{master_folder}/Images/plots/min0maxmapped/{imag}_{x}.png'
+    #plt.savefig(file_min0max)
+
     

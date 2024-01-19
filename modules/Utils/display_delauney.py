@@ -6,10 +6,8 @@ from pathlib import Path
 from PIL import Image
 from matplotlib import pyplot as plt
 import geopandas as gpd
-import background_generation as backgen
-
-
-from General_Functions import functions
+from Background import background_generation as backgen
+from modules.Utils import functions
 
 # Linux root directory
 root_dir = f"/home/adriano/projeto_mestrado/modules"

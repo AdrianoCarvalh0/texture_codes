@@ -11,7 +11,7 @@ sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
 # Path for Windows
 # sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
-from General_Functions import functions
+from modules.Utils import functions
 from Background import background_generation as backgen
 
 # Root directory for Linux

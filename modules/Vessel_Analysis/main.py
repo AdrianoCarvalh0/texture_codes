@@ -5,9 +5,9 @@ import sys
 sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
 root_dir = f"/home/adriano/projeto_mestrado/modules"
 
-#path windows
-#sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
-#root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+# path windows
+# sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+# root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 from Slice_mapper import slice_mapper
 import numpy as np
@@ -15,35 +15,33 @@ import pickle
 from PIL import Image
 import vessel_analysis as va
 
+if __name__ == '__main__':
 
-if __name__ == '__main__':   
-  
-  image = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 4-20X'
+    image = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 4-20X'
 
-  arquivo = f'{root_dir}/Vetores_Extraidos_json/{image}.json'
-  
-  caminho_img = f'{root_dir}/Imagens/vessel_data/images/{image}.tiff'
+    file_path = f'{root_dir}/Extracted_Json_Vectors/{image}.json'
 
-  #pega o arquivo e armazena em um array
-  array_path = va.retorna_paths(arquivo)
+    image_path = f'{root_dir}/Images/vessel_data/images/{image}.tiff'
 
-  #leitura da imagem
-  img = np.array(Image.open(caminho_img))
+    # retrieve the file and store it in an array
+    array_path = va.return_paths(file_path)
 
-  #pega a metade inteira do vetor
-  half_array = len(array_path)//2
+    # read the image
+    img = np.array(Image.open(image_path))
 
-  x=0
-  for i in range(half_array):  
-    img, caminhos_transladados, primeiro_ponto = va.redimensiona_imagem(array_path[x:x+2], caminho_img)     
-    alcance = va.setar_alcance(array_path[0], array_path[1])
-    vessel_mod,  cross_t = va.gera_vessel_cross(img, caminhos_transladados[0], caminhos_transladados[1], alcance)   
-    va.plot_figure(img, vessel_mod, cross_t)
-    va.plot_figure2(img, vessel_mod, cross_t)
-    
-    #parte para salvar o .pickle
-    data_dump = {"img_file": caminho_img, "vessel_model": vessel_mod, "primeiro_ponto": primeiro_ponto} 
-    savedata = f'{root_dir}/Vessel_Models_pickle/novos/{imag}_savedata{i}.pickle'
-    pickle.dump(data_dump, open(savedata,"wb"))  
-    x+=2
+    # get the integer half of the vector
+    half_array = len(array_path) // 2
 
+    x = 0
+    for i in range(half_array):
+        img, translated_paths, first_point = va.resize_image(array_path[x:x+2], image_path)
+        range_value = va.set_range(array_path[0], array_path[1])
+        vessel_model, cross_section = va.generate_vessel_cross(img, translated_paths[0], translated_paths[1], range_value)
+        va.plot_figure(img, vessel_model, cross_section)
+        va.plot_figure2(img, vessel_model, cross_section)
+
+        # section to save the .pickle file
+        data_dump = {"img_file": image_path, "vessel_model": vessel_model, "first_point": first_point}
+        save_data = f'{root_dir}/Vessel_Models_Pickle/new/{image}_savedata{i}.pickle'
+        pickle.dump(data_dump, open(save_data, "wb"))
+        x += 2

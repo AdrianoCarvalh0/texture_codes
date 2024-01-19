@@ -3,217 +3,216 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import interp1d
 
-def ready_directory(diretorio):
-    """ Função que lê todos os arquivos de um diretório, retornando a quantidade existente e os nomes dos arquivos
+def ready_directory(directory):
+    """Function that reads all files in a directory, returning the quantity and names of the files.
 
-    Parâmetros:
+    Parameters:
     -----------
-    diretorio: str
-      nome do local onde se encontra o diretório a ser lido
-    Retorno:
+    directory: str
+        Name of the location where the directory to be read is located.
+    Returns:
     -----------
-    nome: list, str
-      lista de nomes dos arquivos que estão sendo lidos no diretório setado
-    qtde: int
-      quantidade de arquivos existentes no diretório  
+    names: list, str
+        List of file names being read in the set directory.
+    quantity: int
+        Number of files in the directory.
     """
 
-    qtde_de_arquivos = 0
-    lista_de_nomes = []
-    # varredura dos arquivos e adição dos nomes na variável nome e quantidade na variável qtde
-    for name in os.listdir(diretorio):
-        path = os.path.join(diretorio, name)
+    file_quantity = 0
+    names_list = []
+    # Scans files and adds names to the 'names' variable and quantity to the 'quantity' variable.
+    for name in os.listdir(directory):
+        path = os.path.join(directory, name)
         if os.path.isfile(path):
-            lista_de_nomes.append(path)
-            qtde_de_arquivos += 1   
-    return lista_de_nomes, qtde_de_arquivos
+            names_list.append(path)
+            file_quantity += 1   
+    return names_list, file_quantity
 
 def plot_vessel_map(vessel_map):
-    """ Função que faz o plot do mapa do vaso. Mapeia os valores de zero sendo o mínimo e 60 como sendo o máximo
+    """Function that plots the vessel map. Maps values from zero as the minimum to 60 as the maximum.
 
-    Parâmetros:
+    Parameters:
     -----------
     vessel_map: object VesselMap
-        instância do objeto VesselMap
+        Instance of the VesselMap object.
 
-    Retorno:
+    Returns:
     -----------
-        plota os valores das intensidades dos pixels do vaso sanguíneo.
+        Plots the intensity values of the blood vessel pixels.
     """
     plt.figure(figsize=[12, 10])
-    #plt.title("Map values Vmin=0 e Vmax=60")
+    #plt.title("Map values Vmin=0 and Vmax=60")
     #plt.xticks([])
     #plt.yticks([])
 
-    # o mapped_values, são os valores das intensidades dos pixels do vaso sanguíneo.
+    # 'mapped_values' are the intensity values of the blood vessel pixels.
     plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=60)
 
-    # mostra os valores do path1 mapeado em amarelo
+    # Shows the values of path1 mapped in yellow.
     plt.plot(vessel_map.path1_mapped, c='yellow')
 
-    # mostra os valores do path2 mapeado em amarelo
+    # Shows the values of path2 mapped in yellow.
     plt.plot(vessel_map.path2_mapped, c='yellow')    
     #plt.savefig('plot_vessel_map.pdf')
-    plt.show()    
+    plt.show()
+
 
 def plot_intensity_lines(vessel_map, half_size_vessel_map):
-    """ Função que plota a intensidade da linha mediana, uma acima e uma abaixo dos valores mapeados
-    
-    Parâmetros:
+    """Function that plots the intensity of the median line, one above and one below the mapped values.
+
+    Parameters:
     -----------
     vessel_map: object VesselMap
-       instância do objeto VesselMap
+        Instance of the VesselMap object.
     half_size_vessel_map: int
-        metade inteira da divisão do tamanho dos valores mapeados por 2
-    Retorno:
+        Integer half of the division of the size of the mapped values by 2.
+    Returns:
     -----------
-        plote da intensidade da linha mediana, uma acima e uma abaixo dos valores mapeados
+        Plot of the intensity of the median line, one above and one below the mapped values.
     """
     plt.figure(figsize=[12, 10])
-    #plt.title(f'Intensity of position in sections of the vessel {half_size_vessel_map - 1}, {half_size_vessel_map} and {half_size_vessel_map + 1}')
-    plt.title(f'Intensidades da linha medial nas linhas {half_size_vessel_map - 1}, {half_size_vessel_map} e {half_size_vessel_map + 1}')
+    #plt.title(f'Intensity of position in sections of the vessel {half_size_vessel_map - 1}, {half_size_vessel_map}, and {half_size_vessel_map + 1}')
+    plt.title(f'Intensities of the medial line in lines {half_size_vessel_map - 1}, {half_size_vessel_map}, and {half_size_vessel_map + 1}')
 
-    # acima
+    # above
     plt.plot(vessel_map.mapped_values[half_size_vessel_map - 1].flatten(),
-             label=f'Posição:  {half_size_vessel_map - 1}')
-    # linha do centro
-    plt.plot(vessel_map.mapped_values[half_size_vessel_map].flatten(), label=f'Posição:  {half_size_vessel_map}')
+             label=f'Position:  {half_size_vessel_map - 1}')
+    # centerline
+    plt.plot(vessel_map.mapped_values[half_size_vessel_map].flatten(), label=f'Position:  {half_size_vessel_map}')
 
-    # linha abaixo
-    plt.plot(vessel_map.mapped_values[half_size_vessel_map + 1].flatten(), label=f'Posição:  {half_size_vessel_map + 1}')
+    # below
+    plt.plot(vessel_map.mapped_values[half_size_vessel_map + 1].flatten(), label=f'Position:  {half_size_vessel_map + 1}')
 
     plt.legend(loc='lower right')
-    plt.xlabel('Posições')
-    plt.ylabel('Intensidades')
+    plt.xlabel('Positions')
+    plt.ylabel('Intensities')
     #plt.savefig('plot_intensity_lines.pdf')
     plt.show() 
 
 
 def plot_fill_means_std_dev(means, std_dev):
-    """ Função que plota a diferença entre a média e o desvio padrão
+    """Function that plots the difference between the mean and standard deviation.
 
-    Parâmetros:
+    Parameters:
     -----------
     means: ndarray, float
-        média de todos os valores mapeados ao longo das linhas
+        Mean of all mapped values along the lines.
     std_dev: ndarray, float
-        desvio padrão de todos os valores mapeados ao longo das linhas
-    Retorno:
+        Standard deviation of all mapped values along the lines.
+    Returns:
     -----------
-        plota a diferença entre a média e o desvio padrão
+        Plots the difference between the mean and standard deviation.
     """
 
     plt.figure(figsize=[12, 10])
     #plt.title("Filling between the mean intensity and standard deviation")
-    plt.title("Preenchimento entre a intensidade média e o desvio padrão ao longo das linhas")
+    plt.title("Filling between the mean intensity and standard deviation along the lines")
 
-    # mostra o sombreamento
+    # shows the shading
     plt.fill_between(range(len(means)), means - std_dev, means + std_dev, alpha=0.3)
 
-    # mostra a média
+    # shows the mean
     plt.plot(range(len(means)), means)
     #plt.savefig('plot_fill_means_std_dev.pdf')
     plt.show()
 
 
 def plot_diameter_vessel(vessel_map):
+    """Function that plots the diameter of the mapped vessels.
 
-    """ Função que plota o diâmetro dos vasos mapeados
-
-    Parâmetros:
+    Parameters:
     -----------
     vessel_map: object VesselMap
-       instância do objeto VesselMap
-    Retorno:
+        Instance of the VesselMap object.
+    Returns:
     -----------
-        plota o diâmetro dos vasos mapeados
+        Plots the diameter of the mapped vessels.
     """   
-    vetor_diametros = []
+    diameter_vector = []
     plt.figure(figsize=[12, 10])
-    # o diâmetro é o módulo da diferença entre os dois caminhos mapeados.
+    # diameter is the absolute difference between the two mapped paths.
     diameter = np.abs(vessel_map.path1_mapped - vessel_map.path2_mapped)
     a = np.array(diameter)
-    media = np.mean(a)
-    vetor_diametros.append(media)
+    mean_diameter = np.mean(a)
+    diameter_vector.append(mean_diameter)
 
     #plt.title("Diameter of the vessel")
-    plt.title("Diâmetro do vaso")    
-    plt.xlabel('Índice da coluna')
-    plt.ylabel('Diâmetro')
+    plt.title("Diameter of the vessel")    
+    plt.xlabel('Column Index')
+    plt.ylabel('Diameter')
 
-    # o diâmetro é float, portanto necessitou do range(len)
+    # diameter is a float, so it required range(len)
     plt.plot(range(len(diameter)), diameter)
     #plt.savefig('plot_diameter_vessel.pdf')
     plt.show()  
 
 
 def return_intensity_cols(vessel_map):
-    """ Função que armazena todas as intensidades das colunas
+    """Function that stores all column intensities.
 
-    Parâmetros:
+    Parameters:
     -----------
     vessel_map: object VesselMap
-       instância do objeto VesselMap
-    Retorno:
+        Instance of the VesselMap object.
+    Returns:
     -----------
      intensity_cols_values_all: list, ndarray
-        lista contendo todos os valores das intensidades das colunas em formato array numpy
+        List containing all column intensity values in numpy array format.
     """
 
-    # número de linhas e colunas do mapa do vaso
+    # number of rows and columns in the vessel map
     num_rows, num_cols = vessel_map.mapped_values.shape
 
     intensity_cols_values_all = []
 
-    # armazena todas as intensidades das colunas ao longo das linhas
+    # stores all column intensities along the rows
     for i in range(num_cols):
         intensity_cols_values_all.append(vessel_map.mapped_values[0:num_rows, i])
     return intensity_cols_values_all
 
 
 def return_clipping(vessel_map):
-    """ Função que faz o recorte de uma imagem
+    """Function that clips an image.
 
-    Parâmetros:
+    Parameters:
     -----------
     vessel_map: object VesselMap
-       instância do objeto VesselMap
-    Retorno:
+        Instance of the VesselMap object.
+    Returns:
     -----------
     clipping: ndarray, float
-        imagem recortada mostrando a área em que o vaso se encontra. Nesta imagem é exibida apenas os valores mapeados
-        com um padding de 1 pixel apenas.
+        Clipped image showing the area where the vessel is located. This image displays only the mapped values
+        with a padding of 1 pixel only.
     """
     padding = 1
-    # linha mínima do path2
+    # minimum line of path2
     line_min_path2 = int(np.min(vessel_map.path2_mapped) + padding)
-    # linha máxima do path1
+    # maximum line of path1
     line_max_path1 = int(np.max(vessel_map.path1_mapped) + padding)
 
-    # todos os valores mapeados
+    # all mapped values
     img_path = vessel_map.mapped_values
 
-    # puxando o número de colunas da imagem
+    # fetching the number of columns in the image
     _, num_cols = img_path.shape
 
-    # o recorte é feito da linha minima e da linha máxima, e das colunas variando de 0 até o número de colunas existentes
+    # the clipping is done from the minimum line to the maximum line, and from columns ranging from 0 to the number of existing columns
     clipping = (img_path[line_min_path2:line_max_path1, 0:num_cols])
     return clipping
 
 
-
 def plot_clipping(vessel_map):
-    """ Função que plota uma imagem, com valores mínimos de zero e máximo de 60
+    """Function that plots an image with minimum values of zero and maximum of 60.
 
-    Parâmetros:
+    Parameters:
     -----------
     vessel_map: object VesselMap
-       instância do objeto VesselMap
-    Retorno:
+        Instance of the VesselMap object.
+    Returns:
     -----------
-        plote da imagem recortada mostrando a área em que o vaso se encontra com um pixel de padding
+        Plots the clipped image showing the area where the vessel is located with one pixel of padding.
     """
-    # chama a função que retorna o recorte
+    # calls the function that returns the clipping
     clipp = return_clipping(vessel_map)
 
     plt.figure(figsize=[12, 10])
@@ -223,45 +222,46 @@ def plot_clipping(vessel_map):
     plt.show()
 
 
-def plot_intensity_cols_with_line_vessel(vessel_map):
-    """ Função que plota a intensidade das colunas. Exibe também onde começa e termina o vaso
-     através das barras centrais, perperdinculares ao eixo y
 
-    Parâmetros:
+def plot_intensity_cols_with_line_vessel(vessel_map):
+    """Function that plots column intensities. Also displays where the vessel starts and ends
+    through central bars, perpendicular to the y-axis.
+
+    Parameters:
     -----------
     vessel_map: object VesselMap
-       instância do objeto VesselMap
-    Retorno:
+       Instance of the VesselMap object.
+    Returns:
     -----------
-        plota a intensidade das colunas e exibe as delimitações dos vasos à esquerda e à direita
+        Plots column intensities and displays vessel boundaries on the left and right.
     """
     array_min_path = []
     array_max_path = []
 
-    # número de linhas e colunas dos valores mapeados
+    # number of rows and columns of the mapped values
     num_rows, num_cols = vessel_map.mapped_values.shape
 
-    # cálculo do diâmetro
+    # diameter calculation
     diameter = np.abs(vessel_map.path1_mapped - vessel_map.path2_mapped)
 
-    # várias cores para alinhar a cor das colunas que serão exibidas com as v_lines que mostram a delimitação dos vasos
+    # various colors to align the color of the columns to be displayed with the v_lines that show the vessel boundaries
     colors = ['blue', 'green', 'red', 'orange', 'gray']
 
-    # chama a função que pega todas as intensidades das colunas
+    # calls the function that gets all column intensities
     intensity_cols_values_all = return_intensity_cols(vessel_map)
 
-    # Pegando a posição 0, 1/4, 1/2, 3/4, e final das colunas
+    # Getting position 0, 1/4, 1/2, 3/4, and end of the columns
     colunas_demarcadas = [0, (num_cols // 4), (num_cols // 2), ((num_cols * 3) // 4), (num_cols - 1)]
 
     plt.figure(figsize=[12, 10])
     plt.title(
-        f'Intensidades das colunas {colunas_demarcadas[0]}, {colunas_demarcadas[1]}, {colunas_demarcadas[2]}, {colunas_demarcadas[3]} e {colunas_demarcadas[4]}')
-    plt.xlabel('Índice da linha')
-    plt.ylabel('Intensidade')
+        f'Column intensities {colunas_demarcadas[0]}, {colunas_demarcadas[1]}, {colunas_demarcadas[2]}, {colunas_demarcadas[3]} and {colunas_demarcadas[4]}')
+    plt.xlabel('Row Index')
+    plt.ylabel('Intensity')
     for i in range(len(colunas_demarcadas)):
-        # plota as posições existentes nas colunas demarcadas no vetor que contém todas as intensidades das colunas
+        # plots the positions existing in the marked columns in the vector containing all column intensities
         plt.plot(range(num_rows), intensity_cols_values_all[colunas_demarcadas[i]],
-                 label=f'Posição:  {colunas_demarcadas[i]}', color=colors[i])
+                 label=f'Position:  {colunas_demarcadas[i]}', color=colors[i])
     plt.legend(loc='lower right')
 
     liv_list_vlines = []
@@ -276,7 +276,6 @@ def plot_intensity_cols_with_line_vessel(vessel_map):
         liv_list_vlines.append(vessel_map.path1_mapped[colunas_demarcadas[j]])
         lfv_list_vlines.append(vessel_map.path2_mapped[colunas_demarcadas[j]])
        
-        
     plt.vlines(liv_list_vlines, np.min(array_min_path), np.max(array_max_path), color=colors, ls='--')
     plt.vlines(lfv_list_vlines, np.min(array_min_path), np.max(array_max_path), color=colors, ls='--')
     #plt.plot(ls='--')
@@ -286,48 +285,46 @@ def plot_intensity_cols_with_line_vessel(vessel_map):
 
 
 def plot_intensity_cols_with_line_vessel_normal(vessel_map, colunas_demarcadas=None):
-    """ Função que plota a intensidade das colunas. Exibe também onde começa e termina o vaso
-        através das barras centrais, perperdinculares ao eixo y. Aqui exibiremos algumas colunas específicas ao
-        longo do vaso. As intensidades das colunas serão mantidas, mas o eixo será normalizado conforme a linha do
-        centro.
+    """Function that plots column intensities. Also displays where the vessel starts and ends
+    through central bars, perpendicular to the y-axis. Here we will show some specific columns along the
+    vessel. The column intensities will be kept, but the axis will be normalized according to the center line.
 
-    Parâmetros:
+    Parameters:
     -----------
     vessel_map: object VesselMap
-        instância do objeto VesselMap
+        Instance of the VesselMap object.
     colunas_demarcadas: NoneType
-        o campo é None por padrão, sendo setado posteriormente para pegar 5 colunas ao longo do vaso. Se este
-        parâmetro vier preenchido, as colunas serão as que forem passadas por parâmetro
-    Retorno:
+        The field is None by default, being set later to get 5 columns along the vessel. If this
+        parameter is filled, the columns will be the ones passed as parameters
+    Returns:
     -----------
-        plota a intensidade das colunas e exibe as delimitações dos vasos à esquerda e à direita
+        Plots column intensities and displays vessel boundaries on the left and right.
     """
     num_rows, num_cols = vessel_map.mapped_values.shape
 
     if (colunas_demarcadas is None):
-        # Mostrando a posição 0, 1/4, 1/2, 3/4, e final das colunas
+        # Showing position 0, 1/4, 1/2, 3/4, and end of the columns
         colunas_demarcadas = [0, (num_cols // 4), (num_cols // 2), ((num_cols * 3) // 4), (num_cols - 1)]
 
-    # recebe um vetor de cores
+    # receives a vector of colors
     colors = ['blue', 'green', 'red', 'orange', 'gray']
 
-    # puxa todas as intensidades de todas as colunas
+    # fetches all intensities of all columns
     intensity_cols_values_all = return_intensity_cols(vessel_map)
 
-    # Resto inteiro do número de linhas dividido por 2
+    # Integer remainder of the number of lines divided by 2
     linha_centro = num_rows // 2
 
-    # vetor criado para armazenar as posições
+    # vector created to store the positions
     vet_num_rows = []
     for i in range(num_rows):
-        # criando um vetor de tamanho de 27 posições
+        # creating a vector of size 27 positions
         vet_num_rows.append(i)
 
     l_chapeu = []
     for j in range(len(vet_num_rows)):
-        # Neste for faço a adição no vetor criado anteriormente. Colocando as linhas divididas por 2, ==> lc = num_rows//2
-        # Normalização pela linha do centro
-        l_chapeu.append(vet_num_rows[j] - linha_centro)
+        # Formula (L1'' = 2L'/(Lfv1-Liv1))
+        l_chapeu.append(2 * (vet_num_rows[j] - linha_centro) / diameter[-1])
 
     lfv_list = []
     liv_list = []
@@ -338,19 +335,19 @@ def plot_intensity_cols_with_line_vessel_normal(vessel_map, colunas_demarcadas=N
         liv = vessel_map.path1_mapped[col]
         lfv_list.append(lfv)
         liv_list.append(liv)
-        # pega o último valor que foi adicionado na lista
+        # gets the last value that was added to the list
         diametro.append(abs(lfv - liv))
 
         l2_chapeu = []
         for k in range(len(l_chapeu)):
-            # Fórmula (L1'' = 2L'/(Lfv1-Liv1))
-            l2_chapeu.append(2 * l_chapeu[k] / diametro[-1])
+            # Formula (L2'' = 2L'/(Lfv-Liv))
+            l2_chapeu.append(2 * (liv_list[k] - linha_centro) / diametro[-1])
         l2_chapeu_all.append(l2_chapeu)
 
     plt.figure(figsize=[12, 10])
     for i in range(len(colunas_demarcadas)):      
         plt.plot(l2_chapeu_all[i], intensity_cols_values_all[colunas_demarcadas[i]], 
-                 label=f'Posição:  {colunas_demarcadas[i]}', color=colors[i])
+                 label=f'Position:  {colunas_demarcadas[i]}', color=colors[i])
     plt.legend(loc='lower right')
 
     liv_list_vlines = []
@@ -374,54 +371,51 @@ def plot_intensity_cols_with_line_vessel_normal(vessel_map, colunas_demarcadas=N
     plt.vlines(liv_list_vlines, np.min(array_min_path), np.max(array_max_path), color=colors, ls='--')
     plt.vlines(lfv_list_vlines, np.min(array_min_path), np.max(array_max_path), color=colors, ls='--')
 
-    # VER
-    plt.xlabel('Posições')
-    plt.ylabel('Intensidade')
+    # SEE
+    plt.xlabel('Positions')
+    plt.ylabel('Intensity')
 
     plt.legend(loc='lower right')
     #plt.savefig('plot_intensity_cols_with_line_vessel_normal.pdf')
     plt.show()
 
+
 def return_all_instisitys_normal(vessel_map):
+    """Function that returns all intensities normalized with the central line.
 
-    """ Função que retorna todas as intensidades normalizadas com a linha central
-
-    Parâmetros:
+    Parameters:
     -----------
     vessel_map: object VesselMap
-        instância do objeto VesselMap
-    Retorno:
+        Instance of the VesselMap object.
+    Returns:
     -----------
     intensities_common_axis: ndarray, float
-        vetor que contém as intensidades normalizadas
+        Vector containing normalized intensities.
     l2_chapeu_axis: ndarray, float
-        contém as informações sobre onde o eixo deve começar e terminar. Existe uma modificação na exibição do gráfic,
-        ao invés de começar do ponto de origem [0,0]. Ele (ponto de origem) vai começar dependendo da quantidade de
-        linhas que existirem.
+        Contains information about where the axis should start and end. There is a modification in the graph display,
+        instead of starting from the origin [0,0]. It (the origin) will start depending on the number of rows that exist.
     """
-
-    #EXPLICAR MELHOR ESTA FUNÇÃO
 
     num_rows, num_cols = vessel_map.mapped_values.shape
 
-    # puxa todas as intensidades de todas as colunas
+    # Fetches all intensities of all columns
     intensity_cols_values_all = return_intensity_cols(vessel_map)
 
-    # Mostrando a posição 0, 1/4, 1/2, 3/4, e final das colunas
+    # Showing position 0, 1/4, 1/2, 3/4, and end of the columns
     colunas_demarcadas = [0, (num_cols // 4), (num_cols // 2), ((num_cols * 3) // 4), (num_cols - 1)]
 
-    # Resto inteiro do número de linhas dividido por 2
+    # Integer remainder of the number of lines divided by 2
     linha_centro = num_rows // 2
 
-    # vetor criado para armazenar as posições
+    # Vector created to store the positions
     vet_num_rows = []
     for i in range(num_rows):
-        # criando um vetor de tamanho de N posições
+        # Creating a vector of size N positions
         vet_num_rows.append(i)
 
     l = []
     for j in range(len(vet_num_rows)):
-        # Neste for faço a adição no vetor criado anteriormente. Colocando as linhas divididas por 2, ==> lc = num_rows//2
+        # In this loop, I add to the vector created earlier. Putting the lines divided by 2 ==> lc = num_rows//2
         l.append(vet_num_rows[j] - linha_centro)
 
     lfv_list = []
@@ -434,12 +428,12 @@ def return_all_instisitys_normal(vessel_map):
         lfv = vessel_map.path2_mapped[col]
         liv_list.append(liv)
         lfv_list.append(lfv)
-        # pega o último valor que foi adicionado na lista
+        # Gets the last value that was added to the list
         diametro.append(abs(lfv - liv))
 
         l2 = []
         for k in range(len(l)):
-            # Fórmula (L1'' = 2L'/(Lfv1-Liv1))
+            # Formula (L1'' = 2L'/(Lfv1-Liv1))
             l2.append(2 * l[k] / diametro[-1])
         l_all.append(l2)
 
@@ -453,7 +447,7 @@ def return_all_instisitys_normal(vessel_map):
         l2_chapeu_func = interp1d(l2, intens, kind='linear', bounds_error=False)
         l2_chapeu_funcs.append(l2_chapeu_func)
 
-    # Calculate intensities for point
+    # Calculate intensities for each point on the common axis
     intensities_common_axis = np.zeros((len(l2_chapeu_funcs), len(l2_chapeu_axis)))
     for col, l2_val in enumerate(l2_chapeu_axis):
         for row, l2_chapeu_func in enumerate(l2_chapeu_funcs):
@@ -463,23 +457,20 @@ def return_all_instisitys_normal(vessel_map):
 
 
 def plot_all_intensities_columns(intensities_common_axis, l2_chapeu_axis):
+    """Function that plots all intensities normalized from the central line.
 
-    """ Função que plota todas as intensidades normalizadas a partir da linha do centro
-
-    Parâmetros:
+    Parameters:
     -----------
     intensities_common_axis: ndarray, float
-        vetor que contém as intensidades normalizadas
+        Vector containing normalized intensities.
     l2_chapeu_axis: ndarray, float
-        contém as informações sobre onde o eixo deve começar e terminar. Existe uma modificação na exibição do gráfic,
-        ao invés de começar do ponto de origem [0,0]. Ele (ponto de origem) vai começar dependendo da quantidade de
-        linhas que existirem.
-    Retorno:
+        Contains information about where the axis should start and end. There is a modification in the graph display,
+        instead of starting from the origin [0,0]. It (the origin) will start depending on the number of rows that exist.
+    Returns:
     -----------
-        plota todas as intensidades das colunas
+        Plots all column intensities.
     """
 
-    # EXPLICAR MELHOR
     plt.figure(figsize=[12, 10])
     for intens in intensities_common_axis:
         plt.plot(l2_chapeu_axis, intens)
@@ -487,61 +478,62 @@ def plot_all_intensities_columns(intensities_common_axis, l2_chapeu_axis):
     plt.show()
 
 
-def plot_fill_means_std_dev_normal_all(intensities_common_axis):
-    """ Função que plota todas as intensidades normalizadas, exibindo a diferença entre a média e o desvio padrão
-    existente entre as intensidades.
 
-    Parâmetros:
+def plot_fill_means_std_dev_normal_all(intensities_common_axis):
+    """Function that plots all normalized intensities, displaying the difference between the mean and standard deviation
+    across intensities.
+
+    Parameters:
     -----------
     intensities_common_axis: ndarray, float
-        vetor que contém as intensidades normalizadas
-    Retorno:
+        Vector containing normalized intensities.
+    Returns:
     -----------
-        plota todas as intensidades normalizadas, exibindo a diferença entre a média e o desvio padrão
-        existente entre as intensidades.
+        Plots all normalized intensities, displaying the difference between the mean and standard deviation
+        across intensities.
     """
-    # retorna a média de todos os valores mapeados ao longo das linhas
+    # Returns the mean of all mapped values along the columns
     means = np.mean(intensities_common_axis, axis=0)
 
-    # retorna o desvio padrão de todos os valores mapeados ao longo das linhas
+    # Returns the standard deviation of all mapped values along the columns
     std_dev = np.std(intensities_common_axis, axis=0)
 
     plt.figure(figsize=[12, 10])
-    plt.title("Preenchimento entre a intensidade média e o desvio padrão ao longo das colunas, com o eixo normalizado")
+    plt.title("Filling between the mean intensity and standard deviation along the columns, with the axis normalized")
 
-    # mostra o sombreamento
+    # Shows the shading
     plt.fill_between(range(len(means)), means - std_dev, means + std_dev, alpha=0.3)
 
-    # mostra a média
+    # Shows the mean
     plt.plot(range(len(means)), means)
     #plt.savefig('plot_fill_means_std_dev_normal_all.pdf')
     plt.show()
 
-# função que plota os mínimos e máximos da linha medial de todas as extrações
+# Function that plots the minimum and maximum of the medial line of all extractions
 def plot_min_max_medial_line(minimum, maximum):
-    """ Função que plota todas os valores mínimos e máximos da linha medial de cada vaso extraído. Cada modelo de vaso
-    possui um valor máximo e um mínimo de intensidade da linha medial. Esta função serve para visualizar
-    estas variações.
+    """Function that plots all minimum and maximum values of the medial line for each extracted vessel. Each vessel model
+    has a maximum and minimum intensity value of the medial line. This function is used to visualize
+    these variations.
 
-    Parâmetros:
+    Parameters:
     -----------
     minimum: list, float
-        lista contendo os valores mínimos de intensidade da linha medial de cada um dos vasos
+        List containing the minimum intensity values of the medial line for each vessel.
     maximum: list, float
-        lista contendo os valores máximos de intensidade da linha medial de cada um dos vasos
-    Retorno:
+        List containing the maximum intensity values of the medial line for each vessel.
+    Returns:
     -----------
-       plota todas os valores mínimos e máximos da linha medial de cada vaso extraído
+       Plots all minimum and maximum values of the medial line for each extracted vessel.
     """
 
     maximum = np.array(maximum)
     minimum = np.array(minimum)
     plt.figure(figsize=[12, 10])
-    plt.title(f'Máximo e mínimos da linha medial:')
-    plt.ylabel('Número')
-    plt.xlabel('Valores')
-    plt.plot(minimum.flatten(), label=f'minimum')
-    plt.plot(maximum.flatten(), label=f'maximum')
+    plt.title(f'Maximum and minimum of the medial line:')
+    plt.ylabel('Number')
+    plt.xlabel('Values')
+    plt.plot(minimum.flatten(), label=f'Minimum')
+    plt.plot(maximum.flatten(), label=f'Maximum')
     plt.legend(loc='lower right')
     #plt.savefig('plot_min_max_medial_line.pdf')
     plt.show()

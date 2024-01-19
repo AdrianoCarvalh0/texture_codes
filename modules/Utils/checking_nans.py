@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 # Path for Windows
 sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
-from General_Functions import functions
+from modules.Utils import functions
 
 # Windows
 root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
