@@ -5,11 +5,11 @@ import sys
 from matplotlib import pyplot as plt
 import functions
 
-# Linux
-# sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
-# root_dir = f"/home/adriano/projeto_mestrado/modules"
+# linux
+#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+#root_dir = f"/home/adriano/projeto_mestrado/modules"
 
-# Windows
+# windows
 sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
