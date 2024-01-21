@@ -81,3 +81,33 @@ def merge(img_fundo,img_mapa,mask_vaso,p):
    img_map_copy[pixeis_replace_x,pixeis_replace_y] = img_fundo[pixeis_replace_x,pixeis_replace_y]
 
    return img_map_copy
+
+def plot_fill_means_std_dev_normal_all(intensities_common_axis):
+    """Function that plots all normalized intensities, displaying the difference between the mean and standard deviation
+    across intensities.
+
+    Parameters:
+    -----------
+    intensities_common_axis: ndarray, float
+        Vector containing normalized intensities.
+    Returns:
+    -----------
+        Plots all normalized intensities, displaying the difference between the mean and standard deviation
+        across intensities.
+    """
+    # Returns the mean of all mapped values along the columns
+    means = np.mean(intensities_common_axis, axis=0)
+
+    # Returns the standard deviation of all mapped values along the columns
+    std_dev = np.std(intensities_common_axis, axis=0)
+
+    plt.figure(figsize=[12, 10])
+    plt.title("Filling between the mean intensity and standard deviation along the columns, with the axis normalized")
+
+    # Shows the shading
+    plt.fill_between(range(len(means)), means - std_dev, means + std_dev, alpha=0.3)
+
+    # Shows the mean
+    plt.plot(range(len(means)), means)
+    #plt.savefig('plot_fill_means_std_dev_normal_all.pdf')
+    plt.show()

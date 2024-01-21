@@ -242,7 +242,7 @@ def plot_intensity_cols_with_line_vessel(vessel_map):
     num_rows, num_cols = vessel_map.mapped_values.shape
 
     # diameter calculation
-    diameter = np.abs(vessel_map.path1_mapped - vessel_map.path2_mapped)
+    diameter = np.abs(vessel_map.path1_mapped - vessel_map.path2_mapped)    
 
     # various colors to align the color of the columns to be displayed with the v_lines that show the vessel boundaries
     colors = ['blue', 'green', 'red', 'orange', 'gray']
@@ -300,7 +300,7 @@ def plot_intensity_cols_with_line_vessel_normal(vessel_map, colunas_demarcadas=N
     -----------
         Plots column intensities and displays vessel boundaries on the left and right.
     """
-    num_rows, num_cols = vessel_map.mapped_values.shape
+    num_rows, num_cols = vessel_map.mapped_values.shape   
 
     if (colunas_demarcadas is None):
         # Showing position 0, 1/4, 1/2, 3/4, and end of the columns
@@ -324,11 +324,11 @@ def plot_intensity_cols_with_line_vessel_normal(vessel_map, colunas_demarcadas=N
     l_chapeu = []
     for j in range(len(vet_num_rows)):
         # Formula (L1'' = 2L'/(Lfv1-Liv1))
-        l_chapeu.append(2 * (vet_num_rows[j] - linha_centro) / diameter[-1])
+        l_chapeu.append(2 * (vet_num_rows[j] - linha_centro))
 
     lfv_list = []
     liv_list = []
-    diametro = []
+    vector_diameter = []
     l2_chapeu_all = []
     for col in colunas_demarcadas:
         lfv = vessel_map.path2_mapped[col]
@@ -336,12 +336,12 @@ def plot_intensity_cols_with_line_vessel_normal(vessel_map, colunas_demarcadas=N
         lfv_list.append(lfv)
         liv_list.append(liv)
         # gets the last value that was added to the list
-        diametro.append(abs(lfv - liv))
+        vector_diameter.append(abs(lfv - liv))
 
         l2_chapeu = []
         for k in range(len(l_chapeu)):
             # Formula (L2'' = 2L'/(Lfv-Liv))
-            l2_chapeu.append(2 * (liv_list[k] - linha_centro) / diametro[-1])
+            l2_chapeu.append(2 * l_chapeu[k] / vector_diameter[-1])
         l2_chapeu_all.append(l2_chapeu)
 
     plt.figure(figsize=[12, 10])
@@ -354,8 +354,8 @@ def plot_intensity_cols_with_line_vessel_normal(vessel_map, colunas_demarcadas=N
     lfv_list_vlines = []
     # l = (vet_num_rows - linha_centro) /diametro
     for k in range(len(colunas_demarcadas)):
-        formula1 = 2 * (liv_list[k] - linha_centro) / diametro[k]
-        formula2 = 2 * (lfv_list[k] - linha_centro) / diametro[k]
+        formula1 = 2 * (liv_list[k] - linha_centro) / vector_diameter[k]
+        formula2 = 2 * (lfv_list[k] - linha_centro) / vector_diameter[k]
         liv_list_vlines.append(formula1)
         lfv_list_vlines.append(formula2)
 
@@ -420,7 +420,7 @@ def return_all_instisitys_normal(vessel_map):
 
     lfv_list = []
     liv_list = []
-    diametro = []
+    vector_diameter = []
 
     l_all = []
     for col in range(len(intensity_cols_values_all)):
@@ -429,12 +429,12 @@ def return_all_instisitys_normal(vessel_map):
         liv_list.append(liv)
         lfv_list.append(lfv)
         # Gets the last value that was added to the list
-        diametro.append(abs(lfv - liv))
+        vector_diameter.append(abs(lfv - liv))
 
         l2 = []
         for k in range(len(l)):
             # Formula (L1'' = 2L'/(Lfv1-Liv1))
-            l2.append(2 * l[k] / diametro[-1])
+            l2.append(2 * l[k] / vector_diameter[-1])
         l_all.append(l2)
 
     l2_min, l2_max = np.min(l_all), np.max(l_all)
@@ -477,37 +477,6 @@ def plot_all_intensities_columns(intensities_common_axis, l2_chapeu_axis):
     #plt.savefig('plot_all_intensities_columns.pdf')
     plt.show()
 
-
-
-def plot_fill_means_std_dev_normal_all(intensities_common_axis):
-    """Function that plots all normalized intensities, displaying the difference between the mean and standard deviation
-    across intensities.
-
-    Parameters:
-    -----------
-    intensities_common_axis: ndarray, float
-        Vector containing normalized intensities.
-    Returns:
-    -----------
-        Plots all normalized intensities, displaying the difference between the mean and standard deviation
-        across intensities.
-    """
-    # Returns the mean of all mapped values along the columns
-    means = np.mean(intensities_common_axis, axis=0)
-
-    # Returns the standard deviation of all mapped values along the columns
-    std_dev = np.std(intensities_common_axis, axis=0)
-
-    plt.figure(figsize=[12, 10])
-    plt.title("Filling between the mean intensity and standard deviation along the columns, with the axis normalized")
-
-    # Shows the shading
-    plt.fill_between(range(len(means)), means - std_dev, means + std_dev, alpha=0.3)
-
-    # Shows the mean
-    plt.plot(range(len(means)), means)
-    #plt.savefig('plot_fill_means_std_dev_normal_all.pdf')
-    plt.show()
 
 # Function that plots the minimum and maximum of the medial line of all extractions
 def plot_min_max_medial_line(minimum, maximum):
