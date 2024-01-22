@@ -3,17 +3,17 @@ from matplotlib import pyplot as plt
 from pathlib import Path
 
 # linux
-#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
-#root_dir = f"/home/adriano/projeto_mestrado/modules"
+sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+root_dir = f"/home/adriano/projeto_mestrado/modules"
 
 # path windows
-sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
-root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+#sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+#root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 from Utils import functions
 
 
-pickle_dir = f'{root_dir}/Vessel_models_pickle/novos/'
+pickle_dir = f'{root_dir}/Vessel_models_pickle/'
 
 vector_pickles = functions.read_directories(pickle_dir)
 
