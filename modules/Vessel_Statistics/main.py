@@ -4,20 +4,26 @@ import numpy as np
 import pickle
 import vessel_statistics as vs
 
-# Windows
-sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
-root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+# linux
+sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+root_dir = f"/home/adriano/projeto_mestrado/modules"
+
+# windows
+#sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+#root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+
 
 if __name__ == '__main__':
 
-    pickle_dir = root_dir / 'Vessel_Models_pickle'
+    pickle_dir = f'{root_dir}/Vessel_Models_pickle'
 
     # Retrieve file names and the number of items in the directory
     nom, tam = vs.ready_directory(pickle_dir)
     maximum = []
     minimum = []
+    diameter_vector = [] 
 
-    for i in range(tam):
+    for i in range(2):
         # Get the file name and store it in the local variable
         local = nom[i]
         # Load the .pickle file
@@ -29,7 +35,13 @@ if __name__ == '__main__':
 
         # Instantiate the vessel_map variable
         # The vessel map has various attributes that will be used to call functions
-        vessel_map = vessel_model.vessel_map
+        vessel_map = vessel_model.vessel_map          
+
+        # diameter is the absolute difference between the two mapped paths.
+        diameter = np.abs(vessel_map.path1_mapped - vessel_map.path2_mapped)
+        a = np.array(diameter)
+        mean_diameter = np.mean(a)
+        diameter_vector.append(mean_diameter)
 
         # Get the half integer size of vessel_map.mapped_values
         half_size_vessel_map = len(vessel_map.mapped_values) // 2
@@ -80,3 +92,4 @@ if __name__ == '__main__':
 
     # Plot the difference between the maximum and minimum of all extractions
     vs.plot_min_max_medial_line(minimum, maximum)
+    vs.plot_all_diameter(diameter_vector)

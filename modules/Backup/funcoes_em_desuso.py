@@ -1,5 +1,19 @@
+from pathlib import Path
 import numpy as np
-import slice_mapper_util as smutil
+import matplotlib.pyplot as plt
+import sys
+
+# linux
+#ys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+#root_dir = f"/home/adriano/projeto_mestrado/modules"
+
+# windows
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+
+
+from Slice_mapper import slice_mapper_util as smutil
+
 
 def encontrar_mediana_fundo_mapa(img,img_label):    
     ints_fundo_mapa = img[img_label==0]
@@ -111,3 +125,55 @@ def plot_fill_means_std_dev_normal_all(intensities_common_axis):
     plt.plot(range(len(means)), means)
     #plt.savefig('plot_fill_means_std_dev_normal_all.pdf')
     plt.show()
+
+    def plot_figure2(img, vessel_model, cross_paths):       
+      """Function that creates the vessel model and transversal paths.
+
+      Parameters:
+      -----------
+      img: ndarray, float
+          Resized image containing the area of the extracted vessel.
+      vessel_model: object VesselModel
+          Returns the vessel model with an instantiated object of the VesselModel class.
+      cross_paths: ndarray, float
+          Transversal paths.
+      Returns:
+      -----------
+          Plots the resized image, along with the vessel model, transversal paths, and translated paths 1 and 2,
+          in three different ways:
+          1 - with the mapped values having the minimum at 0 and maximum at 60
+          2 - values mapped in the standard range, from 0 to 255
+          3 - values mapped between the minimum 0 and maximum in the values found in the mapping
+      """
+
+      vessel_map = vessel_model.vessel_map
+      fig = plt.figure(figsize=[12, 10])
+      ax = fig.add_subplot()
+      slice_mapper.plot_model(img, vessel_model, cross_paths, ax)        
+      norm = ax.images[0].norm
+      norm.vmin, norm.vmax = 0, 60
+      
+      
+      plt.figure(figsize=[12, 10])    
+      plt.plot()
+      plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=60)
+      plt.plot(vessel_map.path1_mapped, c='green')
+      plt.plot(vessel_map.path2_mapped, c='green')
+      #file_min0max60 = f'{master_folder}/Images/plots/min0max60/{imag}_{x}.png'
+      #plt.savefig(file_min0max60)
+
+      plt.figure(figsize=[12, 10])    
+      plt.plot()
+      plt.imshow(vessel_map.mapped_values[::-1], 'gray', vmin=0, vmax=255)
+      plt.plot(vessel_map.path1_mapped, c='green')
+      plt.plot(vessel_map.path2_mapped, c='green')    
+      #file_min0max255 = f'{master_folder}/Images/plots/min0max255/{imag}_{x}.png'
+      #plt.savefig(file_min0max255)
+
+      plt.figure(figsize=[12, 10])   
+      plt.plot()
+      plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=vessel_map.mapped_values.max())     
+      plt.plot(vessel_map.path1_mapped, c='green')
+      plt.plot(vessel_map.path2_mapped, c='green')    
+      #file_min0max = f'{master_folder}/Images/plots/min0maxmapped/{imag}_{x}.png'
+      #plt.savefig(file_min0max)

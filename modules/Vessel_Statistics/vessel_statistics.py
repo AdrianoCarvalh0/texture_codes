@@ -40,10 +40,7 @@ def plot_vessel_map(vessel_map):
     -----------
         Plots the intensity values of the blood vessel pixels.
     """
-    plt.figure(figsize=[12, 10])
-    #plt.title("Map values Vmin=0 and Vmax=60")
-    #plt.xticks([])
-    #plt.yticks([])
+    plt.figure(figsize=[12, 10])   
 
     # 'mapped_values' are the intensity values of the blood vessel pixels.
     plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=60)
@@ -52,8 +49,7 @@ def plot_vessel_map(vessel_map):
     plt.plot(vessel_map.path1_mapped, c='yellow')
 
     # Shows the values of path2 mapped in yellow.
-    plt.plot(vessel_map.path2_mapped, c='yellow')    
-    #plt.savefig('plot_vessel_map.pdf')
+    plt.plot(vessel_map.path2_mapped, c='yellow')        
     plt.show()
 
 
@@ -70,8 +66,7 @@ def plot_intensity_lines(vessel_map, half_size_vessel_map):
     -----------
         Plot of the intensity of the median line, one above and one below the mapped values.
     """
-    plt.figure(figsize=[12, 10])
-    #plt.title(f'Intensity of position in sections of the vessel {half_size_vessel_map - 1}, {half_size_vessel_map}, and {half_size_vessel_map + 1}')
+    plt.figure(figsize=[12, 10])    
     plt.title(f'Intensities of the medial line in lines {half_size_vessel_map - 1}, {half_size_vessel_map}, and {half_size_vessel_map + 1}')
 
     # above
@@ -85,8 +80,7 @@ def plot_intensity_lines(vessel_map, half_size_vessel_map):
 
     plt.legend(loc='lower right')
     plt.xlabel('Positions')
-    plt.ylabel('Intensities')
-    #plt.savefig('plot_intensity_lines.pdf')
+    plt.ylabel('Intensities')   
     plt.show() 
 
 
@@ -104,16 +98,14 @@ def plot_fill_means_std_dev(means, std_dev):
         Plots the difference between the mean and standard deviation.
     """
 
-    plt.figure(figsize=[12, 10])
-    #plt.title("Filling between the mean intensity and standard deviation")
+    plt.figure(figsize=[12, 10])    
     plt.title("Filling between the mean intensity and standard deviation along the lines")
 
     # shows the shading
     plt.fill_between(range(len(means)), means - std_dev, means + std_dev, alpha=0.3)
 
     # shows the mean
-    plt.plot(range(len(means)), means)
-    #plt.savefig('plot_fill_means_std_dev.pdf')
+    plt.plot(range(len(means)), means)   
     plt.show()
 
 
@@ -127,25 +119,41 @@ def plot_diameter_vessel(vessel_map):
     Returns:
     -----------
         Plots the diameter of the mapped vessels.
-    """   
-    diameter_vector = []
-    plt.figure(figsize=[12, 10])
-    # diameter is the absolute difference between the two mapped paths.
-    diameter = np.abs(vessel_map.path1_mapped - vessel_map.path2_mapped)
-    a = np.array(diameter)
-    mean_diameter = np.mean(a)
-    diameter_vector.append(mean_diameter)
+    """      
 
-    #plt.title("Diameter of the vessel")
+    # diameter is the absolute difference between the two mapped paths.
+    diameter = np.abs(vessel_map.path1_mapped - vessel_map.path2_mapped)    
+  
+    plt.figure(figsize=[12, 10])
     plt.title("Diameter of the vessel")    
     plt.xlabel('Column Index')
     plt.ylabel('Diameter')
 
     # diameter is a float, so it required range(len)
-    plt.plot(range(len(diameter)), diameter)
-    #plt.savefig('plot_diameter_vessel.pdf')
+    plt.plot(range(len(diameter)), diameter)    
     plt.show()  
 
+
+def plot_all_diameter(array):
+    """Function that plots the diameter of all vessels.
+
+    Parameters:
+    -----------
+    array: array
+        vector that contains all Diameter of all vessels
+    Returns:
+    -----------    
+        Plots the diameter of all vessels.
+    """        
+    
+    plt.figure(figsize=[12, 10])
+    plt.title("Diameter of all vessels")    
+    plt.xlabel('Files')
+    plt.ylabel('Diameter')
+
+    # diameter is a float, so it required range(len)
+    plt.plot(range(len(array)),array)    
+    plt.show() 
 
 def return_intensity_cols(vessel_map):
     """Function that stores all column intensities.
@@ -217,8 +225,7 @@ def plot_clipping(vessel_map):
 
     plt.figure(figsize=[12, 10])
     plt.title("Image clipping")
-    plt.imshow(clipp, 'gray', vmin=0, vmax=60)
-    #plt.savefig('plot_clipping.pdf')
+    plt.imshow(clipp, 'gray', vmin=0, vmax=60)    
     plt.show()
 
 
@@ -240,10 +247,7 @@ def plot_intensity_cols_with_line_vessel(vessel_map):
 
     # number of rows and columns of the mapped values
     num_rows, num_cols = vessel_map.mapped_values.shape
-
-    # diameter calculation
-    diameter = np.abs(vessel_map.path1_mapped - vessel_map.path2_mapped)    
-
+    
     # various colors to align the color of the columns to be displayed with the v_lines that show the vessel boundaries
     colors = ['blue', 'green', 'red', 'orange', 'gray']
 
@@ -251,40 +255,37 @@ def plot_intensity_cols_with_line_vessel(vessel_map):
     intensity_cols_values_all = return_intensity_cols(vessel_map)
 
     # Getting position 0, 1/4, 1/2, 3/4, and end of the columns
-    colunas_demarcadas = [0, (num_cols // 4), (num_cols // 2), ((num_cols * 3) // 4), (num_cols - 1)]
+    demarcated_columns = [0, (num_cols // 4), (num_cols // 2), ((num_cols * 3) // 4), (num_cols - 1)]
 
     plt.figure(figsize=[12, 10])
     plt.title(
-        f'Column intensities {colunas_demarcadas[0]}, {colunas_demarcadas[1]}, {colunas_demarcadas[2]}, {colunas_demarcadas[3]} and {colunas_demarcadas[4]}')
+        f'Column intensities {demarcated_columns[0]}, {demarcated_columns[1]}, {demarcated_columns[2]}, {demarcated_columns[3]} and {demarcated_columns[4]}')
     plt.xlabel('Row Index')
     plt.ylabel('Intensity')
-    for i in range(len(colunas_demarcadas)):
+    for i in range(len(demarcated_columns)):
         # plots the positions existing in the marked columns in the vector containing all column intensities
-        plt.plot(range(num_rows), intensity_cols_values_all[colunas_demarcadas[i]],
-                 label=f'Position:  {colunas_demarcadas[i]}', color=colors[i])
+        plt.plot(range(num_rows), intensity_cols_values_all[demarcated_columns[i]],
+                 label=f'Position:  {demarcated_columns[i]}', color=colors[i])
     plt.legend(loc='lower right')
 
     liv_list_vlines = []
     lfv_list_vlines = []
-    for j in range(len(colunas_demarcadas)):
-        min_path = np.argmin(intensity_cols_values_all[colunas_demarcadas[j]])
-        array_min_path.append(intensity_cols_values_all[colunas_demarcadas[j]][min_path])
+    for j in range(len(demarcated_columns)):
+        min_path = np.argmin(intensity_cols_values_all[demarcated_columns[j]])
+        array_min_path.append(intensity_cols_values_all[demarcated_columns[j]][min_path])
 
-        max_path = np.argmax(intensity_cols_values_all[colunas_demarcadas[j]])
-        array_max_path.append(intensity_cols_values_all[colunas_demarcadas[j]][max_path])
+        max_path = np.argmax(intensity_cols_values_all[demarcated_columns[j]])
+        array_max_path.append(intensity_cols_values_all[demarcated_columns[j]][max_path])
 
-        liv_list_vlines.append(vessel_map.path1_mapped[colunas_demarcadas[j]])
-        lfv_list_vlines.append(vessel_map.path2_mapped[colunas_demarcadas[j]])
+        liv_list_vlines.append(vessel_map.path1_mapped[demarcated_columns[j]])
+        lfv_list_vlines.append(vessel_map.path2_mapped[demarcated_columns[j]])
        
     plt.vlines(liv_list_vlines, np.min(array_min_path), np.max(array_max_path), color=colors, ls='--')
-    plt.vlines(lfv_list_vlines, np.min(array_min_path), np.max(array_max_path), color=colors, ls='--')
-    #plt.plot(ls='--')
-    #plt.savefig('plot_intensity_cols_with_line_vessel.pdf')
-    plt.show()
-    
+    plt.vlines(lfv_list_vlines, np.min(array_min_path), np.max(array_max_path), color=colors, ls='--')    
+    plt.show()    
 
 
-def plot_intensity_cols_with_line_vessel_normal(vessel_map, colunas_demarcadas=None):
+def plot_intensity_cols_with_line_vessel_normal(vessel_map, demarcated_columns=None):
     """Function that plots column intensities. Also displays where the vessel starts and ends
     through central bars, perpendicular to the y-axis. Here we will show some specific columns along the
     vessel. The column intensities will be kept, but the axis will be normalized according to the center line.
@@ -293,7 +294,7 @@ def plot_intensity_cols_with_line_vessel_normal(vessel_map, colunas_demarcadas=N
     -----------
     vessel_map: object VesselMap
         Instance of the VesselMap object.
-    colunas_demarcadas: NoneType
+    demarcated_columns: NoneType
         The field is None by default, being set later to get 5 columns along the vessel. If this
         parameter is filled, the columns will be the ones passed as parameters
     Returns:
@@ -302,9 +303,9 @@ def plot_intensity_cols_with_line_vessel_normal(vessel_map, colunas_demarcadas=N
     """
     num_rows, num_cols = vessel_map.mapped_values.shape   
 
-    if (colunas_demarcadas is None):
+    if (demarcated_columns is None):
         # Showing position 0, 1/4, 1/2, 3/4, and end of the columns
-        colunas_demarcadas = [0, (num_cols // 4), (num_cols // 2), ((num_cols * 3) // 4), (num_cols - 1)]
+        demarcated_columns = [0, (num_cols // 4), (num_cols // 2), ((num_cols * 3) // 4), (num_cols - 1)]
 
     # receives a vector of colors
     colors = ['blue', 'green', 'red', 'orange', 'gray']
@@ -313,24 +314,24 @@ def plot_intensity_cols_with_line_vessel_normal(vessel_map, colunas_demarcadas=N
     intensity_cols_values_all = return_intensity_cols(vessel_map)
 
     # Integer remainder of the number of lines divided by 2
-    linha_centro = num_rows // 2
+    half_rows = num_rows // 2
 
     # vector created to store the positions
-    vet_num_rows = []
+    number_rows_vector = []
     for i in range(num_rows):
         # creating a vector of size 27 positions
-        vet_num_rows.append(i)
+        number_rows_vector.append(i)
 
-    l_chapeu = []
-    for j in range(len(vet_num_rows)):
+    l_hat = []
+    for j in range(len(number_rows_vector)):
         # Formula (L1'' = 2L'/(Lfv1-Liv1))
-        l_chapeu.append(2 * (vet_num_rows[j] - linha_centro))
+        l_hat.append(2 * (number_rows_vector[j] - half_rows))
 
     lfv_list = []
     liv_list = []
     vector_diameter = []
-    l2_chapeu_all = []
-    for col in colunas_demarcadas:
+    l2_hat_all = []
+    for col in demarcated_columns:
         lfv = vessel_map.path2_mapped[col]
         liv = vessel_map.path1_mapped[col]
         lfv_list.append(lfv)
@@ -338,36 +339,36 @@ def plot_intensity_cols_with_line_vessel_normal(vessel_map, colunas_demarcadas=N
         # gets the last value that was added to the list
         vector_diameter.append(abs(lfv - liv))
 
-        l2_chapeu = []
-        for k in range(len(l_chapeu)):
+        l2_hat = []
+        for k in range(len(l_hat)):
             # Formula (L2'' = 2L'/(Lfv-Liv))
-            l2_chapeu.append(2 * l_chapeu[k] / vector_diameter[-1])
-        l2_chapeu_all.append(l2_chapeu)
+            l2_hat.append(2 * l_hat[k] / vector_diameter[-1])
+        l2_hat_all.append(l2_hat)
 
     plt.figure(figsize=[12, 10])
-    for i in range(len(colunas_demarcadas)):      
-        plt.plot(l2_chapeu_all[i], intensity_cols_values_all[colunas_demarcadas[i]], 
-                 label=f'Position:  {colunas_demarcadas[i]}', color=colors[i])
+    for i in range(len(demarcated_columns)):      
+        plt.plot(l2_hat_all[i], intensity_cols_values_all[demarcated_columns[i]], 
+                 label=f'Position:  {demarcated_columns[i]}', color=colors[i])
     plt.legend(loc='lower right')
 
     liv_list_vlines = []
     lfv_list_vlines = []
-    # l = (vet_num_rows - linha_centro) /diametro
-    for k in range(len(colunas_demarcadas)):
-        formula1 = 2 * (liv_list[k] - linha_centro) / vector_diameter[k]
-        formula2 = 2 * (lfv_list[k] - linha_centro) / vector_diameter[k]
+    # l = (number_rows_vector - half_rows) / diameter
+    for k in range(len(demarcated_columns)):
+        formula1 = 2 * (liv_list[k] - half_rows) / vector_diameter[k]
+        formula2 = 2 * (lfv_list[k] - half_rows) / vector_diameter[k]
         liv_list_vlines.append(formula1)
         lfv_list_vlines.append(formula2)
 
     array_min_path = []
     array_max_path = []
 
-    for i in range(len(colunas_demarcadas)):
-        min_path = np.argmin(intensity_cols_values_all[colunas_demarcadas[i]])
-        array_min_path.append(intensity_cols_values_all[colunas_demarcadas[i]][min_path])
+    for i in range(len(demarcated_columns)):
+        min_path = np.argmin(intensity_cols_values_all[demarcated_columns[i]])
+        array_min_path.append(intensity_cols_values_all[demarcated_columns[i]][min_path])
 
-        max_path = np.argmax(intensity_cols_values_all[colunas_demarcadas[i]])
-        array_max_path.append(intensity_cols_values_all[colunas_demarcadas[i]][max_path])
+        max_path = np.argmax(intensity_cols_values_all[demarcated_columns[i]])
+        array_max_path.append(intensity_cols_values_all[demarcated_columns[i]][max_path])
     plt.vlines(liv_list_vlines, np.min(array_min_path), np.max(array_max_path), color=colors, ls='--')
     plt.vlines(lfv_list_vlines, np.min(array_min_path), np.max(array_max_path), color=colors, ls='--')
 
@@ -375,8 +376,7 @@ def plot_intensity_cols_with_line_vessel_normal(vessel_map, colunas_demarcadas=N
     plt.xlabel('Positions')
     plt.ylabel('Intensity')
 
-    plt.legend(loc='lower right')
-    #plt.savefig('plot_intensity_cols_with_line_vessel_normal.pdf')
+    plt.legend(loc='lower right')    
     plt.show()
 
 
@@ -391,7 +391,7 @@ def return_all_instisitys_normal(vessel_map):
     -----------
     intensities_common_axis: ndarray, float
         Vector containing normalized intensities.
-    l2_chapeu_axis: ndarray, float
+    l2_hat_axis: ndarray, float
         Contains information about where the axis should start and end. There is a modification in the graph display,
         instead of starting from the origin [0,0]. It (the origin) will start depending on the number of rows that exist.
     """
@@ -400,23 +400,20 @@ def return_all_instisitys_normal(vessel_map):
 
     # Fetches all intensities of all columns
     intensity_cols_values_all = return_intensity_cols(vessel_map)
-
-    # Showing position 0, 1/4, 1/2, 3/4, and end of the columns
-    colunas_demarcadas = [0, (num_cols // 4), (num_cols // 2), ((num_cols * 3) // 4), (num_cols - 1)]
-
+    
     # Integer remainder of the number of lines divided by 2
-    linha_centro = num_rows // 2
+    half_rows = num_rows // 2
 
     # Vector created to store the positions
-    vet_num_rows = []
+    number_rows_vector = []
     for i in range(num_rows):
         # Creating a vector of size N positions
-        vet_num_rows.append(i)
+        number_rows_vector.append(i)
 
     l = []
-    for j in range(len(vet_num_rows)):
+    for j in range(len(number_rows_vector)):
         # In this loop, I add to the vector created earlier. Putting the lines divided by 2 ==> lc = num_rows//2
-        l.append(vet_num_rows[j] - linha_centro)
+        l.append(number_rows_vector[j] - half_rows)
 
     lfv_list = []
     liv_list = []
@@ -439,31 +436,31 @@ def return_all_instisitys_normal(vessel_map):
 
     l2_min, l2_max = np.min(l_all), np.max(l_all)
 
-    l2_chapeu_axis = np.linspace(l2_min, l2_max, num_rows)
+    l2_hat_axis = np.linspace(l2_min, l2_max, num_rows)
 
     # Create interpolating functions
-    l2_chapeu_funcs = []
+    l2_hat_funcs = []
     for l2, intens in zip(l_all, intensity_cols_values_all):
-        l2_chapeu_func = interp1d(l2, intens, kind='linear', bounds_error=False)
-        l2_chapeu_funcs.append(l2_chapeu_func)
+        l2_hat_func = interp1d(l2, intens, kind='linear', bounds_error=False)
+        l2_hat_funcs.append(l2_hat_func)
 
     # Calculate intensities for each point on the common axis
-    intensities_common_axis = np.zeros((len(l2_chapeu_funcs), len(l2_chapeu_axis)))
-    for col, l2_val in enumerate(l2_chapeu_axis):
-        for row, l2_chapeu_func in enumerate(l2_chapeu_funcs):
-            intensities_common_axis[row, col] = l2_chapeu_func(l2_val)
+    intensities_common_axis = np.zeros((len(l2_hat_funcs), len(l2_hat_axis)))
+    for col, l2_val in enumerate(l2_hat_axis):
+        for row, l2_hat_func in enumerate(l2_hat_funcs):
+            intensities_common_axis[row, col] = l2_hat_func(l2_val)
 
-    return intensities_common_axis, l2_chapeu_axis
+    return intensities_common_axis, l2_hat_axis
 
 
-def plot_all_intensities_columns(intensities_common_axis, l2_chapeu_axis):
+def plot_all_intensities_columns(intensities_common_axis, l2_hat_axis):
     """Function that plots all intensities normalized from the central line.
 
     Parameters:
     -----------
     intensities_common_axis: ndarray, float
         Vector containing normalized intensities.
-    l2_chapeu_axis: ndarray, float
+    l2_hat_axis: ndarray, float
         Contains information about where the axis should start and end. There is a modification in the graph display,
         instead of starting from the origin [0,0]. It (the origin) will start depending on the number of rows that exist.
     Returns:
@@ -473,7 +470,7 @@ def plot_all_intensities_columns(intensities_common_axis, l2_chapeu_axis):
 
     plt.figure(figsize=[12, 10])
     for intens in intensities_common_axis:
-        plt.plot(l2_chapeu_axis, intens)
+        plt.plot(l2_hat_axis, intens)
     #plt.savefig('plot_all_intensities_columns.pdf')
     plt.show()
 

@@ -98,16 +98,22 @@ def return_rows_columns(paths):
     # Get the second position of the vector
     path2 = paths[1]
 
+    # Calculate the minimum values for columns and rows for each path
     min_column1, min_row1 = np.min(path1, axis=0)
     min_column2, min_row2 = np.min(path2, axis=0)
 
+    # Calculate the maximum values for columns and rows for each path
     max_column1, max_row1 = np.max(path1, axis=0)
     max_column2, max_row2 = np.max(path2, axis=0)
 
+    # Determine the overall minimum values for columns and rows
     min_column = int(np.min([min_column1, min_column2]))
     min_row = int(np.min([min_row1, min_row2]))
+
+    # Determine the overall maximum values for columns and rows
     max_column = int(np.max([max_column1, max_column2]))
     max_row = int(np.max([max_row1, max_row2]))
+
 
     return min_row, min_column, max_row, max_column
 
@@ -202,101 +208,40 @@ def plot_figure(img, vessel_model, cross_paths):
     """
 
     vessel_map = vessel_model.vessel_map
+
+    # Plotting using slice_mapper.plot_model
     fig = plt.figure(figsize=[12, 10])
     ax = fig.add_subplot()
-    slice_mapper.plot_model(img, vessel_model, cross_paths, ax)
-    #plt.title("Analyzed Image")
+    slice_mapper.plot_model(img, vessel_model, cross_paths, ax)   
     norm = ax.images[0].norm
     norm.vmin, norm.vmax = 0, 60
-    plt.axis('off')
-    #model_file = f'{master_folder}/Images/maps/model/{imag}_{x}.png'
-    #plt.imsave(model_file, vessel_map.mapped_values, cmap='gray', vmin=0, vmax=60)
+    plt.axis('off')    
 
+    # Plotting the mapped values with specified vmin and vmax
     plt.figure(figsize=[12, 10])
-    #plt.title("Vmin=0 and Vmax=60")
-    plt.plot()
-    plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=60)
-    #plt.plot(vessel_map.path1_mapped, c='green')
-    #plt.plot(vessel_map.path2_mapped, c='green')
-    plt.axis('off')
-    #plt.imsave(imag+'.png', vessel_map.mapped_values, cmap='gray', vmin=0, vmax=60)
-    #file_min0max60 = f'{master_folder}/Images/maps/min0max60/{imag}_{x}.png'
-    #plt.imsave(file_min0max60, vessel_map.mapped_values, cmap='gray', vmin=0, vmax=60)
-
-    plt.figure(figsize=[12, 10])
-    plt.title("Vmin=0 and Vmax=255")
-    plt.plot()
-    plt.imshow(vessel_map.mapped_values[::-1], 'gray', vmin=0, vmax=255)
-    #plt.plot(vessel_map.path1_mapped, c='green')
-    #plt.plot(vessel_map.path2_mapped, c='green')
-    plt.axis('off')
-    #file_min0max255 = f'{master_folder}/Images/maps/min0max255/{imag}_{x}.tiff'
-    #plt.imsave(file_min0max255, vessel_map.mapped_values, cmap='gray', vmin=0, vmax=255)
-    #image = np.array(vessel_map.mapped_values, dtype=np.uint8)
-    #imsave(file_min0max255, image)
-
-    plt.figure(figsize=[12, 10])
-    plt.title("Vmin=0 and Vmax=max mapped value")
-    plt.plot()
-    plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=vessel_map.mapped_values.max())
-    #plt.plot(vessel_map.path1_mapped, c='green')
-    #plt.plot(vessel_map.path2_mapped, c='green')
-    plt.axis('off')
-    #file_min0max = f'{master_folder}/Images/maps/min0maxmapped/{imag}_{x}.png'
-    #plt.imsave(file_min0max, vessel_map.mapped_values, cmap='gray', vmin=0, vmax=vessel_map.mapped_values.max())
-
-    
-def plot_figure2(img, vessel_model, cross_paths):       
-    """Function that creates the vessel model and transversal paths.
-
-    Parameters:
-    -----------
-    img: ndarray, float
-        Resized image containing the area of the extracted vessel.
-    vessel_model: object VesselModel
-        Returns the vessel model with an instantiated object of the VesselModel class.
-    cross_paths: ndarray, float
-        Transversal paths.
-    Returns:
-    -----------
-        Plots the resized image, along with the vessel model, transversal paths, and translated paths 1 and 2,
-        in three different ways:
-        1 - with the mapped values having the minimum at 0 and maximum at 60
-        2 - values mapped in the standard range, from 0 to 255
-        3 - values mapped between the minimum 0 and maximum in the values found in the mapping
-    """
-
-    vessel_map = vessel_model.vessel_map
-    fig = plt.figure(figsize=[12, 10])
-    ax = fig.add_subplot()
-    slice_mapper.plot_model(img, vessel_model, cross_paths, ax)        
-    norm = ax.images[0].norm
-    norm.vmin, norm.vmax = 0, 60
-    #model_file = f'{master_folder}/Images/plots/model/{imag}_{x}.png'
-    #plt.savefig(model_file)  
-    
-    plt.figure(figsize=[12, 10])    
+    plt.title("Vmin=0 and Vmax=60")
     plt.plot()
     plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=60)
     plt.plot(vessel_map.path1_mapped, c='green')
     plt.plot(vessel_map.path2_mapped, c='green')
-    #file_min0max60 = f'{master_folder}/Images/plots/min0max60/{imag}_{x}.png'
-    #plt.savefig(file_min0max60)
+    plt.axis('off')
 
-    plt.figure(figsize=[12, 10])    
+    # Plotting the mapped values reversed with vmin and vmax
+    plt.figure(figsize=[12, 10])
+    plt.title("Vmin=0 and Vmax=255")
     plt.plot()
     plt.imshow(vessel_map.mapped_values[::-1], 'gray', vmin=0, vmax=255)
     plt.plot(vessel_map.path1_mapped, c='green')
-    plt.plot(vessel_map.path2_mapped, c='green')    
-    #file_min0max255 = f'{master_folder}/Images/plots/min0max255/{imag}_{x}.png'
-    #plt.savefig(file_min0max255)
+    plt.plot(vessel_map.path2_mapped, c='green')
+    plt.axis('off')
 
-    plt.figure(figsize=[12, 10])   
+    # Plotting the mapped values with dynamic vmax (max mapped value)
+    plt.figure(figsize=[12, 10])
+    plt.title("Vmin=0 and Vmax=max mapped value")
     plt.plot()
-    plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=vessel_map.mapped_values.max())     
+    plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=vessel_map.mapped_values.max())
     plt.plot(vessel_map.path1_mapped, c='green')
-    plt.plot(vessel_map.path2_mapped, c='green')    
-    #file_min0max = f'{master_folder}/Images/plots/min0maxmapped/{imag}_{x}.png'
-    #plt.savefig(file_min0max)
+    plt.plot(vessel_map.path2_mapped, c='green')
+    plt.axis('off')
 
     
