@@ -15,7 +15,7 @@ root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 img_dir = f'{root_dir}/Imagens/vessel_data/images'
 lab_dir = f'{root_dir}/Imagens/vessel_data/labels_20x'
 
-trein_dir = f'{root_dir}/Treinamento_validacao'
+trein_dir = f'{root_dir}/Training_validation'
 
 pickle_dir = f'{root_dir}/Vessel_Models_pickle'
 pickle_dir_5 = f'{trein_dir}/Mapas/5_mapas_de_5_imagens'
@@ -78,26 +78,15 @@ for j in range(100):
             fundo_com_vasos2 = backgen.inserir_mapa_bin(fundo_com_vasos2,vaso_sem_artefatos,possui_mapas2)
             contador +=1
         else:
-            resultados_none += 1
-  
-    # plt.figure(figsize=[10, 8])
-    # plt.title("fundo_com_vasos")
-    # plt.imshow(fundo_com_vasos, 'gray', vmin=0, vmax=255)
-    # plt.plot()
+            resultados_none += 1  
+    
     fundo_recortado = fundo_com_vasos[200:1304,200:1576]
     fundo_recortado2 = fundo_com_vasos2[200:1304,200:1576]
 
     img1 = Image.fromarray(fundo_recortado.astype(np.uint8))
-    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_5_mapas/imagens_artificiais/{nome_background}_{j}_com_{n_vasos}.tiff'
+    path = f'{trein_dir}/Artificial_Images/Geradas_a_partir_de_5_mapas/Artificial_Images/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img1.save(path)
 
     img2 = Image.fromarray(fundo_recortado2.astype(np.bool_))
-    path = f'{trein_dir}/Imagens_Artificiais/Geradas_a_partir_de_5_mapas/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
-    img = img2.save(path)
-
-    #plt.figure(figsize=[10, 8])
-    #plt.title("img2")
-    #plt.imshow(img2, 'gray', vmin=0, vmax=1)
-
-
-# print(f'resultados_none: {resultados_none}')
+    path = f'{trein_dir}/Artificial_Images/Geradas_a_partir_de_5_mapas/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
+    img = img2.save(path)    

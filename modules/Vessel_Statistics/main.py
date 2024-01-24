@@ -1,94 +1,95 @@
+from pathlib import Path
 import sys
-sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
-
 import numpy as np
 import pickle
 import vessel_statistics as vs
 
+# linux
+sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+root_dir = f"/home/adriano/projeto_mestrado/modules"
+
+# windows
+#sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+#root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+
+
 if __name__ == '__main__':
-    pasta_mestrado ='/home/adriano/projeto_mestrado/modules'
 
-    dir = f'{pasta_mestrado}/Vessel_Models_pickle'
-   
-    #coloca nas varíaveis nom e tam, os nomes dos arquivos que existem no diretório e pega a quantidade de itens que existem
-    nom, tam = vs.ready_directory(dir)
+    pickle_dir = f'{root_dir}/Vessel_Models_pickle'
 
+    # Retrieve file names and the number of items in the directory
+    nom, tam = vs.ready_directory(pickle_dir)
     maximum = []
     minimum = []
-    vetor_diametros = []
-    i=1
-    #faz a varredura de todos os itens que estão no diretório
-    for i in range(tam):  
-        #pega o nome da imagem e armazena na variável local
+    diameter_vector = [] 
+
+    for i in range(2):
+        # Get the file name and store it in the local variable
         local = nom[i]
-        #faz a carregamento do .pickle
-        data_dump = pickle.load(open(local,"rb"))
-        #absorve os três índices que existem no .pickle
+        # Load the .pickle file
+        data_dump = pickle.load(open(local, "rb"))
+        # Extract the three indices from the .pickle file
         vessel_model = data_dump['vessel_model']
         first_point = data_dump['primeiro_ponto']
-        img_file = data_dump['img_file']  
+        img_file = data_dump['img_file']
 
-        #instanciação da variável vessel_map
-        #o mapa do vaso possui vários atributos que serão utilizados para chamar as funções
-        vessel_map = vessel_model.vessel_map 
-        
-        #pega a metade inteira do tamanho do vessel_map.mapped_values
-        half_size_vessel_map = len(vessel_map.mapped_values)//2
+        # Instantiate the vessel_map variable
+        # The vessel map has various attributes that will be used to call functions
+        vessel_map = vessel_model.vessel_map          
 
-        #variáveis que pegam o índice do menor e do menor valor da posição do meio
-        max = np.argmax(vessel_map.mapped_values[half_size_vessel_map])
-        min = np.argmin(vessel_map.mapped_values[half_size_vessel_map])  
+        # diameter is the absolute difference between the two mapped paths.
+        diameter = np.abs(vessel_map.path1_mapped - vessel_map.path2_mapped)
+        a = np.array(diameter)
+        mean_diameter = np.mean(a)
+        diameter_vector.append(mean_diameter)
 
-        #variáveis que pegam o valor armazenados no menor e maior valor encontrado
-        maximum.append(vessel_map.mapped_values[half_size_vessel_map][max])
-        minimum.append(vessel_map.mapped_values[half_size_vessel_map][min])
+        # Get the half integer size of vessel_map.mapped_values
+        half_size_vessel_map = len(vessel_map.mapped_values) // 2
 
-        #retorna a média de todos os valores mapeados ao longo das linhas
+        # Variables that get the index of the minimum and maximum values of the middle position
+        max_index = np.argmax(vessel_map.mapped_values[half_size_vessel_map])
+        min_index = np.argmin(vessel_map.mapped_values[half_size_vessel_map])
+
+        # Variables that get the values stored in the minimum and maximum values found
+        maximum.append(vessel_map.mapped_values[half_size_vessel_map][max_index])
+        minimum.append(vessel_map.mapped_values[half_size_vessel_map][min_index])
+
+        # Returns the mean of all mapped values along the rows
         means = np.mean(vessel_map.mapped_values, axis=1)
 
-        #retorna o desvio padrão de todos os valores mapeados ao longo das linhas
-        std_dev = np.std(vessel_map.mapped_values, axis=1)  
+        # Returns the standard deviation of all mapped values along the rows
+        std_dev = np.std(vessel_map.mapped_values, axis=1)
 
-        #retorna o desvio padrão de todos os valores mapeados ao longo das colunas
-        std_dev2 = np.std(vessel_map.mapped_values, axis=0)    
+        # Returns the standard deviation of all mapped values along the columns
+        std_dev2 = np.std(vessel_map.mapped_values, axis=0)
 
-        #plot of the vessel map, min value is 0 and max value is 60
-        vs.plot_vessel_map(vessel_map) 
+        # Plot of the vessel map, min value is 0, and max value is 60
+        vs.plot_vessel_map(vessel_map)
 
-        #plot do recorte
+        # Plot of the clipping
         vs.plot_clipping(vessel_map)
-        
-        #plot da intensidade das linhas interemediária, uma acima e uma abaixo
-        vs.plot_intensity_lines(vessel_map, half_size_vessel_map) 
 
-        #plot mostrando a diferença entre a média e o desvio padrão
+        # Plot of the intensity lines, one above and one below
+        vs.plot_intensity_lines(vessel_map, half_size_vessel_map)
+
+        # Plot showing the difference between the mean and standard deviation
         vs.plot_fill_means_std_dev(means, std_dev)
 
-        #tentativa de plotar a diferença entre o desvio padrão com a coluna normalizada
-        #plot_fill_means_std_dev_normal(intensity_cols_values_all[0], std_dev2)
-        
-        #plota o diâmetro do vaso
-        vs.plot_diameter_vessel(vessel_map)  
+        # Plot the diameter of the vessel
+        vs.plot_diameter_vessel(vessel_map)
 
-        #plota a intensidade das colunas, exibe onde começa e termina o vaso
+        # Plot the intensity of the columns, shows where the vessel starts and ends
         vs.plot_intensity_cols_with_line_vessel(vessel_map)
 
-        #plota a intensidade das colunas normalizadas com a linha do centro (metade dos índices das colunas), 
-        #exibe onde começa e termina o vaso, retirando a dependência de se começar do ponto (0,0)
+        # Plot the intensity of the columns normalized with the centerline (half of the column indices),
+        # shows where the vessel starts and ends, removing the dependence on starting from the point (0,0)
         vs.plot_intensity_cols_with_line_vessel_normal(vessel_map)
 
-        #plota todas as intensidades normalizadas
+        # Plot all normalized intensities
         intensities_common_axis, l2_chapeu_axis = vs.return_all_instisitys_normal(vessel_map)
 
         vs.plot_all_intensities_columns(intensities_common_axis, l2_chapeu_axis)
 
-        #plot_fill_means_std_dev_normal_all(intensities_common_axis)
-
-        #plota a diferença entre os máximos e mínimos de todas as extrações
-        vs.plot_min_max_medial_line(minimum,maximum)
-
-        #VER plt.xaxis.set_Visible(False)
-
-        #usar o inkscape - software de imagens
-
-
+    # Plot the difference between the maximum and minimum of all extractions
+    vs.plot_min_max_medial_line(minimum, maximum)
+    vs.plot_all_diameter(diameter_vector)
