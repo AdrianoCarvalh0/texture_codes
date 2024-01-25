@@ -6,12 +6,11 @@ import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
 
 # Linux
-sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/Slice_mapper")
+sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/")
 
 # Windows
 #sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules\Slice_mapper")
 
-from Slice_mapper import slice_mapper_util as smutil
 from shapely.geometry import Point, LineString
 from PIL import Image
 from scipy import ndimage
