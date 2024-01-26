@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 
 sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
-from Funcoes_gerais import funcoes
+from Utils import functions
 
 import background_generation as backgen
 
@@ -30,10 +30,10 @@ background_dir_40 = f'{trein_dir}/Backgrounds/40_backgrounds'
 tracados_dir = root_dir/"Artificial_Lines/tracados_bezier"
 tracados_dir_maiores = root_dir/"Artificial_Lines/tracados_bezier_maiores"
 
-vetor_pickles = funcoes.ler_diretorios(pickle_dir_5)
-array_backgrounds = funcoes.ler_diretorios(background_dir_5)
-#array_tracados = funcoes.ler_diretorios(tracados_dir)
-array_tracados_maiores = funcoes.ler_diretorios(tracados_dir_maiores)
+vetor_pickles = functions.ler_diretorios(pickle_dir_5)
+array_backgrounds = functions.ler_diretorios(background_dir_5)
+#array_tracados = functions.ler_diretorios(tracados_dir)
+array_tracados_maiores = functions.ler_diretorios(tracados_dir_maiores)
 
 problema = 0
 resultados_not_none = 0
@@ -66,7 +66,7 @@ for j in range(100):
         n_tracados = np.random.randint(0, len(array_tracados_maiores))
         tracado = array_tracados_maiores[n_tracados]
         
-        vetor_medial_path = backgen.retorna_paths(tracados_dir_maiores/f"{tracado}")        
+        vetor_medial_path = backgen.return_paths(tracados_dir_maiores/f"{tracado}")        
        
         resultados = backgen.inserir_vasos(vetor_medial_path[0],vetor_medial_path[1],vetor_pickles,pickle_dir,background_com_pad,treshold=30)       
         if resultados is not None:

@@ -636,8 +636,7 @@ def insert_vessels(medial_path_array, distance, pickles_array, pickle_dir, back_
 
     # Get the original binary map without lateral artifacts
     binary_map_original = vessel_map.mapped_mask_values
-    binary_map_without_lateral_artifacts = returns_binary_image_without_artifacts(vessel_map,
-                                                                                          binary_map_original)
+    binary_map_without_lateral_artifacts = returns_binary_image_without_artifacts(vessel_map, binary_map_original)
 
     # Return None if binary map without lateral artifacts is None
     if binary_map_without_lateral_artifacts is None:
@@ -710,6 +709,74 @@ def insert_vessels(medial_path_array, distance, pickles_array, pickle_dir, back_
     # Transform the map without artifacts
     map_without_artifacts_transf = transform_map_dist2(map_without_artifacts, mask_map, vessel_without_artifacts,
                                                         back_artifact)
+
+    # Return the result if the transformed map without artifacts is not None
+    if map_without_artifacts_transf is not None:
+        return vessel_without_artifacts, map_without_artifacts_transf, mask_map, threshold1
+    else:
+        return vessel_without_artifacts, map_without_artifacts, mask_map, threshold1
+
+# results = backgen.insert_vessels2(vector_medial_path[0], vector_medial_path[1], 
+def insert_vessels2(medial_path_array, distance, vessel_map, normalized_original_map, binary_map_without_artifacts, back_artif):   
+    
+    # Get dimensions of the original map
+    rows, cols = normalized_original_map.shape
+
+    # Calculate the distance to be used for the map expansion
+    distance = (rows / 2)
+
+    # Find the threshold based on the most frequent pixel value in the normalized map
+    threshold1 = find_most_frequent_pixel(normalized_original_map)
+
+    # Set the maximum value for expansion
+    max_value = int(distance)
+
+    # Expand the original map to the specified size
+    expanded_original_map = expand_maps_to_trace_size(normalized_original_map, max_value)
+
+    # Expand the binary vessel map to the specified size
+    expanded_vessel_bin = expand_maps_to_trace_size(binary_map_without_artifacts, max_value)
+
+    # Get left, central, and right lines for the expansion from the medial path
+    left_offset_line, central_line, right_offset_line, max_size = returns_lines_offset_position_size(
+        medial_path_array, distance)
+
+    # Create destination array for transformation from left, central, and right lines
+    dst_array_np = returns_dst_array_np(left_offset_line, central_line, right_offset_line, max_size)
+
+    # Execute the algorithm that transforms the expanded map
+    img_proper, img_out, new_src, new_dst, tform_out, translation, new_origin = rotate_expanded_map(
+        expanded_original_map, dst_array_np, max_size)
+
+    # Create a binary mask for the map
+    mask_map = create_binary_mask_map(new_dst, img_out)
+
+    # Create a binary mask for the vessel
+    mask_vessel = create_binary_mask_vessel(vessel_map, new_origin, medial_path_array, img_out)
+
+    # Remove artifacts from the map
+    map_without_artifacts = remove_artifacts(img_out, mask_map)
+
+    # Get dimensions of the map without artifacts
+    rows_art, cols_art = map_without_artifacts.shape
+
+    # Get dimensions of the artificial background
+    rows_back, cols_back = back_artif.shape
+
+    import pdb; pdb.set_trace()
+    # Return None if the dimensions of the map without artifacts are greater than or equal to the background artifact
+    if rows_art >= rows_back or cols_art >= cols_back:
+        return None
+
+    # Create an expanded and rotated binary vessel map
+    img_out_bin = create_binary_expanded_vessel(expanded_vessel_bin, dst_array_np, max_size)
+
+    # Remove artifacts from the binary vessel map
+    vessel_without_artifacts = remove_artifacts(img_out_bin, mask_vessel)
+
+    # Transform the map without artifacts
+    map_without_artifacts_transf = transform_map_dist2(map_without_artifacts, mask_map, vessel_without_artifacts,
+                                                        back_artif)
 
     # Return the result if the transformed map without artifacts is not None
     if map_without_artifacts_transf is not None:
