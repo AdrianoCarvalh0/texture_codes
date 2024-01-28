@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 
 sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
-from Funcoes_gerais import funcoes
+from Utils import functions
 
 import background_generation as backgen
 
@@ -19,7 +19,7 @@ lab_dir = f'{root_dir}/Imagens/vessel_data/labels_20x'
 trein_dir = f'{root_dir}/Training_validation'
 
 #pickle_dir = f'{root_dir}/Vessel_Models_pickle'
-pickle_dir_5 = f'{trein_dir}/Mapas/5_mapas_de_5_imagens'
+pickle_dir_5 = f'{trein_dir}/Maps/5_maps_5_images'
 #pickle_dir_10 = f'{trein_dir}/Mapas/10_mapas_de_10_imagens'
 #pickle_dir_40 = f'{trein_dir}/Mapas/160_mapas_de_40_imagens'
 #pickle_dir_50 = f'{trein_dir}/Mapas/200_mapas_de_50_imagens'
@@ -31,13 +31,13 @@ pickle_dir_5 = f'{trein_dir}/Mapas/5_mapas_de_5_imagens'
 background_dir_50 = f'{trein_dir}/Backgrounds/50_backgrounds'
 
 
-tracados_dir = root_dir/"Artificial_Lines/tracados_bezier"
-tracados_dir_maiores = root_dir/"Artificial_Lines/tracados_bezier_maiores"
+tracados_dir = root_dir/"Artificial_Lines/bezier_traces"
+tracados_dir_tests = root_dir/"Artificial_lines/bezier_traces_tests"
 
-vetor_pickles = funcoes.ler_diretorios(pickle_dir_5)
-array_backgrounds = funcoes.ler_diretorios(background_dir_50)
+vetor_pickles = functions.read_directories(pickle_dir_5)
+array_backgrounds = functions.read_directories(background_dir_50)
 #array_tracados = funcoes.ler_diretorios(tracados_dir)
-array_tracados_maiores = funcoes.ler_diretorios(tracados_dir_maiores)
+array_tracados_maiores = functions.read_directories(tracados_dir_tests)
 
 problema = 0
 resultados_not_none = 0
@@ -61,14 +61,14 @@ for j in range(100):
 
         mapa_original_norm = None
         imagem_binaria_original = vessel_map.mapped_mask_values
-        imagem_binaria_sem_artefatos_laterais = backgen.retornar_imagem_binaria_sem_artefatos(vessel_map, imagem_binaria_original)
+        imagem_binaria_sem_artefatos_laterais = backgen.returns_binary_image_without_artifacts(vessel_map, imagem_binaria_original)
     #imagem_binaria_sem_artefatos = backgen.fill_holes(imagem_binaria_sem_artefatos_laterais) 
 
     nro_norms_falhos = 0
     while mapa_original_norm is None:
         n_backgrounds = np.random.randint(0, len(array_backgrounds))
         background = np.array(Image.open(f'{background_dir_50}/{array_backgrounds[n_backgrounds]}'))        
-        mapa_original_norm = backgen.normaliza(background,mapa_original,imagem_binaria_original,treshold=30)
+        mapa_original_norm = backgen.normalize(background,mapa_original,imagem_binaria_original,30)
         nro_norms_falhos +=1
    
     nome_background = f'{array_backgrounds[n_backgrounds]}'
@@ -88,16 +88,16 @@ for j in range(100):
         n_tracados = np.random.randint(0, len(array_tracados_maiores))
         tracado = array_tracados_maiores[n_tracados]
         
-        vetor_medial_path = backgen.retorna_paths(tracados_dir_maiores/f"{tracado}")        
+        vetor_medial_path = backgen.return_paths(tracados_dir_tests/f"{tracado}")        
        
-        resultados = backgen.inserir_vasos(vetor_medial_path[0],vetor_medial_path[1],vetor_pickles,pickle_dir_5,background_com_pad,treshold=30)       
+        resultados = backgen.insert_vessels(vetor_medial_path[0],vetor_medial_path[1],vetor_pickles,pickle_dir_5,background_com_pad,30)       
         if resultados is not None:
             vaso_sem_artefatos,mapa_sem_artefatos,mask_map, limiar1 = resultados
             resultados_not_none += 1
            
-            fundo_com_vasos = backgen.inserir_mapa(fundo_com_vasos,vaso_sem_artefatos,mapa_sem_artefatos,mask_map, limiar1, possui_mapas)           
+            fundo_com_vasos = backgen.insert_map(fundo_com_vasos,vaso_sem_artefatos,mapa_sem_artefatos,mask_map, limiar1, possui_mapas)           
 
-            fundo_com_vasos2 = backgen.inserir_mapa_bin(fundo_com_vasos2,vaso_sem_artefatos,possui_mapas2)
+            fundo_com_vasos2 = backgen.insert_binary_map(fundo_com_vasos2,vaso_sem_artefatos,possui_mapas2)
             contador +=1
         else:
             resultados_none += 1  
@@ -106,13 +106,13 @@ for j in range(100):
     fundo_recortado2 = fundo_com_vasos2[200:1304,200:1576]
 
     img1 = Image.fromarray(fundo_recortado.astype(np.uint8))
-    path = f'{trein_dir}/Artificial_Images/Geradas_a_partir_de_5_mapas/Artificial_Images/{nome_background}_{j}_com_{n_vasos}.tiff'
+    path = f'{root_dir}/Images/Background_with_vessels_tests/images/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img1.save(path)
 
     img2 = Image.fromarray(fundo_recortado2.astype(np.bool_))
-    path = f'{trein_dir}/Artificial_Images/Geradas_a_partir_de_5_mapas/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
+    path = f'{root_dir}/Images/Background_with_vessels_tests/labels/{nome_background}_{j}_com_{n_vasos}.tiff'
     img = img2.save(path)   
-    print(f'laço: {j}')
+    print(f'laço: {j}')    
     print(f"número de falhas na normalização: {nro_norms_falhos}")
 
 

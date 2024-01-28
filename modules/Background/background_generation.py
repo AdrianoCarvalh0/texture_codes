@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
 
 # Linux
-sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/")
+#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/")
 
 # Windows
-#sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules\Slice_mapper")
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules\Slice_mapper")
 
 from shapely.geometry import Point, LineString
 from PIL import Image
@@ -763,10 +763,10 @@ def insert_vessels2(medial_path_array, distance, vessel_map, normalized_original
     # Get dimensions of the artificial background
     rows_back, cols_back = back_artif.shape
 
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
     # Return None if the dimensions of the map without artifacts are greater than or equal to the background artifact
-    if rows_art >= rows_back or cols_art >= cols_back:
-        return None
+    #if rows_art >= rows_back or cols_art >= cols_back:
+        #return None
 
     # Create an expanded and rotated binary vessel map
     img_out_bin = create_binary_expanded_vessel(expanded_vessel_bin, dst_array_np, max_size)
