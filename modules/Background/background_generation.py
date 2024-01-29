@@ -690,11 +690,11 @@ def insert_vessels(medial_path_array, distance, pickles_array, pickle_dir, back_
     # Get dimensions of the map without artifacts
     rows_art, cols_art = map_without_artifacts.shape
 
-    # Get dimensions of the background artifact
-    rows_back, cols_back = back_artifact.shape
+    background_with_pad = np.pad(back_artifact, ((200,200),(200,200)), mode="symmetric", reflect_type="even")
 
-    # Return None if the dimensions of the map without artifacts are greater than or equal to the background artifact
+    rows_back, cols_back =background_with_pad.shape
     if rows_art >= rows_back or cols_art >= cols_back:
+        print(f"colunas ou linhas maiores que o fundo")
         return None
 
     # Create an expanded and rotated binary vessel map
