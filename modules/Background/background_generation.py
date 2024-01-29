@@ -656,23 +656,20 @@ def insert_vessels(medial_path_array, distance, pickles_array, pickle_dir, back_
     rows, cols = original_map.shape
 
     # Calculate the distance to be used for the map expansion
-    distance = (rows / 2)
+    half_rows = (rows / 2)
 
     # Find the threshold based on the most frequent pixel value in the normalized map
     threshold1 = find_most_frequent_pixel(normalized_original_map)
 
-    # Set the maximum value for expansion
-    max_value = int(distance)
-
     # Expand the original map to the specified size
-    expanded_original_map = expand_maps_to_trace_size(normalized_original_map, max_value)
+    expanded_original_map = expand_maps_to_trace_size(normalized_original_map, int(distance))
 
     # Expand the binary vessel map to the specified size
-    expanded_vessel_bin = expand_maps_to_trace_size(binary_map_without_artifacts, max_value)
+    expanded_vessel_bin = expand_maps_to_trace_size(binary_map_without_artifacts, int(distance))
 
     # Get left, central, and right lines for the expansion from the medial path
     left_offset_line, central_line, right_offset_line, max_size = returns_lines_offset_position_size(
-        medial_path_array, distance)
+        medial_path_array, half_rows)
 
     # Create destination array for transformation from left, central, and right lines
     dst_array_np = returns_dst_array_np(left_offset_line, central_line, right_offset_line, max_size)
