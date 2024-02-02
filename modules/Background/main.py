@@ -156,5 +156,11 @@ if __name__ == '__main__':
                 'out_dir': f'{root_dir}/Images/Background_with_vessels_tests', #output directory
                 'min_number_vessels': 2, # minimum number of vessels
                 'max_number_vessels': 5, # maximum number of vessels
+                # Bezier Curves parameters
+                'max_vd' : 500,
+                'precision': 100,
+                'number_cols': 1776,
+                'number_rows': 1504,
+                'number_points': 25,
             }    
     generate_maps(parameters)
