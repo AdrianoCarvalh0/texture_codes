@@ -1,4 +1,3 @@
-import tracemalloc
 import background_generation as backgen
 import numpy as np
 import pickle
@@ -18,6 +17,22 @@ root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 from Utils import functions
 
+
+def return_background(generate,dir_images,dir_labels,directory_backs,vector_backgrounds,img_back):
+    if generate:
+        while not img_back in vector_backgrounds:
+            if img_back in dir_images and img_back in dir_labels:
+                background = backgen.estimate_background(f'{dir_images}/{img_back}', f'{dir_labels}/{img_back}')
+            else:
+                n_background = np.random.randint(0, len(vector_backgrounds))
+                img_back = vector_backgrounds[n_background]
+                background = np.array(Image.open(f'{directory_backs}/{vector_backgrounds[n_background]}')) 
+    else:
+        n_background = np.random.randint(0, len(vector_backgrounds))
+        img_back = vector_backgrounds[n_background]
+        background = np.array(Image.open(f'{directory_backs}/{img_back}'))
+    return background 
+
 def returns_array_pickle(num_maps,array_maps_pickle):
     sorted_array_pickels = []
     for i in range(num_maps):
@@ -25,7 +40,10 @@ def returns_array_pickle(num_maps,array_maps_pickle):
         sorted_array_pickels.append(array_maps_pickle[n_pickle])
     return sorted_array_pickels
 
-def compatible_map_with_backg(sorted_array_pickels, background, dir_maps_pickle,threshold):    
+def compatible_map_with_backg(sorted_array_pickels, array_backrounds, directory_backs,dir_maps_pickle,treshold):
+    n_background = np.random.randint(0, len(array_backrounds))
+    img_back = array_backrounds[n_background]
+    background = np.array(Image.open(f'{directory_backs}/{img_back}'))
     cont = 0
     for i in range(len(sorted_array_pickels)):
         path_map = (f"{dir_maps_pickle}/{sorted_array_pickels[i]}")
@@ -33,93 +51,68 @@ def compatible_map_with_backg(sorted_array_pickels, background, dir_maps_pickle,
         vessel_map = map_pickle['vessel_model'].vessel_map 
         original_map = vessel_map.mapped_values
         vessel_mask = vessel_map.mapped_mask_values
-        normalized_original_map = backgen.normalize(background,original_map,vessel_mask,threshold)            
+        normalized_original_map = backgen.normalize(background,original_map,vessel_mask,treshold)            
         if normalized_original_map is not None:
             cont += 1                  
     if cont == len(sorted_array_pickels):
-        background_norm = background
-        return background_norm
+        return img_back
     else:
         return None
 
-def check_compatible(array_pickles,number_images,array_backrounds, directory_backs,dir_maps_pickle,array_images,array_labels,directory_images,directory_labels,generate,threshold):
+def check_compatible(array_pickles,number_images,array_backrounds, directory_backs,dir_maps_pickle,treshold,dir_images,dir_labels):
     count_errors = 0
-    vector_dict = []
-    import time
+    vector_names = []
         
     for i in range(number_images):
         n_random = np.random.randint(0, len(array_backrounds))
-        path_img = array_backrounds[n_random]
-
-        # TEST
-        #path_img = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 1-20X.tiff'
-
-        if path_img in array_backrounds:
-            background = np.array(Image.open(f'{directory_backs}/{path_img}'))
-        else:
-            path_name = path_img.replace("'","").replace(".tiff","")
-            label = f'{path_name}.png'
-            if generate:
-                if path_img in array_images and  label in array_labels:
-                     # Measuring the amount of memory used in the creation of the artificial background
-                    tracemalloc.start()
-                    start_time = time.time()
-                    background = backgen.estimate_background(np.array(Image.open(f'{directory_images}/{path_name}.tiff')), np.array(Image.open(f'{directory_labels}/{label}')))
-                    end_time = time.time()
-                    _, peak_memory = tracemalloc.get_traced_memory()
-                    execution_time = end_time - start_time
-                    print(f"Took {execution_time} seconds, and the peak memory usage was {peak_memory/1024**3} GBs.")
-                    tracemalloc.stop()
-
-        back =  compatible_map_with_backg(array_pickles, background, dir_maps_pickle,threshold)
-        if back is not None:  
-            dict = {
-                'name': path_img,
-                'back': background,
-            }
-            vector_dict.append(dict)   
+        name =  compatible_map_with_backg(array_pickles, array_backrounds, directory_backs, dir_maps_pickle,treshold)
+        if name is not None:        
+            vector_names.append(name)
         else:
             count_errors += 1       
     print(f"incompatible: {count_errors}")
-    return vector_dict
+    return vector_names
 
 
 def generate_maps(params):
     array_maps_pickle = functions.read_directories(params['dir_maps_pickle'])
     array_images = functions.read_directories(params['dir_images'])
     array_labels = functions.read_directories(params['dir_labels'])
-    array_backrounds = functions.read_directories(params['dir_backs'])
-    array_traces = functions.read_directories(params['dir_traces'])
-
-    generate = params['generate_back']
-    threshold = params['threshold']
+    array_backrounds = functions.read_directories(params['dir_backs'])  
 
     number_maps = params['num_maps']
     dir_maps_pickle = params['dir_maps_pickle']
     directory_backs = params['dir_backs']
-    directory_images = params['dir_images']
-    directory_labels = params['dir_labels']
-    directory_traces =  params['dir_traces']
+    
     directory_out = params['out_dir']
     num_images = params['num_images']
     min_number_vessels = params['min_number_vessels']
-    max_number_vessels = params['max_number_vessels']    
+    max_number_vessels = params['max_number_vessels']
+    treshold = params['treshold']
 
-    array_maps_pickle_sorted = returns_array_pickle(number_maps,array_maps_pickle)    
+    #parameters of curve Bezier
+    max_distance = params['max_distance']
+    control_points = params['control_points']
+    precision = params['precision']
+    min_len_trace = params['min_len_trace']
+    max_len_trace = params['max_len_trace']
+    number_points = params['number_points']
+    padding = params['padding']
+    number_cols = params['number_cols']
+    number_rows = params['number_rows']
 
-    #compatible_map_with_backg(array_maps_pickle_sorted, array_backrounds, directory_backs,dir_maps_pickle)
+    array_maps_pickle_sorted = returns_array_pickle(number_maps,array_maps_pickle)        
 
-    vector_backgrounds = check_compatible(array_maps_pickle, num_images,array_backrounds,directory_backs,dir_maps_pickle,array_images,array_labels,directory_images,directory_labels,generate,threshold)   
+    vector_names_background = check_compatible(array_maps_pickle, num_images,array_backrounds,directory_backs,dir_maps_pickle,treshold)   
 
     none_results = 0
 
     for j in range(num_images):
         number_of_vessels = np.random.randint(min_number_vessels, max_number_vessels)        
         
-        n_background = np.random.randint(0, len(vector_backgrounds))
-        name_background = vector_backgrounds[n_background]['name']
-        background =  vector_backgrounds[n_background]['back']
-        #background = np.array(Image.open(f'{directory_backs}/{name_background}'))          
+        n_background = np.random.randint(0, len(vector_names_background))
+        name_background = vector_names_background[n_background]
+        background = np.array(Image.open(f'{directory_backs}/{name_background}'))          
     
         background_name = name_background.replace("'","").replace(".tiff","")
 
@@ -135,10 +128,9 @@ def generate_maps(params):
 
         counter = 0
         while counter < number_of_vessels:
-            n_traces = np.random.randint(0, len(array_traces))
-            trace = array_traces[n_traces]    
-            vector_medial_path = backgen.return_paths(f"{directory_traces}/{trace}")           
-            results = backgen.insert_vessels(vector_medial_path[0], vector_medial_path[1], array_maps_pickle_sorted,dir_maps_pickle,background,30)        
+            points, distance = backgen.create_points(number_points, padding, number_rows, number_cols, min_len_trace, max_len_trace)
+            curve = backgen.create_curve(points, max_distance, control_points, precision)         
+            results = backgen.insert_vessels(curve, distance, array_maps_pickle_sorted,dir_maps_pickle,background,treshold)        
             if results is not None:
                 vessel_without_artifacts, map_without_artifacts, mask_map, treshold = results  
                 background_with_vessels = backgen.insert_map(background_with_vessels,vessel_without_artifacts,map_without_artifacts,mask_map, treshold, has_maps)
@@ -159,9 +151,7 @@ def generate_maps(params):
         img = img2.save(path)
 
 if __name__ == '__main__':
-
-    #Aumentar o limiar para testar se fica compatível no máximo valor
-    #Gerar as curvas de bezier dentro do algoritmo - tamanho setado pelo cliente - distancia entre o ponto 1 e ponto 2, numero de pontos, max_vd, 
+    
     parameters ={
         'dir_maps_pickle': f'{root_dir}/Vessel_models_pickle',
         'num_maps': 1,  # number of maps to be inserted
@@ -174,7 +164,7 @@ if __name__ == '__main__':
         'out_dir': f'{root_dir}/Images/Background_with_vessels_tests',  # output directory
         'min_number_vessels': 1,  # minimum number of vessels
         'max_number_vessels': 3,  # maximum number of vessels
-        'threshold': 33,  # parameter that defines the threshold between the differences of the map background and the overall background
+        'treshold': 33,  # parameter that defines the threshold between the differences of the map background and the overall background
         
         # Bezier Curves parameters
         'max_distance': 500,  # maximum distance where control points will be randomly drawn. Example: 1 generates straight lines.
@@ -185,6 +175,7 @@ if __name__ == '__main__':
         'number_points': 25,  # determine the number of random points to be generated
         'min_len_trace': 500,  # minimum distance between the initial and final points
         'max_len_trace': 1300,  # maximum distance between the initial and final points
-        'padding': 50,  # padding used to ensure that the trace does not exceed the size of the background
+        'padding': 0,  # padding used to ensure that the trace does not exceed the size of the background
     }
+    
     generate_maps(parameters)
