@@ -5,16 +5,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
 
+import tracemalloc, time, os
+
 # Linux
 #sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/")
 
 # Windows
-sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules\Slice_mapper")
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 from shapely.geometry import Point, LineString
 from PIL import Image
 from scipy import ndimage
 
+from Utils import functions
 
 def return_paths(json_file):
     """Function that reads a JSON file and returns paths 1 and 2 from one or multiple manual blood vessel markings.
@@ -653,7 +656,7 @@ def insert_vessels(medial_path_array, distance, pickles_array, pickle_dir, back_
         return None
 
     # Get dimensions of the original map
-    rows, cols = original_map.shape
+    rows, cols = original_map.shape   
 
     # Calculate the distance to be used for the map expansion
     half_rows = (rows / 2)
@@ -693,9 +696,10 @@ def insert_vessels(medial_path_array, distance, pickles_array, pickle_dir, back_
     background_with_pad = np.pad(back_artifact, ((200,200),(200,200)), mode="symmetric", reflect_type="even")
 
     rows_back, cols_back =background_with_pad.shape
+    
     if rows_art >= rows_back or cols_art >= cols_back:
         print(f"colunas ou linhas maiores que o fundo")
-        #return None
+        return None
 
     # Create an expanded and rotated binary vessel map
     img_out_bin = create_binary_expanded_vessel(expanded_vessel_bin, dst_array_np, max_size)
@@ -712,76 +716,6 @@ def insert_vessels(medial_path_array, distance, pickles_array, pickle_dir, back_
         return vessel_without_artifacts, map_without_artifacts_transf, mask_map, threshold1
     else:
         return vessel_without_artifacts, map_without_artifacts, mask_map, threshold1
-
-# results = backgen.insert_vessels2(vector_medial_path[0], vector_medial_path[1], 
-def insert_vessels2(medial_path_array, distance, vessel_map, normalized_original_map, binary_map_without_artifacts, back_artif):   
-    
-    # Get dimensions of the original map
-    rows, cols = normalized_original_map.shape
-
-    # Calculate the distance to be used for the map expansion
-    distance = (rows / 2)
-
-    # Find the threshold based on the most frequent pixel value in the normalized map
-    threshold1 = find_most_frequent_pixel(normalized_original_map)
-
-    # Set the maximum value for expansion
-    max_value = int(distance)
-
-    # Expand the original map to the specified size
-    expanded_original_map = expand_maps_to_trace_size(normalized_original_map, max_value)
-
-    # Expand the binary vessel map to the specified size
-    expanded_vessel_bin = expand_maps_to_trace_size(binary_map_without_artifacts, max_value)
-
-    # Get left, central, and right lines for the expansion from the medial path
-    left_offset_line, central_line, right_offset_line, max_size = returns_lines_offset_position_size(
-        medial_path_array, distance)
-
-    # Create destination array for transformation from left, central, and right lines
-    dst_array_np = returns_dst_array_np(left_offset_line, central_line, right_offset_line, max_size)
-
-    # Execute the algorithm that transforms the expanded map
-    img_proper, img_out, new_src, new_dst, tform_out, translation, new_origin = rotate_expanded_map(
-        expanded_original_map, dst_array_np, max_size)
-
-    # Create a binary mask for the map
-    mask_map = create_binary_mask_map(new_dst, img_out)
-
-    # Create a binary mask for the vessel
-    mask_vessel = create_binary_mask_vessel(vessel_map, new_origin, medial_path_array, img_out)
-
-    # Remove artifacts from the map
-    map_without_artifacts = remove_artifacts(img_out, mask_map)
-
-    # Get dimensions of the map without artifacts
-    rows_art, cols_art = map_without_artifacts.shape
-
-    # Get dimensions of the artificial background
-    rows_back, cols_back = back_artif.shape
-
-    #import pdb; pdb.set_trace()
-    # Return None if the dimensions of the map without artifacts are greater than or equal to the background artifact
-    #if rows_art >= rows_back or cols_art >= cols_back:
-        #return None
-
-    # Create an expanded and rotated binary vessel map
-    img_out_bin = create_binary_expanded_vessel(expanded_vessel_bin, dst_array_np, max_size)
-
-    # Remove artifacts from the binary vessel map
-    vessel_without_artifacts = remove_artifacts(img_out_bin, mask_vessel)
-
-    # Transform the map without artifacts
-    map_without_artifacts_transf = transform_map_dist2(map_without_artifacts, mask_map, vessel_without_artifacts,
-                                                        back_artif)
-
-    # Return the result if the transformed map without artifacts is not None
-    if map_without_artifacts_transf is not None:
-        return vessel_without_artifacts, map_without_artifacts_transf, mask_map, threshold1
-    else:
-        return vessel_without_artifacts, map_without_artifacts, mask_map, threshold1
-    
-
 
 def bezier(points, precision):
     """Function that creates Bezier curves
@@ -879,3 +813,140 @@ def create_curve(points, max_vd, n_points, precision):
     curve = bezier(control_points, precision)   
 
     return curve
+
+
+def returns_array_pickle(num_maps,array_maps_pickle):
+    sorted_array_pickels = []
+    for i in range(num_maps):
+        n_pickle = np.random.randint(1, len(array_maps_pickle))    
+        sorted_array_pickels.append(array_maps_pickle[n_pickle])
+    return sorted_array_pickels
+
+def compatible_map_with_backg(sorted_array_pickels, background, dir_maps_pickle,threshold):    
+    cont = 0
+    for i in range(len(sorted_array_pickels)):
+        path_map = (f"{dir_maps_pickle}/{sorted_array_pickels[i]}")
+        map_pickle = pickle.load(open(path_map, 'rb'))           
+        vessel_map = map_pickle['vessel_model'].vessel_map 
+        original_map = vessel_map.mapped_values
+        vessel_mask = vessel_map.mapped_mask_values
+        normalized_original_map = normalize(background,original_map,vessel_mask,threshold)            
+        if normalized_original_map is not None:
+            cont += 1                  
+    if cont == len(sorted_array_pickels):
+        background_norm = background
+        return background_norm
+    else:
+        return None
+
+def check_compatible(array_pickles,number_images,array_backrounds, directory_backs,dir_maps_pickle,array_images,array_labels,directory_images,directory_labels,generate,threshold):
+    count_errors = 0
+    vector_dict = []
+    import time
+        
+    for i in range(number_images):
+        n_random = np.random.randint(0, len(array_backrounds))
+        path_img = array_backrounds[n_random]
+        
+        if path_img in array_backrounds:
+            background = np.array(Image.open(f'{directory_backs}/{path_img}'))
+        else:
+            path_name = path_img.replace("'","").replace(".tiff","")
+            label = f'{path_name}.png'
+            if generate:
+                if path_img in array_images and  label in array_labels:
+                     # Measuring the amount of memory used in the creation of the artificial background
+                    tracemalloc.start()
+                    start_time = time.time()
+                    background = estimate_background(np.array(Image.open(f'{directory_images}/{path_name}.tiff')), np.array(Image.open(f'{directory_labels}/{label}')))
+                    end_time = time.time()
+                    _, peak_memory = tracemalloc.get_traced_memory()
+                    execution_time = end_time - start_time
+                    print(f"Took {execution_time} seconds, and the peak memory usage was {peak_memory/1024**3} GBs.")
+                    tracemalloc.stop()
+
+        back =  compatible_map_with_backg(array_pickles, background, dir_maps_pickle,threshold)
+        if back is not None:  
+            dict = {
+                'name': path_img,
+                'back': background,
+            }
+            vector_dict.append(dict)   
+        else:
+            count_errors += 1       
+    print(f"incompatible: {count_errors}")
+    return vector_dict
+
+
+def generate_maps(params):
+    array_maps_pickle = functions.read_directories(params['dir_maps_pickle'])
+    array_images = functions.read_directories(params['dir_images'])
+    array_labels = functions.read_directories(params['dir_labels'])
+    array_backrounds = functions.read_directories(params['dir_backs'])
+    array_traces = functions.read_directories(params['dir_traces'])
+
+    generate = params['generate_back']
+    threshold = params['threshold']
+
+    number_maps = params['num_maps']
+    dir_maps_pickle = params['dir_maps_pickle']
+    directory_backs = params['dir_backs']
+    directory_images = params['dir_images']
+    directory_labels = params['dir_labels']
+    directory_traces =  params['dir_traces']
+    directory_out = params['out_dir']
+    directory_out_images = params['out_dir_images']
+    directory_out_labels = params['out_dir_labels']
+    num_images = params['num_images']
+    min_number_vessels = params['min_number_vessels']
+    max_number_vessels = params['max_number_vessels']    
+
+    array_maps_pickle_sorted = returns_array_pickle(number_maps,array_maps_pickle)       
+
+    vector_backgrounds = check_compatible(array_maps_pickle, num_images,array_backrounds,directory_backs,dir_maps_pickle,array_images,array_labels,directory_images,directory_labels,generate,threshold)   
+
+    none_results = 0
+
+    for j in range(num_images):
+        number_of_vessels = np.random.randint(min_number_vessels, max_number_vessels)        
+        
+        n_background = np.random.randint(0, len(vector_backgrounds))
+        name_background = vector_backgrounds[n_background]['name']
+        background =  vector_backgrounds[n_background]['back']            
+    
+        background_name = name_background.replace("'","").replace(".tiff","")
+
+        clipping_background = background[0:1100,0:1370]
+        background_with_pad = np.pad(clipping_background, ((200,200),(200,200)), mode="symmetric", reflect_type="even")
+        background_bin = np.zeros(background_with_pad.shape)
+
+        background_with_vessels_bin = background_bin.copy()
+        background_with_vessels = background_with_pad.copy()
+
+        has_maps =  np.full(shape = background_with_pad.shape, fill_value=0)
+        has_maps_bin =  np.full(shape = background_bin.shape, fill_value=0)
+
+        counter = 0
+        while counter < number_of_vessels:
+            n_traces = np.random.randint(0, len(array_traces))
+            trace = array_traces[n_traces]    
+            vector_medial_path = return_paths(f"{directory_traces}/{trace}")           
+            results = insert_vessels(vector_medial_path[0], vector_medial_path[1], array_maps_pickle_sorted,dir_maps_pickle,background,30)        
+            if results is not None:
+                vessel_without_artifacts, map_without_artifacts, mask_map, treshold = results  
+                background_with_vessels = insert_map(background_with_vessels,vessel_without_artifacts,map_without_artifacts,mask_map, treshold, has_maps)
+                background_with_vessels_bin = insert_binary_map(background_with_vessels_bin,vessel_without_artifacts,has_maps_bin)
+                counter +=1
+            else:
+                none_results += 1  
+
+        background_clipped = background_with_vessels[200:1304,200:1576]
+        background_clipped_bin = background_with_vessels_bin[200:1304,200:1576]    
+
+        img1 = Image.fromarray(background_clipped.astype(np.uint8))
+        path = f"{directory_out_images}/{background_name}_{j}_with_{number_of_vessels}.tiff"
+        img = img1.save(path)
+
+        img2 = Image.fromarray(background_clipped_bin.astype(np.bool_))
+        path = f"{directory_out_labels}/{background_name}_{j}_with_{number_of_vessels}.tiff"
+        img = img2.save(path)

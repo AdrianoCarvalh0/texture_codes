@@ -11,7 +11,7 @@ sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/Slice_mapper")
 # windows
 #sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules\Slice_mapper")
 
-from Slice_mapper import slice_mapper_util as smutil
+
 from shapely.geometry import Point,LineString
 from PIL import Image
 from scipy import ndimage
@@ -536,8 +536,10 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   if path_pickle is not None:
      path = path_pickle  
   else:     
-    n_random = np.random.randint(0, len(array_pickles))  
+    n_random = np.random.randint(0, (len(array_pickles)-1))  
+    print(f"n_random: {n_random}")
     path = (pickle_dir + f'/{array_pickles[n_random]}') 
+    print(f"path: {path}")
 
   arquivo_pickle = pickle.load(open(path, 'rb')) 
   vessel_map = arquivo_pickle['vessel_model'].vessel_map 
@@ -547,6 +549,7 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   imagem_binaria_sem_artefatos_laterais = retornar_imagem_binaria_sem_artefatos(vessel_map, imagem_binaria_original)
   
   if imagem_binaria_sem_artefatos_laterais is None:
+    print("Erro em imagem binária")
     return None
   
   imagem_binaria_sem_artefatos = fill_holes(imagem_binaria_sem_artefatos_laterais) 
@@ -554,6 +557,7 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   mapa_original_norm = normaliza(back_artif,mapa_original,imagem_binaria_sem_artefatos,treshold)
   
   if mapa_original_norm is None:
+    print(f"Erro na normalização")
     return None
   
   rows, cols = mapa_original.shape  
@@ -590,8 +594,11 @@ def inserir_vasos(array_medial_path, distance, array_pickles,pickle_dir,back_art
   
   rows_art, cols_art = mapa_sem_artefatos.shape
   
-  rows_back, cols_back =back_artif.shape
+  background_with_pad = np.pad(back_artif, ((200,200),(200,200)), mode="symmetric", reflect_type="even")
+
+  rows_back, cols_back =background_with_pad.shape
   if rows_art >= rows_back or cols_art >= cols_back:
+     print(f"colunas ou linhas maiores que o fundo")
      return None
   
   #Vaso binário expandido e rotacionado
