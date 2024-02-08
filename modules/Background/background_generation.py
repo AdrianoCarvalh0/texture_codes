@@ -917,7 +917,7 @@ def generate_maps(params):
         background_name = name_background.replace("'","").replace(".tiff","")
 
         clipping_background = background[0:1100,0:1370]
-        background_with_pad = np.pad(clipping_background, ((200,200),(200,200)), mode="symmetric", reflect_type="even")
+        background_with_pad = np.pad(clipping_background, ((300,300),(300,300)), mode="symmetric", reflect_type="even")
         background_bin = np.zeros(background_with_pad.shape)
 
         background_with_vessels_bin = background_bin.copy()
@@ -940,8 +940,8 @@ def generate_maps(params):
             else:
                 none_results += 1  
 
-        background_clipped = background_with_vessels[200:1304,200:1576]
-        background_clipped_bin = background_with_vessels_bin[200:1304,200:1576]    
+        background_clipped = background_with_vessels[300:1404,300:1676]
+        background_clipped_bin = background_with_vessels_bin[300:1404,300:1676]    
 
         img1 = Image.fromarray(background_clipped.astype(np.uint8))
         path = f"{directory_out_images}/{background_name}_{j}_with_{number_of_vessels}.tiff"
