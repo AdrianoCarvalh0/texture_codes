@@ -693,7 +693,7 @@ def insert_vessels(medial_path_array, distance, pickles_array, pickle_dir, back_
     # Get dimensions of the map without artifacts
     rows_art, cols_art = map_without_artifacts.shape
 
-    background_with_pad = np.pad(back_artifact, ((200,200),(200,200)), mode="symmetric", reflect_type="even")
+    background_with_pad = np.pad(back_artifact, ((300,300),(300,300)), mode="symmetric", reflect_type="even")
 
     rows_back, cols_back =background_with_pad.shape
     
@@ -931,7 +931,7 @@ def generate_maps(params):
             n_traces = np.random.randint(0, len(array_traces))
             trace = array_traces[n_traces]    
             vector_medial_path = return_paths(f"{directory_traces}/{trace}")           
-            results = insert_vessels(vector_medial_path[0], vector_medial_path[1], array_maps_pickle_sorted,dir_maps_pickle,background,30)        
+            results = insert_vessels(vector_medial_path[0], vector_medial_path[1], array_maps_pickle_sorted,dir_maps_pickle,background_with_pad,threshold)        
             if results is not None:
                 vessel_without_artifacts, map_without_artifacts, mask_map, treshold = results  
                 background_with_vessels = insert_map(background_with_vessels,vessel_without_artifacts,map_without_artifacts,mask_map, treshold, has_maps)

@@ -22,13 +22,13 @@ if __name__ == '__main__':
     #Gerar as curvas de bezier dentro do algoritmo - tamanho setado pelo cliente - distancia entre o ponto 1 e ponto 2, numero de pontos, max_vd, 
     parameters ={
         'dir_maps_pickle': f'{root_dir}/Vessel_models_pickle',
-        'num_maps': 1,  # number of maps to be inserted
-        'num_images': 5,  # number of images desired
+        'num_maps': 30,  # number of maps to be inserted
+        'num_images': 50,  # number of images desired
         'dir_backs': f'{root_dir}/Background/Artificially_generated_maps',  # background's directory
         'dir_images': f'{root_dir}/Images/vessel_data/images',  # original images directory
         'dir_labels': f'{root_dir}/Images/vessel_data/labels_20x',  # label directory
         'dir_traces': f'{root_dir}/Artificial_lines/bezier_traces',  # directory of traces - Bezier curves
-        'generate_back': False,  # whether to generate background images
+        'generate_back': True,  # whether to generate background images
         'out_dir': f'{root_dir}/Images/Background_with_vessels_tests',  # output directory
         'out_dir_images': f'{root_dir}/Images/Background_with_vessels_tests/images',  # output directory of images
         'out_dir_labels': f'{root_dir}/Images/Background_with_vessels_tests/labels',  # output directory of labels        
