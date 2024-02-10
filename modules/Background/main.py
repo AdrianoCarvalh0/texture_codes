@@ -21,20 +21,20 @@ if __name__ == '__main__':
     #Aumentar o limiar para testar se fica compatível no máximo valor
     #Gerar as curvas de bezier dentro do algoritmo - tamanho setado pelo cliente - distancia entre o ponto 1 e ponto 2, numero de pontos, max_vd, 
     parameters ={
-        'dir_maps_pickle': f'{root_dir}/Vessel_models_pickle',
-        'num_maps': 30,  # number of maps to be inserted
-        'num_images': 50,  # number of images desired
+        'dir_maps_pickle': f'{root_dir}/Training_validation/Maps/5_maps_5_images/pack2',
+        'num_maps': 5,  # number of maps to be inserted
+        'num_images': 100,  # number of images desired
         'dir_backs': f'{root_dir}/Background/Artificially_generated_maps',  # background's directory
         'dir_images': f'{root_dir}/Images/vessel_data/images',  # original images directory
         'dir_labels': f'{root_dir}/Images/vessel_data/labels_20x',  # label directory
         'dir_traces': f'{root_dir}/Artificial_lines/bezier_traces',  # directory of traces - Bezier curves
         'generate_back': True,  # whether to generate background images
         'out_dir': f'{root_dir}/Images/Background_with_vessels_tests',  # output directory
-        'out_dir_images': f'{root_dir}/Images/Background_with_vessels_tests/images',  # output directory of images
-        'out_dir_labels': f'{root_dir}/Images/Background_with_vessels_tests/labels',  # output directory of labels        
-        'min_number_vessels': 1,  # minimum number of vessels
-        'max_number_vessels': 3,  # maximum number of vessels
-        'threshold': 33,  # parameter that defines the threshold between the differences of the map background and the overall background
+        'out_dir_images': f'{root_dir}/Training_validation/Artificial_images/Generated_from_5_maps/pack2/images',  # output directory of images
+        'out_dir_labels': f'{root_dir}/Training_validation/Artificial_images/Generated_from_5_maps/pack2/labels',  # output directory of labels        
+        'min_number_vessels': 20,  # minimum number of vessels
+        'max_number_vessels': 50,  # maximum number of vessels
+        'threshold': 30,  # parameter that defines the threshold between the differences of the map background and the overall background
         
         # Bezier Curves parameters
         'max_distance': 500,  # maximum distance where control points will be randomly drawn. Example: 1 generates straight lines.
@@ -45,6 +45,6 @@ if __name__ == '__main__':
         'number_points': 25,  # determine the number of random points to be generated
         'min_len_trace': 500,  # minimum distance between the initial and final points
         'max_len_trace': 1300,  # maximum distance between the initial and final points
-        'padding': 50,  # padding used to ensure that the trace does not exceed the size of the background
+        'padding': 60,  # padding used to ensure that the trace does not exceed the size of the background
     }
     backgen.generate_maps(parameters)
