@@ -2,7 +2,6 @@ from pathlib import Path
 import pickle
 import numpy as np
 import sys
-from matplotlib import pyplot as plt
 import functions
 
 # linux
@@ -24,8 +23,7 @@ dictionary_vector = []
 
 for i in range(len(pickle_vector)):
     
-    pickle_path = (pickle_dir_50 + f'/{pickle_vector[i]}')
-    print(pickle_path)
+    pickle_path = (pickle_dir_50 + f'/{pickle_vector[i]}')   
 
     pickle_file = pickle.load(open(pickle_path, 'rb')) 
     vessel_map = pickle_file['vessel_model'].vessel_map 

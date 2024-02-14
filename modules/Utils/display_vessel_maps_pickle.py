@@ -2,13 +2,13 @@ import sys, pickle
 from matplotlib import pyplot as plt
 from pathlib import Path
 
-# linux
-sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
-root_dir = f"/home/adriano/projeto_mestrado/modules"
+# Linux
+#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+#root_dir = f"/home/adriano/projeto_mestrado/modules"
 
-# path windows
-#sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
-#root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+# Windows
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 from Utils import functions
 

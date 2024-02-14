@@ -6,16 +6,16 @@ from pathlib import Path
 from PIL import Image
 from matplotlib import pyplot as plt
 import geopandas as gpd
+
+# Linux  
+#root_dir = f"/home/adriano/projeto_mestrado/modules"
+#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+
+# Windows  
+root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+
 from Background import background_generation as backgen
-from modules.Utils import functions
-
-# Linux root directory
-root_dir = f"/home/adriano/projeto_mestrado/modules"
-sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/Slice_mapper")
-
-# Windows root directory
-#root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
-#sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 img_dir = f'{root_dir}/Images/vessel_data/images'
 
@@ -35,9 +35,9 @@ rows, cols = original_map.shape[0], original_map.shape[1]
 
 height = (rows / 2)
 
-file_path = f'{root_dir}/Artificial_Lines/tracados_bezier_maiores/img_savedata_13.json'
+file_path = f'{root_dir}/Artificial_lines/bezier_traces/img_savedata_13.json'
 
-background_path = f'{root_dir}/Background/Mapas_gerados_artificialmente/{background_path}.tiff'
+background_path = f'{root_dir}/Background/Artificially_generated_maps/{background_path}.tiff'
 background = np.array(Image.open(f'{background_path}'))
 
 medial_path = backgen.return_paths(file_path)
@@ -67,7 +67,7 @@ img_proper, img_out, new_src, new_dst, tform_out, translation, new_origin = back
 tri = tform_out._tesselation
 tri_inv = tform_out._inverse_tesselation
 
-plt.figure(figsize=[100, 80])
+plt.figure(figsize=[20, 14])
 ax = plt.subplot(121)
 plt.imshow(img_proper, 'gray')
 x, y = tri.points.T

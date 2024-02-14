@@ -1,8 +1,12 @@
 import numpy as np
 
 class ImageProperties:
+    '''
+        Stores image properties
+    '''
 
     def __init__(self, py_type):
+        # Initializes class attributes
         self.py_type = py_type
         self.numpy_dtype = None
         self.shape = None
@@ -13,7 +17,8 @@ class ImageProperties:
         self.num_unique = None
 
     def __str__(self):
-        err = 'Not recognized'
+        err = 'Not recognized'  # Default error message
+        # Creates a string representing image properties
         str_data = f'Type:\t\t{self.py_type}\n'
         if self.numpy_dtype is None:
             str_data += f'Numpy type:\t{err}\n'
@@ -53,8 +58,10 @@ class ImageProperties:
         return str_data
 
 def props(img, name=''):
-
+    '''Display image properties'''
+    # Checks the image type
     img_type = type(img)
+    # Creates an instance of ImageProperties with the image type
     imgp = ImageProperties(img_type)
 
     # Convert to numpy
@@ -69,7 +76,7 @@ def props(img, name=''):
         shape = img.shape
         imgp.numpy_dtype = dtype
         imgp.shape = shape
-        # Check if array contains objects
+        # Checks if the array contains objects
         if not dtype.hasobject:
             min_val, max_val = np.min(img), np.max(img)
             imgp.min_val = min_val
@@ -92,7 +99,7 @@ def props(img, name=''):
         print(warnings)
 
 def _checks(img):
-
+    ''' Checks image properties'''
     shape = img.shape
     ndim = img.ndim
     min_size = min(shape)

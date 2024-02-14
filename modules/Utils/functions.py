@@ -1,8 +1,14 @@
-import os, sys, json
+import os, json
 import sys
-import time
-import tracemalloc
-sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+from pathlib import Path
+import numpy as np
+#windows
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+
+#linux
+#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/")
+#root_dir = f"/home/adriano/projeto_mestrado/modules"
 
 def read_directories(directory, img=None):
     # Get a list of filenames in the specified directory
@@ -28,17 +34,45 @@ def write_dict_to_file(dictionary, filename):
     list_of_lists = [item.tolist() for item in array_list]  
     json.dump(list_of_lists, open(filename, 'w'), indent=2)
 
-def measure_time_memory(description, function):
-    # Start tracing memory usage
-    tracemalloc.start()
-    start_time = time.time()
-    
-    # Execute the specified function
-    function()
-    
-    end_time = time.time()
-    _, peak_memory = tracemalloc.get_traced_memory()
-    execution_time = end_time - start_time
+def add_gaussian_noise(image, mean=0, sigma=50):
+    """
+    Adds Gaussian noise to an image.
 
-    print(f"{description} took {execution_time} seconds, and the peak memory usage was {peak_memory/1024**3} GBs.")
-    tracemalloc.stop()
+    Parameters:
+    - image: input image (numpy array).
+    - mean: mean of the Gaussian distribution (default: 0).
+    - sigma: standard deviation of the Gaussian distribution (default: 25).
+
+    Returns:
+    - Image with Gaussian noise.
+    """
+    row, col = image.shape
+    gauss = np.random.normal(mean, sigma, (row, col))
+    noisy = image + gauss
+    return np.clip(noisy, 0, 255).astype(np.uint8)
+
+def add_salt_and_pepper_noise(image, salt_prob=0.01, pepper_prob=0.01):   
+    """
+    Adds salt and pepper noise to an image.
+
+    Parameters:
+    - image: input image (numpy array).
+    - salt_prob: probability of salt pixels (white).
+    - pepper_prob: probability of pepper pixels (black).
+
+    Returns:
+    - Image with salt and pepper noise.
+    """
+    
+    row, col = image.shape
+    noisy = np.copy(image)
+
+    # Adds salt noise
+    salt_pixels = np.random.rand(row, col) < salt_prob
+    noisy[salt_pixels] = 255
+
+    # Adds pepper noise
+    pepper_pixels = np.random.rand(row, col) < pepper_prob
+    noisy[pepper_pixels] = 0
+
+    return noisy.astype(np.uint8)

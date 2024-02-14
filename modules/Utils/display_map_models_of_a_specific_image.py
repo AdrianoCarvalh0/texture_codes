@@ -5,24 +5,20 @@ from matplotlib import pyplot as plt
 import numpy as np
 from PIL import Image
 
-# Path for Linux
-sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+#windows
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
-# Path for Windows
-# sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+#linux
+#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/")
+#root_dir = f"/home/adriano/projeto_mestrado/modules"
 
-from modules.Utils import functions
-from Background import background_generation as backgen
+from Utils import functions
 
-# Root directory for Linux
-root_dir = "/home/adriano/projeto_mestrado/modules"
-
-# Root directory for Windows
-# root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 # Specific image name
 specific_image = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@41-Image 3-20X'
-pickle_directory = f'{root_dir}/Vessel_Models_pickle/'
+pickle_directory = f'{root_dir}/Vessel_models_pickle/'
 array_pickles = functions.read_directories(pickle_directory, img=specific_image)
 
 # Sort the array of pickle files

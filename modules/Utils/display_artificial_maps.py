@@ -14,15 +14,15 @@ root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 # Image file names for different backgrounds with vessels
 background1 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@75-Image 3-20X_21_com_49.tiff'
-background2 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@74-Image 1-20X_32_com_20.tiff'
+background2 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@41-Image 2-20X_8_with_36.tiff'
 background3 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 1-20X_39_com_49.tiff'
 background4 = 'T-3 Weeks@Females@397 F@397-stroke-middle-20X-03_22_com_20.tiff'
 
 # Directories for artificial images generated from different numbers of maps
-train_dir1 = 'Training_validation/Artificial_Images\Generated_from_1_map\pack5\artificial_images'
-train_dir2 = 'Training_validation/Artificial_Images\Generated_from_5_maps\artificial_images'
-train_dir3 = 'Training_validation/Artificial_Images\Generated_from_10_maps\artificial_images'
-train_dir4 = 'Training_validation/Artificial_Images\Generated_from_160_maps\artificial_images'
+train_dir1 = 'Training_validation/Artificial_images/Generated_from_1_map/pack5/images'
+train_dir2 = 'Training_validation/Artificial_images/Generated_from_5_maps/pack4/images'
+train_dir3 = 'Training_validation/Artificial_images/Generated_from_10_maps/images'
+train_dir4 = 'Training_validation/Artificial_images/Generated_from_160_maps/images'
 
 # Load images with vessels from different backgrounds and directories
 background_with_vessels1 = np.array(Image.open(f'{root_dir}/{train_dir1}/{background1}'))

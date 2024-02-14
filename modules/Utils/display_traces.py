@@ -10,7 +10,7 @@ from pathlib import Path
 sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
-bezier_traces_tests = f'{root_dir}/Artificial_Lines/bezier_traces_tests/'
+bezier_traces_tests = f'{root_dir}/Artificial_lines/bezier_traces/'
 
 filenames = []
 for filename in os.listdir(bezier_traces_tests):
