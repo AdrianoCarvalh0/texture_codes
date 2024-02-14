@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     image = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 4-20X'
 
-    file_path = f'{root_dir}/Extracted_json_vectors/novos/{image}.json'
+    file_path = f'{root_dir}/Extracted_json_vectors/{image}.json'
 
     image_path = f'{root_dir}/Images/vessel_data/images/{image}.tiff'
 

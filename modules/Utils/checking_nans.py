@@ -22,6 +22,7 @@ pickle_vector = functions.read_directories(pickle_dir_50)
 dictionary_vector = []
 
 for i in range(len(pickle_vector)):
+    '''Checks and displays null rows or columns'''
     
     pickle_path = (pickle_dir_50 + f'/{pickle_vector[i]}')   
 

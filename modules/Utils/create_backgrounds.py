@@ -29,6 +29,7 @@ filenames.sort()
 amounts = 100
 
 for i in range(amounts):
+    '''Creates and saves as many backgrounds as set'''
     
     img = np.array(Image.open(img_dir / f'{filenames[i]}.tiff'))
     label = np.array(Image.open(lab_dir / f'{filenames[i]}.png'))
@@ -41,7 +42,7 @@ for i in range(amounts):
 
     # Calling the function that creates the backgrounds
     generated_background = backgen.estimate_background(img, label)
-    background_name = f'{root_dir}/Background/Artificially_generated_maps/teste/{filenames[i]}.tiff'
+    background_name = f'{root_dir}/Background/Artificially_generated_maps/{filenames[i]}.tiff'
     
     # Converting to Pillow Image
     background_image = Image.fromarray(generated_background)
