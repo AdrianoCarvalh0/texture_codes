@@ -5,17 +5,17 @@ import pickle
 import vessel_statistics as vs
 
 # linux
-sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
-root_dir = f"/home/adriano/projeto_mestrado/modules"
+#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
+#root_dir = f"/home/adriano/projeto_mestrado/modules"
 
 # windows
-#sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
-#root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 
 if __name__ == '__main__':
 
-    pickle_dir = f'{root_dir}/Vessel_Models_pickle'
+    pickle_dir = f'{root_dir}/Vessel_models_pickle'
 
     # Retrieve file names and the number of items in the directory
     nom, tam = vs.ready_directory(pickle_dir)

@@ -1,4 +1,4 @@
-import sys
+import sys,pickle
 
 # Linux path
 # sys.path.insert(0, "/home/adriano/projeto_mestrado/modules")
@@ -11,6 +11,9 @@ import matplotlib.pyplot as plt
 import json
 from Slice_mapper import slice_mapper as slice_mapper
 from PIL import Image
+
+from Utils import functions
+
 
 # reads a file and returns an array of the file data
 # The array is in column/row format. The code that performs the extraction writes in column/row format
@@ -158,7 +161,6 @@ def resize_image(paths, image_path):
     return img1, translated_paths, first_point
 
 
-
 def generate_vessel_cross(img, trans_paths_0, trans_paths_1, range_value, delta_eval=1., smoothing=0.01):
     """Function that creates the vessel model and transversal paths.
 
@@ -206,7 +208,6 @@ def plot_figure(img, vessel_model, cross_paths):
         2 - values mapped in the standard range, from 0 to 255
         3 - values mapped between the minimum 0 and maximum in the values found in the mapping
     """
-
     vessel_map = vessel_model.vessel_map
 
     # Plotting using slice_mapper.plot_model
@@ -243,5 +244,59 @@ def plot_figure(img, vessel_model, cross_paths):
     plt.plot(vessel_map.path1_mapped, c='green')
     plt.plot(vessel_map.path2_mapped, c='green')
     plt.axis('off')
+
+def generate_vessel_models(params):
+    '''Function that reads all .json files and transforms them into a vessel model 
+       by writing to a folder designated as the output directory
+    
+    Parameters:
+    -----------
+    params['dir_json']: text
+        Directory of jscon vectors 
+    params['dir_images']: text
+        Directory of original images
+    params['out_dir_save_data']: text
+        Output directory of save data 
+
+    Returns:
+    -----------
+        Plots the vessel models and maps created and also saves the vessel models
+        in .pickle files within the defined output directory    
+    '''
+    root_json = params['dir_json']
+    root_imgs = params['dir_images']
+    root_out = params['out_dir_save_data']
+    
+    json_array = functions.read_directories(root_json,exclude_json='yes')
+
+    for i in range(len(json_array)):
+
+        path = f"{json_array[i].replace('.json','')}"
+
+        file_path = f'{root_json}/{path}.json'
+
+        image_path = f'{root_imgs}/{path}.tiff'
+
+        # retrieve the file and store it in an array
+        array_path = return_paths(file_path)
+
+        # read the image
+        img = np.array(Image.open(image_path))
+
+        # get the integer half of the vector
+        half_array = len(array_path) // 2
+
+        x = 0
+        for i in range(half_array):
+            img, translated_paths, first_point = resize_image(array_path[x:x+2], image_path)
+            range_value = set_range(array_path[0], array_path[1])
+            vessel_model, cross_section = generate_vessel_cross(img, translated_paths[0], translated_paths[1], range_value)
+            plot_figure(img, vessel_model, cross_section)
+
+            # section to save the .pickle file
+            data_dump = {"img_file": image_path, "vessel_model": vessel_model, "primeiro_ponto": first_point}
+            save_data = f'{root_out}/{path}_savedata{i}.pickle'
+            pickle.dump(data_dump, open(save_data, "wb"))
+            x += 2
 
     

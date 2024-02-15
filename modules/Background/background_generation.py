@@ -765,8 +765,7 @@ def create_points(num_points, pad, n_rows, n_columns, min_len, max_len):
     distance: float
         stores the value of the distance between the initial and final points
     """
-    # element used to avoid exceeding the boundary
-   
+    # element used to avoid exceeding the boundary  
 
     points = []
     while len(points) < num_points:
@@ -878,28 +877,35 @@ def check_compatible(array_pickles,number_images,array_backrounds, directory_bac
     return vector_dict
 
 
-def generate_maps(params):
+def generate_backgrounds_with_vessels(params):
     array_maps_pickle = functions.read_directories(params['dir_maps_pickle'])
     array_images = functions.read_directories(params['dir_images'])
     array_labels = functions.read_directories(params['dir_labels'])
-    array_backrounds = functions.read_directories(params['dir_backs'])
-    array_traces = functions.read_directories(params['dir_traces'])
-
+    array_backrounds = functions.read_directories(params['dir_backs'])  
+    
     generate = params['generate_back']
     threshold = params['threshold']
-
     number_maps = params['num_maps']
     dir_maps_pickle = params['dir_maps_pickle']
     directory_backs = params['dir_backs']
     directory_images = params['dir_images']
-    directory_labels = params['dir_labels']
-    directory_traces =  params['dir_traces']
-    directory_out = params['out_dir']
+    directory_labels = params['dir_labels']      
     directory_out_images = params['out_dir_images']
     directory_out_labels = params['out_dir_labels']
     num_images = params['num_images']
     min_number_vessels = params['min_number_vessels']
-    max_number_vessels = params['max_number_vessels']    
+    max_number_vessels = params['max_number_vessels']
+
+     #parameters of curve Bezier
+    max_distance = params['max_distance']
+    control_points = params['control_points']
+    precision = params['precision']
+    min_len_trace = params['min_len_trace']
+    max_len_trace = params['max_len_trace']
+    number_points = params['number_points']
+    padding = params['padding']
+    number_cols = params['number_cols']
+    number_rows = params['number_rows'] 
 
     array_maps_pickle_sorted = returns_array_pickle(number_maps,array_maps_pickle)       
 
@@ -928,13 +934,12 @@ def generate_maps(params):
 
         counter = 0
         while counter < number_of_vessels:
-            n_traces = np.random.randint(0, len(array_traces))
-            trace = array_traces[n_traces]    
-            vector_medial_path = return_paths(f"{directory_traces}/{trace}")           
-            results = insert_vessels(vector_medial_path[0], vector_medial_path[1], array_maps_pickle_sorted,dir_maps_pickle,background_with_pad,threshold)        
+            points, distance = create_points(number_points, padding, number_rows, number_cols, min_len_trace, max_len_trace)
+            curve = create_curve(points, max_distance, control_points, precision)         
+            results = insert_vessels(curve, distance, array_maps_pickle_sorted,dir_maps_pickle,background,threshold)           
             if results is not None:
-                vessel_without_artifacts, map_without_artifacts, mask_map, treshold = results  
-                background_with_vessels = insert_map(background_with_vessels,vessel_without_artifacts,map_without_artifacts,mask_map, treshold, has_maps)
+                vessel_without_artifacts, map_without_artifacts, mask_map, threshold = results  
+                background_with_vessels = insert_map(background_with_vessels,vessel_without_artifacts,map_without_artifacts,mask_map, threshold, has_maps)
                 background_with_vessels_bin = insert_binary_map(background_with_vessels_bin,vessel_without_artifacts,has_maps_bin)
                 counter +=1
             else:

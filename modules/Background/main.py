@@ -26,10 +26,8 @@ if __name__ == '__main__':
         'num_images': 100,  # number of images desired
         'dir_backs': f'{root_dir}/Background/Artificially_generated_maps',  # background's directory
         'dir_images': f'{root_dir}/Images/vessel_data/images',  # original images directory
-        'dir_labels': f'{root_dir}/Images/vessel_data/labels_20x',  # label directory
-        'dir_traces': f'{root_dir}/Artificial_lines/bezier_traces',  # directory of traces - Bezier curves
-        'generate_back': True,  # whether to generate background images
-        'out_dir': f'{root_dir}/Images/Background_with_vessels_tests',  # output directory
+        'dir_labels': f'{root_dir}/Images/vessel_data/labels_20x',  # label directory       
+        'generate_back': True,  # whether to generate background images       
         'out_dir_images': f'{root_dir}/Training_validation/Artificial_images/Generated_from_5_maps/pack2/images',  # output directory of images
         'out_dir_labels': f'{root_dir}/Training_validation/Artificial_images/Generated_from_5_maps/pack2/labels',  # output directory of labels        
         'min_number_vessels': 20,  # minimum number of vessels
@@ -47,4 +45,4 @@ if __name__ == '__main__':
         'max_len_trace': 1300,  # maximum distance between the initial and final points
         'padding': 60,  # padding used to ensure that the trace does not exceed the size of the background
     }
-    backgen.generate_maps(parameters)
+    backgen.generate_backgrounds_with_vessels(parameters)

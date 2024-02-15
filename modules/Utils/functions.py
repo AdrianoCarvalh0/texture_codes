@@ -10,7 +10,7 @@ root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 #sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/")
 #root_dir = f"/home/adriano/projeto_mestrado/modules"
 
-def read_directories(directory, img=None):
+def read_directories(directory, img=None, exclude_json=None):
     # Get a list of filenames in the specified directory
     filenames = []
     for filename in os.listdir(directory):
@@ -18,6 +18,8 @@ def read_directories(directory, img=None):
             # If 'img' is provided, filter filenames containing it
             if img in filename:   
                 filenames.append(filename)
+        elif exclude_json is not None:
+            filenames.append(filename.replace('.json',''))     
         else:
             filenames.append(filename)    
     return filenames
