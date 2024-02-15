@@ -12,6 +12,7 @@ from skimage import draw
 from scipy import ndimage
 import re
 
+
 def record_vector_file(array_list, filename):
   """Function to write an array to a JSON file"""
   array = [item.tolist() for item in array_list]
@@ -152,121 +153,121 @@ def extract_intensities(img, shape_type, coords, flat=True):
 
     return img_roi
 
-# Annotation style for drawing on image
-annotation_style = {
-    'line_color': 'red',
-    'line_width': 2,
-    'fillcolor': 'red',
-    'opacity':1,
-}
 
-image = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 4-20X'
+def generate_dash(params):
 
-#root_dir linux
-#root_dir ="/home/adriano/projeto_mestrado/modules"
+    image = params['image']
+    root_img = params['root_img']   # original images directory
+    root_out = params['root_out']  # Path where the JSON file will be saved  
+    list_array = params['list_array']  # array that will store the coordinates resulting from manual marking  
+    
+    # Annotation style for drawing on image
+    annotation_style = {
+        'line_color': 'red',
+        'line_width': 2,
+        'fillcolor': 'red',
+        'opacity':1,
+    }
 
-#root_dir windows
-root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+    # Path where the JSON file will be saved
+    file = f'{root_out}/{image}.json'
 
-# Path where the JSON file will be saved
-file = f'{root_dir}/Extracted_json_vectors/novos/{image}.json'
+    # path of the image to be read
+    path = f'{root_img}/{image}.tiff'
 
-# path of the image to be read
-path = f'{root_dir}/Images/vessel_data/images/{image}.tiff'
+    # converting image to numpy array
+    img = np.array(Image.open(path))
 
-# converting image to numpy array
-img = np.array(Image.open(path))
+    # Initial image setup in Plotly Express
+    fig = px.imshow(img, color_continuous_scale='gray', zmin=0, zmax=100,
+            binary_string=True, binary_compression_level=0)
+    fig.update_layout(dragmode="drawopenpath", coloraxis_showscale=False,
+                newshape=annotation_style, height=1000, hovermode=False)
 
-# Initial image setup in Plotly Express
-fig = px.imshow(img, color_continuous_scale='gray', zmin=0, zmax=100,
-        binary_string=True, binary_compression_level=0)
-fig.update_layout(dragmode="drawopenpath", coloraxis_showscale=False,
-            newshape=annotation_style, height=1000, hovermode=False)
+    # Configure tooltip
+    fig.update_traces(hovertemplate="x: %{x} <br> y: %{y} <br> z: %{z} <br> color: %{color}")
 
-# Configure tooltip
-fig.update_traces(hovertemplate="x: %{x} <br> y: %{y} <br> z: %{z} <br> color: %{color}")
+    # Initial histogram
+    fig_hist = px.histogram(img.ravel(), height=700)
 
-# Initial histogram
-fig_hist = px.histogram(img.ravel(), height=700)
+    # Dash Settings
+    config = {
+        # Toolbar buttons
+        "modeBarButtonsToAdd": [
+            "drawline",
+            "drawopenpath",
+            "drawclosedpath",
+            "drawcircle",
+            "drawrect",
+            "eraseshape",
+        ],
+        'displayModeBar': True,
+        'displaylogo': False,
+    }
 
-# Dash Settings
-config = {
-    # Toolbar buttons
-    "modeBarButtonsToAdd": [
-        "drawline",
-        "drawopenpath",
-        "drawclosedpath",
-        "drawcircle",
-        "drawrect",
-        "eraseshape",
-    ],
-    'displayModeBar': True,
-    'displaylogo': False,
-}
+    # Dash Components
+    dash_graph = dcc.Graph(id="graph-picture", figure=fig, config=config)
 
-# Dash Components
-dash_graph = dcc.Graph(id="graph-picture", figure=fig, config=config)
+    # Instantiates an app object of the JupyterDash class
+    app = JupyterDash(__name__)
 
-# Instantiates an app object of the JupyterDash class
-app = JupyterDash(__name__)
+    # Dash information, title, screen size
+    app.layout = html.Div(
+        [
+            html.H3("Drag a rectangle to show the histogram of the ROI"),
+            html.Div(
+                [dash_graph,],
+                style={"width": "60%", "display": "inline-block", "padding": "0 0"},
+            ),
+            html.Div(
+                [dcc.Graph(id="histogram", figure=fig_hist),],
+                style={"width": "40%", "display": "inline-block", "padding": "0 0"},
+            ),
+            dcc.Markdown("Characteristics of shapes"),
+            html.Pre(id="annotations-data"),  # For debugging
+        ]
+    )
 
-# Dash information, title, screen size
-app.layout = html.Div(
-    [
-        html.H3("Drag a rectangle to show the histogram of the ROI"),
-        html.Div(
-            [dash_graph,],
-            style={"width": "60%", "display": "inline-block", "padding": "0 0"},
-        ),
-        html.Div(
-            [dcc.Graph(id="histogram", figure=fig_hist),],
-            style={"width": "40%", "display": "inline-block", "padding": "0 0"},
-        ),
-        dcc.Markdown("Characteristics of shapes"),
-        html.Pre(id="annotations-data"),  # For debugging
-    ]
-)
+    shapes = []
 
-shapes = []
+    @app.callback(
+        Output("histogram", "figure"),
+        Output("annotations-data", "children"),
+        Input("graph-picture", "relayoutData"),
+        prevent_initial_call=True,
+    )
+    def on_new_annotation(relayout_data):
 
-@app.callback(
-    Output("histogram", "figure"),
-    Output("annotations-data", "children"),
-    Input("graph-picture", "relayoutData"),
-    prevent_initial_call=True,
-)
-def on_new_annotation(relayout_data):
+        if "shapes" in relayout_data and len(relayout_data['shapes'])>0:        
+            #A shape has been drawn in the figure
+            last_shape = relayout_data["shapes"][-1]
+            shape_type, coords = process_shape(last_shape)
 
-    if "shapes" in relayout_data and len(relayout_data['shapes'])>0:        
-        #A shape has been drawn in the figure
-        last_shape = relayout_data["shapes"][-1]
-        shape_type, coords = process_shape(last_shape)
+            # Adds shapes, storing type and coordinates
+            shapes.append({'type':shape_type, 'coords':coords})
 
-        # Adds shapes, storing type and coordinates
-        shapes.append({'type':shape_type, 'coords':coords})
+            # Add coordinates to an array
+            list_array.append(coords)
 
-        # Add coordinates to an array
-        list_array.append(coords)
+            #Writes the array to a .json file
+            record_vector_file(list_array, file)
+            
+            # Extracts the intensities to pass to the histogram
+            img_roi = extract_intensities(img, shape_type, coords)
 
-        #Writes the array to a .json file
-        record_vector_file(list_array, file)
+            return px.histogram(img_roi), json.dumps(relayout_data['shapes'], indent=2)
+
+        elif any([re.match(r'shapes\[\d+\]\.', key) is not None for key in relayout_data]): 
+            # Finds Strings like `shapes[3].x0` or `shapes[5].path`
+
+            shape_type, coords = process_shape_update(relayout_data)
+            img_roi = extract_intensities(img, shape_type, coords)
+
+            return px.histogram(img_roi), json.dumps(relayout_data, indent=2)
+        else:
+            return (dash.no_update,)*2
         
-        # Extracts the intensities to pass to the histogram
-        img_roi = extract_intensities(img, shape_type, coords)
-
-        return px.histogram(img_roi), json.dumps(relayout_data['shapes'], indent=2)
-
-    elif any([re.match(r'shapes\[\d+\]\.', key) is not None for key in relayout_data]): 
-        # Finds Strings like `shapes[3].x0` or `shapes[5].path`
-
-        shape_type, coords = process_shape_update(relayout_data)
-        img_roi = extract_intensities(img, shape_type, coords)
-
-        return px.histogram(img_roi), json.dumps(relayout_data, indent=2)
-    else:
-        return (dash.no_update,)*2
-
-# Dash app main method. Creates a browser-accessible address for demarcating the vessel(s).
-if __name__ == "__main__":
-    list_array = []
+    # Dash app main method. Creates a browser-accessible address for demarcating the vessel(s).
     app.run_server(mode='external')
+
+
