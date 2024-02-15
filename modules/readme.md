@@ -1,8 +1,5 @@
-# Processo de criação de imagens artificiais
+# Sequência para utilização do código
 
-## Contéudo das pastas
-
-> Annotation ==> Dashboard 
 <br>
 Cria uma interface (Dashboard) onde é possível demarcar um ou mais vasos. Os vasos demarcados vão ser gravados e um arquivo .json que contém as coordendadas dos polígonos demarcados.
 <br>
