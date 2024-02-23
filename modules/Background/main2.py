@@ -23,7 +23,7 @@ if __name__ == '__main__':
     parameters ={
         'dir_maps_pickle': f'{root_dir}/Training_validation/Maps/10_maps_10_images/pack2',
         'num_maps': 10,  # number of maps to be inserted
-        'num_images': 100,  # number of images desired
+        'num_images': 34,  # number of images desired
         'dir_backs': f'{root_dir}/Background/Artificially_generated_maps',  # background's directory
         'dir_images': f'{root_dir}/Images/vessel_data/images',  # original images directory
         'dir_labels': f'{root_dir}/Images/vessel_data/labels_20x',  # label directory       
