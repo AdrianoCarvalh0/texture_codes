@@ -846,8 +846,8 @@ def check_compatible(array_pickles,number_images,array_backrounds, directory_bac
     import time
         
     for i in range(number_images):
-        n_random = np.random.randint(0, len(array_backrounds))
-        path_img = array_backrounds[n_random]
+        #n_random = np.random.randint(0, len(array_backrounds))
+        path_img = array_backrounds[i]
         
         if path_img in array_backrounds:
             background = np.array(Image.open(f'{directory_backs}/{path_img}'))
@@ -918,9 +918,9 @@ def generate_backgrounds_with_vessels(params):
     for j in range(num_images):
         number_of_vessels = np.random.randint(min_number_vessels, max_number_vessels)        
         
-        n_background = np.random.randint(0, len(vector_backgrounds))
-        name_background = vector_backgrounds[n_background]['name']
-        background =  vector_backgrounds[n_background]['back']            
+        #n_background = np.random.randint(0, len(vector_backgrounds))
+        name_background = vector_backgrounds[j]['name']
+        background =  vector_backgrounds[j]['back']            
     
         background_name = name_background.replace("'","").replace(".tiff","")
 
