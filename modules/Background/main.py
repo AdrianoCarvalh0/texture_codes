@@ -21,15 +21,15 @@ if __name__ == '__main__':
     #Aumentar o limiar para testar se fica compatível no máximo valor
     #Gerar as curvas de bezier dentro do algoritmo - tamanho setado pelo cliente - distancia entre o ponto 1 e ponto 2, numero de pontos, max_vd, 
     parameters ={
-        'dir_maps_pickle': f'{root_dir}/Training_validation/Maps/5_maps_5_images/pack2',
+        'dir_maps_pickle': f'{root_dir}/Training_validation/Maps/5_maps_5_images/pack10',
         'num_maps': 5,  # number of maps to be inserted
-        'num_images': 100,  # number of images desired
+        'num_images': 50, # number of images desired
         'dir_backs': f'{root_dir}/Background/Artificially_generated_maps',  # background's directory
         'dir_images': f'{root_dir}/Images/vessel_data/images',  # original images directory
         'dir_labels': f'{root_dir}/Images/vessel_data/labels_20x',  # label directory       
         'generate_back': True,  # whether to generate background images       
-        'out_dir_images': f'{root_dir}/Training_validation/Artificial_images/Generated_from_5_maps/pack2/images',  # output directory of images
-        'out_dir_labels': f'{root_dir}/Training_validation/Artificial_images/Generated_from_5_maps/pack2/labels',  # output directory of labels        
+        'out_dir_images': f'{root_dir}/Training_validation/Artificial_images/Generated_from_5_maps/pack10/images',  # output directory of images
+        'out_dir_labels': f'{root_dir}/Training_validation/Artificial_images/Generated_from_5_maps/pack10/labels',  # output directory of labels
         'min_number_vessels': 20,  # minimum number of vessels
         'max_number_vessels': 50,  # maximum number of vessels
         'threshold': 30,  # parameter that defines the threshold between the differences of the map background and the overall background
