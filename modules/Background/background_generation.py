@@ -643,6 +643,7 @@ def insert_vessels(medial_path_array, distance, pickles_array, pickle_dir, back_
 
     # Return None if binary map without lateral artifacts is None
     if binary_map_without_lateral_artifacts is None:
+        print("Binary NONE")
         return None
 
     # Fill holes in the binary map without lateral artifacts
@@ -653,6 +654,7 @@ def insert_vessels(medial_path_array, distance, pickles_array, pickle_dir, back_
 
     # Return None if normalized map is None
     if normalized_original_map is None:
+        print("normalized_original_map NONE")
         return None
 
     # Get dimensions of the original map
@@ -944,6 +946,7 @@ def generate_backgrounds_with_vessels(params):
                 counter +=1
             else:
                 none_results += 1  
+                print(none_results)
 
         background_clipped = background_with_vessels[300:1404,300:1676]
         background_clipped_bin = background_with_vessels_bin[300:1404,300:1676]    
