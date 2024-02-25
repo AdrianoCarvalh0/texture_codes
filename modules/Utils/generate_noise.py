@@ -27,26 +27,32 @@ noisy_image_salt = functions.add_salt_and_pepper_noise(original_image)
 noisy_image_gauss = functions.add_gaussian_noise(original_image)
 
 # Displaying the original and noisy images
-plt.figure(figsize=(10, 5))
+plt.figure(figsize=(20, 10))
 plt.subplot(1, 2, 1)
-plt.imshow(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB))
+plt.imshow(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB), 'gray', vmin=0, vmax=60)
 plt.title('Original Image')
 plt.axis('off')
 
 plt.subplot(1, 2, 2)
-plt.imshow(cv2.cvtColor(noisy_image_salt, cv2.COLOR_BGR2RGB))
+plt.imshow(cv2.cvtColor(noisy_image_salt, cv2.COLOR_BGR2RGB),'gray', vmin=0, vmax=60)
 plt.title('Image with Salt and Pepper Noise')
 plt.axis('off')
 plt.show()
 
 
-plt.figure(figsize=(10, 5))
-plt.subplot(1, 2, 1)
-plt.imshow(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB))
-plt.title('Original Image')
+plt.figure(figsize=(20, 10))
+
+plt.imshow(original_image,'gray', vmin=0, vmax=155)
 plt.axis('off')
-plt.subplot(1, 2, 2)
-plt.imshow(cv2.cvtColor(noisy_image_gauss, cv2.COLOR_BGR2RGB))
-plt.title('Image with Gaussian Noise')
+plt.plot()
+
+plt.savefig('original.svg', format='svg')
+
+
+
+plt.figure(figsize=(20, 10))
+plt.imshow(noisy_image_gauss,'gray', vmin=0, vmax=155)
+   
 plt.axis('off')
-plt.show()
+plt.plot()
+plt.savefig('noisy_image_gauss.svg', format='svg')

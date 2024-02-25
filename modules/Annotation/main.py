@@ -13,9 +13,9 @@ import annotation as ann
 if __name__ == "__main__":
     list_array = []
     parameters ={
-        'image': 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 4-20X',
+        'image': 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 1-20X',
         'root_img': f'{root_dir}/Images/vessel_data/images',   # original images directory
-        'root_out':  f'{root_dir}/Extracted_json_vectors',  # Path where the JSON file will be saved
+        'root_out':  f'{root_dir}/Extracted_json_vectors/teste',  # Path where the JSON file will be saved
         'list_array': list_array, # array that will store the coordinates resulting from manual marking  
     }
     ann.generate_dash(parameters)

@@ -13,40 +13,42 @@ sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 # Image file names for different backgrounds with vessels
-background1 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@75-Image 3-20X_21_com_49.tiff'
-background2 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@41-Image 2-20X_8_with_36.tiff'
-background3 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@64-Image 1-20X_39_com_49.tiff'
-background4 = 'T-3 Weeks@Females@397 F@397-stroke-middle-20X-03_22_com_20.tiff'
+background1 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 1-20X_77_com_29.tiff'
+background2 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 2-20X_69_com_36.tiff'
+background3 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 2-20X_92_com_41.tiff'
+background4 = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 3-20X_90_com_28.tiff'
 
 # Directories for artificial images generated from different numbers of maps
-train_dir1 = 'Training_validation/Artificial_images/Generated_from_1_map/pack5/images'
-train_dir2 = 'Training_validation/Artificial_images/Generated_from_5_maps/pack4/images'
-train_dir3 = 'Training_validation/Artificial_images/Generated_from_10_maps/images'
-train_dir4 = 'Training_validation/Artificial_images/Generated_from_160_maps/images'
+train_dir = 'Training_validation/Artificial_images/Generated_from_1_map/pack5/images'
+
 
 # Load images with vessels from different backgrounds and directories
-background_with_vessels1 = np.array(Image.open(f'{root_dir}/{train_dir1}/{background1}'))
-background_with_vessels2 = np.array(Image.open(f'{root_dir}/{train_dir2}/{background2}'))
-background_with_vessels3 = np.array(Image.open(f'{root_dir}/{train_dir3}/{background3}'))
-background_with_vessels4 = np.array(Image.open(f'{root_dir}/{train_dir4}/{background4}'))
+background_with_vessels1 = np.array(Image.open(f'{root_dir}/{train_dir}/{background1}'))
+background_with_vessels2 = np.array(Image.open(f'{root_dir}/{train_dir}/{background2}'))
+background_with_vessels3 = np.array(Image.open(f'{root_dir}/{train_dir}/{background3}'))
+background_with_vessels4 = np.array(Image.open(f'{root_dir}/{train_dir}/{background4}'))
 
 # Plot and save the images
 plt.figure(figsize=[10, 10])
-plt.imshow(background_with_vessels1, 'gray', vmin=0, vmax=60)
-plt.savefig('background_with_vessels1.tiff')
+plt.imshow(background_with_vessels1, 'gray', vmin=0, vmax=127)
+plt.savefig('background_with_vessels1.svg', format='svg')
 plt.show()
 
-plt.figure(figsize=[10, 10])
-plt.imshow(background_with_vessels2, 'gray', vmin=0, vmax=60)
-plt.savefig('background_with_vessels2.tiff')
-plt.show()
 
 plt.figure(figsize=[10, 10])
-plt.imshow(background_with_vessels3, 'gray', vmin=0, vmax=60)
-plt.savefig('background_with_vessels3.tiff')
+plt.imshow(background_with_vessels2, 'gray', vmin=0, vmax=127)
+plt.savefig('background_with_vessels2.svg', format='svg')
 plt.show()
 
+
 plt.figure(figsize=[10, 10])
-plt.imshow(background_with_vessels4, 'gray', vmin=0, vmax=60)
-plt.savefig('background_with_vessels4.tiff')
+plt.imshow(background_with_vessels3, 'gray', vmin=0, vmax=127)
+plt.savefig('background_with_vessels3.svg', format='svg')
 plt.show()
+
+
+plt.figure(figsize=[10, 10])
+plt.imshow(background_with_vessels4, 'gray', vmin=0, vmax=127)
+plt.savefig('background_with_vessels4.svg', format='svg')
+plt.show()
+
