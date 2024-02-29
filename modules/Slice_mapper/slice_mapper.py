@@ -650,8 +650,10 @@ def show_interpolated(path_interp, tangents, normals, ax, scale=2., color='blue'
     ax.add_collection(tangents_col)
     ax.add_collection(normals_col)
 
-
+x = 0
 def plot_model(img, vessel_model, cross_paths, ax):
+
+    from matplotlib import pyplot as plt
     """Plotting the image along with the vessel model, with filled lines along the vessel, upper
     and lower, in green, and display of the medial line in red.
 
@@ -687,6 +689,8 @@ def plot_model(img, vessel_model, cross_paths, ax):
                       scale=0.6, color='green')
     show_interpolated(medial_data['interpolated'], medial_data['tangents'], medial_data['normals'], ax,
                       scale=0.6, color='red')
+    
+    #plt.savefig(f'img{x}.svg',format='svg')
 
 
 

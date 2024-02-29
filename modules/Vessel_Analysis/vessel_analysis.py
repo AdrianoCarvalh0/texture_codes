@@ -189,7 +189,7 @@ def generate_vessel_cross(img, trans_paths_0, trans_paths_1, range_value, delta_
 
     return vessel_model, cross_paths
 
-def plot_figure(img, vessel_model, cross_paths):
+def plot_figure(img, vessel_model, cross_paths,i):
     """Function that creates the vessel model and transversal paths.
 
     Parameters:
@@ -217,6 +217,7 @@ def plot_figure(img, vessel_model, cross_paths):
     norm = ax.images[0].norm
     norm.vmin, norm.vmax = 0, 60
     plt.axis('off')    
+    plt.savefig(f'img{i}.svg',format='svg')
 
     # Plotting the mapped values with specified vmin and vmax
     plt.figure(figsize=[12, 10])
@@ -226,6 +227,7 @@ def plot_figure(img, vessel_model, cross_paths):
     plt.plot(vessel_map.path1_mapped, c='green')
     plt.plot(vessel_map.path2_mapped, c='green')
     plt.axis('off')
+    #plt.savefig('img2.svg',format='svg')
 
     # Plotting the mapped values reversed with vmin and vmax
     plt.figure(figsize=[12, 10])
@@ -235,6 +237,9 @@ def plot_figure(img, vessel_model, cross_paths):
     plt.plot(vessel_map.path1_mapped, c='green')
     plt.plot(vessel_map.path2_mapped, c='green')
     plt.axis('off')
+    #plt.savefig('img3.svg',format='svg')
+
+
 
     # Plotting the mapped values with dynamic vmax (max mapped value)
     plt.figure(figsize=[12, 10])
@@ -244,6 +249,7 @@ def plot_figure(img, vessel_model, cross_paths):
     plt.plot(vessel_map.path1_mapped, c='green')
     plt.plot(vessel_map.path2_mapped, c='green')
     plt.axis('off')
+    #plt.savefig('img4.svg',format='svg')
 
 def generate_vessel_models(params):
     '''Function that reads all .json files and transforms them into a vessel model 
@@ -287,16 +293,17 @@ def generate_vessel_models(params):
         half_array = len(array_path) // 2
 
         x = 0
-        for i in range(half_array):
+        for j in range(half_array):
             img, translated_paths, first_point = resize_image(array_path[x:x+2], image_path)
             range_value = set_range(array_path[0], array_path[1])
             vessel_model, cross_section = generate_vessel_cross(img, translated_paths[0], translated_paths[1], range_value)
-            plot_figure(img, vessel_model, cross_section)
+            rand = np.random.randint(0,1000)
+            plot_figure(img, vessel_model, cross_section,rand)
 
             # section to save the .pickle file
-            data_dump = {"img_file": image_path, "vessel_model": vessel_model, "primeiro_ponto": first_point}
-            save_data = f'{root_out}/{path}_savedata{i}.pickle'
-            pickle.dump(data_dump, open(save_data, "wb"))
+            #data_dump = {"img_file": image_path, "vessel_model": vessel_model, "primeiro_ponto": first_point}
+            #save_data = f'{root_out}/{path}_savedata{i}.pickle'
+            #pickle.dump(data_dump, open(save_data, "wb"))
             x += 2
 
     
