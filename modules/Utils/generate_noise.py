@@ -13,8 +13,8 @@ root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 #sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/")
 #root_dir = f"/home/adriano/projeto_mestrado/modules"
 
-root_img = '/Images/vessel_data/images'
-img = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 1-20X.tiff'
+root_img = '/Training_validation/Artificial_images/Generated_from_5_maps/pack1/images/'
+img = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@40-Image 1-20X_81_com_25.tiff'
 
 # Loading the example image (replace 'example.jpg' with the path to your image)
 original_image = cv2.imread(f'{root_dir}/{root_img}/{img}', cv2.IMREAD_GRAYSCALE)
