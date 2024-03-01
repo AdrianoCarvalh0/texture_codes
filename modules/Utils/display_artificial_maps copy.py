@@ -36,14 +36,14 @@ plt.show()
 
 
 plt.figure(figsize=[10, 10])
-plt.imshow(background_with_vessels2, 'gray', vmin=0, vmax=255)
+plt.imshow(background_with_vessels2, 'gray', vmin=0, vmax=189)
 plt.axis('off')
 plt.savefig('background_with_vessels2.svg', format='svg')
 plt.show()
 
 
 plt.figure(figsize=[10, 10])
-plt.imshow(background_with_vessels3, 'gray', vmin=0, vmax=255)
+plt.imshow(background_with_vessels3, 'gray', vmin=0, vmax=189)
 plt.axis('off')
 plt.savefig('background_with_vessels3.svg', format='svg')
 plt.show()

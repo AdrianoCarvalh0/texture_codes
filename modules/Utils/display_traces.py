@@ -26,5 +26,6 @@ for i in range((10)):
     line_offset_left, line_central,line_offset_right, max_valor = backgen.returns_lines_offset_position_size(array_medial_path[0],30)   
     fig, ax2 = plt.subplots(figsize=(10,5))
     gp4 = gpd.GeoSeries([line_offset_left, line_central, line_offset_right])   
-    gp4.plot(ax=ax2, cmap="tab10")   
-    fig.savefig(f'{root_dir}/Artificial_Lines/trace_{i}.svg', format='svg')
+    gp4.plot(ax=ax2, cmap="tab10")
+    plt.axis('off')
+    fig.savefig(f'{root_dir}/Artificial_lines/plots/trace_{i}.svg', format='svg')
