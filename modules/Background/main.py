@@ -21,7 +21,7 @@ if __name__ == '__main__':
     #Aumentar o limiar para testar se fica compatível no máximo valor
     #Gerar as curvas de bezier dentro do algoritmo - tamanho setado pelo cliente - distancia entre o ponto 1 e ponto 2, numero de pontos, max_vd, 
     parameters ={
-        'dir_maps_pickle': f'{root_dir}/Training_validation/Maps/5_maps_5_images/pack10',
+        'dir_maps_pickle': f'{root_dir}/Training_validation/Maps/5_maps_5_images/pack10',  # directory of pickles
         'num_maps': 5,  # number of maps to be inserted
         'num_images': 50, # number of images desired
         'dir_backs': f'{root_dir}/Background/Artificially_generated_maps',  # background's directory
