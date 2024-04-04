@@ -36,7 +36,7 @@ def write_dict_to_file(dictionary, filename):
     list_of_lists = [item.tolist() for item in array_list]  
     json.dump(list_of_lists, open(filename, 'w'), indent=2)
 
-def add_gaussian_noise(image, mean=0, sigma=50):
+def add_gaussian_noise(image, mean=0, sigma=30):
     """
     Adds Gaussian noise to an image.
 
