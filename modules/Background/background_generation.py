@@ -540,20 +540,40 @@ def remove_artifacts(img, mask_map):
 
     return img_without_artifacts
 
-def remove_artifacts2(img, mask_map):
-    # Squeeze the image to 2D
-    img_out_sq = img.squeeze()
+
+def remove_artifacts2(img, mask_map):   
+
+    mask_map = mask_map.squeeze()
 
     # Create an output image with zeros
-    img_without_artifacts = np.zeros(img_out_sq.shape, dtype=np.uint8)
+    img_without_artifacts = np.zeros(img.shape, dtype=np.uint8)
 
     # Iterate through each pixel and copy if the mask is True (white in the boolean image)
     for i in range(img_without_artifacts.shape[0]):
         for j in range(img_without_artifacts.shape[1]):
             if mask_map[i, j] == True:
-                img_without_artifacts[i, j] = img_out_sq[i, j]
+                img_without_artifacts[i, j] = img[i, j]
 
     return img_without_artifacts
+
+def remove_artifacts2(img, mask_map):
+    # Verifique se as entradas são arrays NumPy
+    if not isinstance(img, np.ndarray) or not isinstance(mask_map, np.ndarray):
+        raise TypeError("img e mask_map devem ser arrays NumPy")
+
+    # Verifique se as dimensões das entradas são compatíveis
+    if img.shape != mask_map.shape:
+        raise ValueError("img e mask_map devem ter as mesmas dimensões")
+
+    # Garantir que a máscara seja booleana
+    mask_map = mask_map.astype(bool)
+
+    # Crie a imagem sem artefatos onde os valores fora da máscara são definidos como 0
+    img_without_artifacts = np.zeros_like(img)
+    img_without_artifacts[mask_map] = img[mask_map]
+
+    return img_without_artifacts
+
 
 def normalize(img_background, img_map, vessel_mask, threshold):
     # Flatten intensity values of the background image and the map image outside the vessel mask
