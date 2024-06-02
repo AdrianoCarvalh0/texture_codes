@@ -540,6 +540,21 @@ def remove_artifacts(img, mask_map):
 
     return img_without_artifacts
 
+def remove_artifacts2(img, mask_map):
+    # Squeeze the image to 2D
+    img_out_sq = img.squeeze()
+
+    # Create an output image with zeros
+    img_without_artifacts = np.zeros(img_out_sq.shape, dtype=np.uint8)
+
+    # Iterate through each pixel and copy if the mask is True (white in the boolean image)
+    for i in range(img_without_artifacts.shape[0]):
+        for j in range(img_without_artifacts.shape[1]):
+            if mask_map[i, j] == True:
+                img_without_artifacts[i, j] = img_out_sq[i, j]
+
+    return img_without_artifacts
+
 def normalize(img_background, img_map, vessel_mask, threshold):
     # Flatten intensity values of the background image and the map image outside the vessel mask
     ints_background = img_background.flatten()
