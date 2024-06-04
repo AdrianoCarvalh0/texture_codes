@@ -16,8 +16,9 @@ if __name__ == '__main__':
        and transforms them into a vessel model by writing to a folder designated as the output directory'''
     
     parameters ={
-        'dir_json': f'{root_dir}/Extracted_json_vectors',   # directory of jscon vectors    
-        'dir_images': f'{root_dir}/Images/vessel_data/images',  # original images directory              
-        'out_dir_save_data': f'{root_dir}/Vessel_models_pickle',  # output directory of save data      
+        'dir_json': f'{root_dir}/Extracted_json_vectors/retina/new',   # directory of jscon vectors    
+        'extension': '.tif',   # image's extension    
+        'dir_images': f'{root_dir}/Images/retina/images',  # original images directory              
+        'out_dir_save_data': f'{root_dir}/Vessel_models_pickle/retina',  # output directory of save data      
     }
     va.generate_vessel_models(parameters)

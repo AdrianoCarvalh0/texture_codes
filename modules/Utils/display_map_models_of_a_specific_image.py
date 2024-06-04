@@ -17,8 +17,8 @@ from Utils import functions
 
 
 # Specific image name
-specific_image = 'Experiment #1 (adults set #1)_20x_batch1 - Superfical layers@41-Image 3-20X'
-pickle_directory = f'{root_dir}/Vessel_models_pickle/'
+specific_image = '09_test'
+pickle_directory = f'{root_dir}/Vessel_models_pickle/retina'
 array_pickles = functions.read_directories(pickle_directory, img=specific_image)
 
 # Sort the array of pickle files
@@ -33,6 +33,7 @@ for i in range(len(array_pickles_sorted)):
 
     # Extracting the map name from the pickle file name
     map_name = array_pickles_sorted[i].replace("[", "").replace("]", "").replace(".pickle", "")  
+    print(map_name)
 
     # Plotting the original map
     plt.figure(figsize=[15, 12])  

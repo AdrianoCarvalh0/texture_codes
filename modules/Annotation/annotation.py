@@ -157,6 +157,7 @@ def extract_intensities(img, shape_type, coords, flat=True):
 def generate_dash(params):
 
     image = params['image']
+    extension = params['extension']
     root_img = params['root_img']   # original images directory
     root_out = params['root_out']  # Path where the JSON file will be saved  
     list_array = params['list_array']  # array that will store the coordinates resulting from manual marking  
@@ -173,13 +174,13 @@ def generate_dash(params):
     file = f'{root_out}/{image}.json'
 
     # path of the image to be read
-    path = f'{root_img}/{image}.tiff'
+    path = f'{root_img}/{image}{extension}'
 
     # converting image to numpy array
     img = np.array(Image.open(path))
 
     # Initial image setup in Plotly Express
-    fig = px.imshow(img, color_continuous_scale='gray', zmin=0, zmax=100,
+    fig = px.imshow(img, color_continuous_scale='gray', zmin=0, zmax=255,
             binary_string=True, binary_compression_level=0)
     fig.update_layout(dragmode="drawopenpath", coloraxis_showscale=False,
                 newshape=annotation_style, height=1000, hovermode=False)

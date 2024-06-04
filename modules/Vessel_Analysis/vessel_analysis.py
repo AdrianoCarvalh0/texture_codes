@@ -217,7 +217,7 @@ def plot_figure(img, vessel_model, cross_paths,i):
     norm = ax.images[0].norm
     norm.vmin, norm.vmax = 0, 60
     plt.axis('off')    
-    plt.savefig(f'img{i}.svg',format='svg')
+    #plt.savefig(f'img{i}.svg',format='svg')
 
     # Plotting the mapped values with specified vmin and vmax
     plt.figure(figsize=[12, 10])
@@ -226,7 +226,7 @@ def plot_figure(img, vessel_model, cross_paths,i):
     plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=60)
     plt.plot(vessel_map.path1_mapped, c='green')
     plt.plot(vessel_map.path2_mapped, c='green')
-    plt.axis('off')
+    #plt.axis('off')
     #plt.savefig('img2.svg',format='svg')
 
     # Plotting the mapped values reversed with vmin and vmax
@@ -236,7 +236,7 @@ def plot_figure(img, vessel_model, cross_paths,i):
     plt.imshow(vessel_map.mapped_values[::-1], 'gray', vmin=0, vmax=255)
     plt.plot(vessel_map.path1_mapped, c='green')
     plt.plot(vessel_map.path2_mapped, c='green')
-    plt.axis('off')
+    #plt.axis('off')
     #plt.savefig('img3.svg',format='svg')
 
 
@@ -248,7 +248,7 @@ def plot_figure(img, vessel_model, cross_paths,i):
     plt.imshow(vessel_map.mapped_values, 'gray', vmin=0, vmax=vessel_map.mapped_values.max())
     plt.plot(vessel_map.path1_mapped, c='green')
     plt.plot(vessel_map.path2_mapped, c='green')
-    plt.axis('off')
+    #plt.axis('off')
     #plt.savefig('img4.svg',format='svg')
 
 def generate_vessel_models(params):
@@ -271,6 +271,7 @@ def generate_vessel_models(params):
     '''
     root_json = params['dir_json']
     root_imgs = params['dir_images']
+    extension = params['extension']
     root_out = params['out_dir_save_data']
     
     json_array = functions.read_directories(root_json,exclude_json='yes')
@@ -281,7 +282,7 @@ def generate_vessel_models(params):
 
         file_path = f'{root_json}/{path}.json'
 
-        image_path = f'{root_imgs}/{path}.tiff'
+        image_path = f'{root_imgs}/{path}{extension}'
 
         # retrieve the file and store it in an array
         array_path = return_paths(file_path)
@@ -301,9 +302,9 @@ def generate_vessel_models(params):
             plot_figure(img, vessel_model, cross_section,rand)
 
             # section to save the .pickle file
-            #data_dump = {"img_file": image_path, "vessel_model": vessel_model, "primeiro_ponto": first_point}
-            #save_data = f'{root_out}/{path}_savedata{i}.pickle'
-            #pickle.dump(data_dump, open(save_data, "wb"))
+            data_dump = {"img_file": image_path, "vessel_model": vessel_model, "primeiro_ponto": first_point}
+            save_data = f'{root_out}/{path}_savedata{j}.pickle'
+            pickle.dump(data_dump, open(save_data, "wb"))
             x += 2
 
     
