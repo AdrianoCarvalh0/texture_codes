@@ -17,7 +17,7 @@ from Utils import functions
 
 
 # Specific image name
-specific_image = '09_test'
+specific_image = '15_test'
 pickle_directory = f'{root_dir}/Vessel_models_pickle/retina'
 array_pickles = functions.read_directories(pickle_directory, img=specific_image)
 
