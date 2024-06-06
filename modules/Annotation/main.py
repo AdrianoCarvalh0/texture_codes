@@ -13,10 +13,10 @@ import annotation as ann
 if __name__ == "__main__":
     list_array = []
     parameters ={
-        'image': '33_training',
+        'image': '40_training',
         'extension': '.tif',
         'root_img': f'{root_dir}/Images/retina/images',   # original images directory
-        'root_out':  f'{root_dir}/Extracted_json_vectors/retina/new',  # Path where the JSON file will be saved
+        'root_out':  f'{root_dir}/Extracted_json_vectors/retina/',  # Path where the JSON file will be saved
         'list_array': list_array, # array that will store the coordinates resulting from manual marking  
     }
     ann.generate_dash(parameters)
