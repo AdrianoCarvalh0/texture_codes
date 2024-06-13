@@ -171,7 +171,7 @@ def estimate_background(image: np.ndarray, label: np.ndarray, window_size: int=1
 
     # Divide the image into patches
     list_slices = []
-    window_size = 8
+    window_size = 20
     h_window_size = window_size // 2
     i = h_window_size
     j = h_window_size
