@@ -15,16 +15,16 @@ root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 img_dir = f'{root_dir}/Images/vessel_data/images'
 lab_dir = f'{root_dir}/Images/vessel_data/labels_20x'
 train_dir = f'{root_dir}/Training_validation'
-pickle_dir = f'{root_dir}/Vessel_models_pickle'
+pickle_dir = f'{root_dir}/Vessel_models_pickle/retina/training'
 pickle_dir_50 = f'{train_dir}/Maps/200_maps_50_images'
-pickle_vector = functions.read_directories(pickle_dir_50)
+pickle_vector = functions.read_directories(pickle_dir)
 
 dictionary_vector = []
 
 for i in range(len(pickle_vector)):
     '''Checks and displays null rows or columns'''
     
-    pickle_path = (pickle_dir_50 + f'/{pickle_vector[i]}')   
+    pickle_path = (pickle_dir + f'/{pickle_vector[i]}')   
 
     pickle_file = pickle.load(open(pickle_path, 'rb')) 
     vessel_map = pickle_file['vessel_model'].vessel_map 
