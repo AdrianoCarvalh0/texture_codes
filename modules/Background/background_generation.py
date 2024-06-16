@@ -808,7 +808,7 @@ def insert_vessels_retina(medial_path_array, distance, pickles_array, pickle_dir
     half_rows = (rows / 2)
 
     # Find the threshold based on the most frequent pixel value in the normalized map
-    #threshold1 = find_most_frequent_pixel(normalized_original_map)
+    threshold1 = find_most_frequent_pixel(normalized_original_map)
 
     # Expand the original map to the specified size
     expanded_original_map = expand_maps_to_trace_size(normalized_original_map, int(distance))
@@ -859,9 +859,9 @@ def insert_vessels_retina(medial_path_array, distance, pickles_array, pickle_dir
 
     # Return the result if the transformed map without artifacts is not None
     if map_without_artifacts_transf is not None:
-        return vessel_without_artifacts, map_without_artifacts_transf, mask_map, threshold
+        return vessel_without_artifacts, map_without_artifacts_transf, mask_map, threshold1
     else:
-        return vessel_without_artifacts, map_without_artifacts, mask_map, threshold
+        return vessel_without_artifacts, map_without_artifacts, mask_map, threshold1
 
 def bezier(points, precision):
     """Function that creates Bezier curves
