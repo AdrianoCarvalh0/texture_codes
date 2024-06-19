@@ -4,18 +4,20 @@ from scipy.spatial import distance_matrix
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
-
-import tracemalloc, time, os
-
-# Linux
-#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/")
-
-# Windows
-sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
-
+from pathlib import Path
 from shapely.geometry import Point, LineString
 from PIL import Image
 from scipy import ndimage
+
+import tracemalloc, time, os
+
+# linux
+#sys.path.insert(0, "/home/adriano/projeto_mestrado/modules/")
+#root_dir = f"/home/adriano/projeto_mestrado/modules"
+
+# windows
+sys.path.insert(0, r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
+root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 
 from Utils import functions
 
@@ -355,7 +357,6 @@ def transf_map_dist(img_map, img_map_binary, img_vessel_binary, background):
 
     return img_copy
 
-
 def transform_map_dist2(map, binary_map, binary_vessel, background):
     """
     Transform the given map based on distance and probabilities.
@@ -382,7 +383,7 @@ def transform_map_dist2(map, binary_map, binary_vessel, background):
     dist_map = ndimage.distance_transform_edt(binary_map)
 
     # Set the distance to zero where the vessel is present
-    dist_map[vessel_binary_sq] = 0
+    dist_map[vessel_binary_sq>0] = 0
 
     # Calculate probabilities
     probs = dist_map / dist_map.max()
@@ -407,8 +408,48 @@ def transform_map_dist2(map, binary_map, binary_vessel, background):
         return img_copy
     except:
         return None
-  
 
+
+def transform_map_dist2_new(map, binary_map, binary_vessel, background):
+    """
+    Transform the given map based on distance and probabilities.
+
+    Parameters:
+    - map: Original map image.
+    - binary_map: Binary representation of the map.
+    - binary_vessel: Binary representation of vessels.
+    - background: Background image.
+
+    Returns:
+    - Transformed map image.
+    """
+    # Copy the map image
+    img_copy = map.copy()
+
+    # Get the size of the image
+    rows, cols = img_copy.shape
+
+    # Convert the vessel image to a one-dimensional array
+    vessel_binary_sq = binary_vessel.squeeze()
+
+    # Calculate the distance transformation. Use map>0 instead of binary_map>0
+    # to avoid problem at border
+    dist_map = ndimage.distance_transform_edt((binary_vessel>0) | (map>0))
+    
+    dist_map[vessel_binary_sq>0] = 0
+    alpha = dist_map / dist_map.max()
+    alpha[vessel_binary_sq>0] = 1
+    #alpha_smooth = scipy.ndimage.gaussian_filter(alpha, sigma=1)
+
+    try:
+        img_copy[:rows, :cols] = alpha*img_copy[:rows, :cols] +(1-alpha)*background[:rows, :cols]
+
+        return img_copy
+    except:
+        return None
+    
+
+  
 def fill_holes(binary_img_map):
     # Invert the binary image map
     binary_img_inv = 1 - binary_img_map
@@ -594,6 +635,26 @@ def normalize(img_background, img_map, vessel_mask, threshold):
         img_map_norm1 = (img_map - mean_map) / std_map
         img_map_norm = img_map_norm1 * std_background + mean_background
         return img_map_norm
+    
+def normalize_retina(img_background, img_map, vessel_mask, threshold):
+    # Flatten intensity values of the background image and the map image outside the vessel mask
+    ints_background = img_background.flatten()
+    ints_map = img_map[vessel_mask == 0]
+
+    # Calculate mean and standard deviation for both background and map intensities
+    mean_background = np.mean(ints_background)
+    std_background = 1 #np.std(ints_background)
+    mean_map = np.mean(ints_map)
+    std_map = 1 #np.std(ints_map)
+
+    # Check if the mean difference is within the specified threshold
+    if abs(mean_background - mean_map) > threshold:
+        return None
+    else:
+        # Normalize the map image based on mean and standard deviation of the background
+        img_map_norm1 = (img_map - mean_map) / std_map
+        img_map_norm = img_map_norm1 * std_background + mean_background
+        return img_map_norm
 
 def histogram_matching(img_map, img_vessel_label, img_background):
     # Squeeze the vessel label image to 2D
@@ -640,7 +701,7 @@ def insert_map(background, img_vessel_bin, img_map, img_map_bin, threshold, has_
     threshold_mask = (img_map <= threshold) & (img_map_bin == 1) & (img_vessel_bin == 0)
       
     # Update the map copy with background values where the mask is True
-    img_map_copy[0:rows, 0:cols][threshold_mask] = background[0:rows, 0:cols][threshold_mask]
+    #img_map_copy[0:rows, 0:cols][threshold_mask] = background[0:rows, 0:cols][threshold_mask]
 
     # Get pixel coordinates where the map binary is True and has_maps is False
     pix_map = np.nonzero(img_map_bin & (has_maps[0:rows, 0:cols] == 0))
@@ -794,7 +855,7 @@ def insert_vessels_retina(medial_path_array, distance, pickles_array, pickle_dir
     binary_map_without_artifacts = fill_holes(binary_map_without_lateral_artifacts)
 
     # Normalize the original map based on background artifact, binary map without artifacts, and a threshold
-    normalized_original_map = normalize(back_artifact, original_map, binary_map_without_artifacts, threshold)
+    normalized_original_map = normalize_retina(back_artifact, original_map, binary_map_without_artifacts, threshold)
 
     # Return None if normalized map is None
     if normalized_original_map is None:
@@ -854,7 +915,7 @@ def insert_vessels_retina(medial_path_array, distance, pickles_array, pickle_dir
     vessel_without_artifacts = remove_artifacts(img_out_bin, mask_vessel)
 
     # Transform the map without artifacts
-    map_without_artifacts_transf = transform_map_dist2(map_without_artifacts, mask_map, vessel_without_artifacts,
+    map_without_artifacts_transf = transform_map_dist2_new(map_without_artifacts, mask_map, vessel_without_artifacts,
                                                         back_artifact)
 
     # Return the result if the transformed map without artifacts is not None
@@ -1171,15 +1232,15 @@ def generate_backgrounds_with_vessels_retina(params):
     none_results = 0
 
     for j in range(num_images):
-        number_of_vessels = np.random.randint(min_number_vessels, max_number_vessels)      
+        number_of_vessels = np.random.randint(min_number_vessels, max_number_vessels+1)      
 
         #import pdb; pdb.set_trace()
-        
+
         n_background = np.random.randint(0, len(array_backrounds))
         #background = array_backrounds[n_background]
 
 
-        background = np.array(Image.open(f'{directory_backs}/{array_backrounds[n_background]}'))     
+        background = np.array(Image.open(f'{directory_backs}/{array_backrounds[n_background]}'))  
         
         #name_background = vector_backgrounds[j]['name']
         #background =  vector_backgrounds[j]['back']            

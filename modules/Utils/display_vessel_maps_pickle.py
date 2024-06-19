@@ -13,7 +13,9 @@ root_dir = Path(r"C:\Users\adria\Documents\Mestrado\texture_codes\modules")
 from Utils import functions
 
 
-pickle_dir = f'{root_dir}/Vessel_models_pickle/retina/training'
+pickle_dir = f'{root_dir}/Vessel_models_pickle/retina/10_maps'
+
+#pickle_dir =  f'{root_dir}/Training_validation_retina/Maps/10_maps',  # directory of pickles
 
 vector_pickles = functions.read_directories(pickle_dir)
 
