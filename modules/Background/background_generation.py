@@ -1024,7 +1024,7 @@ def create_curve(points, max_vd, n_points, precision):
 def returns_array_pickle(num_maps,array_maps_pickle):
     sorted_array_pickels = []
     for i in range(num_maps):
-        n_pickle = np.random.randint(1, len(array_maps_pickle))    
+        n_pickle = np.random.randint(0, len(array_maps_pickle))    
         sorted_array_pickels.append(array_maps_pickle[n_pickle])
     return sorted_array_pickels
 
@@ -1037,6 +1037,23 @@ def compatible_map_with_backg(sorted_array_pickels, background, dir_maps_pickle,
         original_map = vessel_map.mapped_values
         vessel_mask = vessel_map.mapped_mask_values
         normalized_original_map = normalize(background,original_map,vessel_mask,threshold)            
+        if normalized_original_map is not None:
+            cont += 1                  
+    if cont == len(sorted_array_pickels):
+        background_norm = background
+        return background_norm
+    else:
+        return None
+
+def compatible_map_with_backg_retina(sorted_array_pickels, background, dir_maps_pickle,threshold):    
+    cont = 0
+    for i in range(len(sorted_array_pickels)):
+        path_map = (f"{dir_maps_pickle}/{sorted_array_pickels[i]}")
+        map_pickle = pickle.load(open(path_map, 'rb'))           
+        vessel_map = map_pickle['vessel_model'].vessel_map 
+        original_map = vessel_map.mapped_values
+        vessel_mask = vessel_map.mapped_mask_values
+        normalized_original_map = normalize_retina(background,original_map,vessel_mask,threshold)            
         if normalized_original_map is not None:
             cont += 1                  
     if cont == len(sorted_array_pickels):
@@ -1094,7 +1111,7 @@ def check_compatible_retina(array_pickles,number_images,array_backgrounds, direc
         path_img = array_backgrounds[i]
         background = np.array(Image.open(f'{directory_backs}/{path_img}'))     
 
-        back =  compatible_map_with_backg(array_pickles, background, dir_maps_pickle,threshold)
+        back =  compatible_map_with_backg_retina(array_pickles, background, dir_maps_pickle,threshold)
         if back is not None:  
             dict = {
                 'name': path_img,
@@ -1273,9 +1290,9 @@ def generate_backgrounds_with_vessels_retina(params):
         background_clipped_bin[mask==False]=0
 
         img1 = Image.fromarray(background_clipped.astype(np.uint8))
-        path = f"{directory_out_images}/{background_name}_{j}_with_{number_of_vessels}.tiff"
+        path = f"{directory_out_images}/{background_name}_with_{number_of_vessels}_vessels.tiff"
         img = img1.save(path)
 
         img2 = Image.fromarray(background_clipped_bin.astype(np.bool_))
-        path = f"{directory_out_labels}/{background_name}_{j}_with_{number_of_vessels}.tiff"
+        path = f"{directory_out_labels}/{background_name}_with_{number_of_vessels}_vessels.tiff"
         img = img2.save(path)
