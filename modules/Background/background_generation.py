@@ -1085,14 +1085,13 @@ def check_compatible(array_pickles,number_images,array_backrounds, directory_bac
     return vector_dict
 
 
-def check_compatible_retina(array_pickles,number_images,array_backrounds, directory_backs,dir_maps_pickle,generate,threshold):
+def check_compatible_retina(array_pickles,number_images,array_backgrounds, directory_backs,dir_maps_pickle,generate,threshold):
     count_errors = 0
-    vector_dict = []
-   
+    vector_dict = []  
         
-    for i in range(number_images):
+    for i in range(len(array_backgrounds)):
         #n_random = np.random.randint(0, len(array_backrounds))
-        path_img = array_backrounds[i]
+        path_img = array_backgrounds[i]
         background = np.array(Image.open(f'{directory_backs}/{path_img}'))     
 
         back =  compatible_map_with_backg(array_pickles, background, dir_maps_pickle,threshold)
@@ -1194,7 +1193,7 @@ def generate_backgrounds_with_vessels_retina(params):
     
     #array_images = functions.read_directories(params['dir_images'])
     #array_labels = functions.read_directories(params['dir_labels'])
-    array_backrounds = functions.read_directories(params['dir_backs'])  
+    array_backgrounds = functions.read_directories(params['dir_backs'])  
     
     generate = params['generate_back']
     threshold = params['threshold']
@@ -1225,30 +1224,21 @@ def generate_backgrounds_with_vessels_retina(params):
 
     mask = np.array(Image.open(f'{dir_mask}/mask.gif'))   
 
-    #array_maps_pickle_sorted = returns_array_pickle(number_maps,array_maps_pickle)       
+    array_maps_pickle_sorted = returns_array_pickle(number_maps,array_maps_pickle)       
 
-    #vector_backgrounds = check_compatible_retina(array_maps_pickle, num_images,array_backrounds,directory_backs,dir_maps_pickle,generate,threshold)   
+    vector_backgrounds = check_compatible_retina(array_maps_pickle_sorted, num_images,array_backgrounds,directory_backs,dir_maps_pickle,generate,threshold)   
 
     none_results = 0
 
     for j in range(num_images):
-        number_of_vessels = np.random.randint(min_number_vessels, max_number_vessels+1)      
-
-        #import pdb; pdb.set_trace()
-
-        n_background = np.random.randint(0, len(array_backrounds))
-        #background = array_backrounds[n_background]
-
-
-        background = np.array(Image.open(f'{directory_backs}/{array_backrounds[n_background]}'))  
+        number_of_vessels = np.random.randint(min_number_vessels, max_number_vessels)        
         
-        #name_background = vector_backgrounds[j]['name']
-        #background =  vector_backgrounds[j]['back']            
-    
-        #background_name = name_background.replace("'","").replace(".png","")
+        n_background = np.random.randint(0, len(vector_backgrounds))
+        name_background = vector_backgrounds[n_background]['name']
+        background =  vector_backgrounds[n_background]['back']      
 
-        #clipping_background = background[0:1100,0:1370]
-        #background_with_pad = np.pad(clipping_background, ((300,300),(300,300)), mode="symmetric", reflect_type="even")
+        background_name = name_background.replace("'","").replace(".tif","")      
+    
         background_bin = np.zeros(background.shape)
 
         background_with_vessels_bin = background_bin.copy()
@@ -1283,9 +1273,9 @@ def generate_backgrounds_with_vessels_retina(params):
         background_clipped_bin[mask==False]=0
 
         img1 = Image.fromarray(background_clipped.astype(np.uint8))
-        path = f"{directory_out_images}/{j}_with_{number_of_vessels}.tiff"
+        path = f"{directory_out_images}/{background_name}_{j}_with_{number_of_vessels}.tiff"
         img = img1.save(path)
 
         img2 = Image.fromarray(background_clipped_bin.astype(np.bool_))
-        path = f"{directory_out_labels}/{j}_with_{number_of_vessels}.tiff"
+        path = f"{directory_out_labels}/{background_name}_{j}_with_{number_of_vessels}.tiff"
         img = img2.save(path)
