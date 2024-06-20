@@ -1205,9 +1205,7 @@ def generate_backgrounds_with_vessels(params):
 
 
 def generate_backgrounds_with_vessels_retina(params):
-    array_maps_pickle = functions.read_directories(params['dir_maps_pickle'])
-
-    
+    array_maps_pickle = functions.read_directories(params['dir_maps_pickle'])  
     #array_images = functions.read_directories(params['dir_images'])
     #array_labels = functions.read_directories(params['dir_labels'])
     array_backgrounds = functions.read_directories(params['dir_backs'])  
@@ -1289,10 +1287,24 @@ def generate_backgrounds_with_vessels_retina(params):
         background_clipped[mask==False]=0
         background_clipped_bin[mask==False]=0
 
-        img1 = Image.fromarray(background_clipped.astype(np.uint8))
-        path = f"{directory_out_images}/{background_name}_with_{number_of_vessels}_vessels.tiff"
-        img = img1.save(path)
+        array_out_dir_images = functions.read_directories(params['out_dir_images'])
 
-        img2 = Image.fromarray(background_clipped_bin.astype(np.bool_))
-        path = f"{directory_out_labels}/{background_name}_with_{number_of_vessels}_vessels.tiff"
-        img = img2.save(path)
+        name = f'{background_name}_with_{number_of_vessels}_vessels.tiff'
+        
+        if name in array_out_dir_images:
+            n_path = np.random.randint(0, 50)
+            img1 = Image.fromarray(background_clipped.astype(np.uint8))
+            path = f"{directory_out_images}/{background_name}_{n_path}_with_{number_of_vessels}_vessels.tiff"
+            img = img1.save(path)
+
+            img2 = Image.fromarray(background_clipped_bin.astype(np.bool_))
+            path = f"{directory_out_labels}/{background_name}_{n_path}_with_{number_of_vessels}_vessels.tiff"
+            img = img2.save(path)
+        else:
+            img1 = Image.fromarray(background_clipped.astype(np.uint8))
+            path = f"{directory_out_images}/{background_name}_with_{number_of_vessels}_vessels.tiff"
+            img = img1.save(path)
+
+            img2 = Image.fromarray(background_clipped_bin.astype(np.bool_))
+            path = f"{directory_out_labels}/{background_name}_with_{number_of_vessels}_vessels.tiff"
+            img = img2.save(path)
