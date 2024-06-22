@@ -1308,3 +1308,102 @@ def generate_backgrounds_with_vessels_retina(params):
             img2 = Image.fromarray(background_clipped_bin.astype(np.bool_))
             path = f"{directory_out_labels}/{background_name}_with_{number_of_vessels}_vessels.tiff"
             img = img2.save(path)
+
+def generate_backgrounds_with_vessels_retina_160(params):
+    array_maps_pickle = functions.read_directories(params['dir_maps_pickle'])  
+   
+    array_backgrounds = functions.read_directories(params['dir_backs'])  
+    
+    generate = params['generate_back']
+    threshold = params['threshold']
+    number_maps = params['num_maps']
+    dir_maps_pickle = params['dir_maps_pickle']
+    directory_backs = params['dir_backs']         
+    directory_out_images = params['out_dir_images']
+    directory_out_labels = params['out_dir_labels']
+    num_images = params['num_images']
+    min_number_vessels = params['min_number_vessels']
+    max_number_vessels = params['max_number_vessels']
+
+     #parameters of curve Bezier
+    max_distance = params['max_distance']
+    control_points = params['control_points']
+    precision = params['precision']
+    min_len_trace = params['min_len_trace']
+    max_len_trace = params['max_len_trace']
+    number_points = params['number_points']
+    padding = params['padding']
+    number_cols = params['number_cols']
+    number_rows = params['number_rows'] 
+    dir_mask = params['dir_mask']     
+
+    mask = np.array(Image.open(f'{dir_mask}/mask.gif'))   
+    none_results = 0
+
+    for j in range(num_images):
+        number_of_vessels = np.random.randint(min_number_vessels, max_number_vessels)    
+
+        array_maps_pickle_sorted = returns_array_pickle(number_of_vessels,array_maps_pickle)    
+
+        vector_backgrounds = check_compatible_retina(array_maps_pickle_sorted, 1 ,array_backgrounds,directory_backs,dir_maps_pickle,generate,threshold)    
+        
+        n_background = np.random.randint(0, len(vector_backgrounds))
+        name_background = vector_backgrounds[n_background]['name']
+        background =  vector_backgrounds[n_background]['back']      
+
+        background_name = name_background.replace("'","").replace(".tif","")      
+    
+        background_bin = np.zeros(background.shape)
+
+        background_with_vessels_bin = background_bin.copy()
+        background_with_vessels = background.copy()
+
+        has_maps =  np.full(shape = background.shape, fill_value=0)
+        has_maps_bin =  np.full(shape = background_bin.shape, fill_value=0)
+
+        counter = 0
+        while counter < number_of_vessels:
+            n_pickle = np.random.randint(0, len(array_maps_pickle))
+            path_pickle = array_maps_pickle[n_pickle]            
+
+            points, distance = create_points(number_points, padding, number_rows, number_cols, min_len_trace, max_len_trace)
+            curve = create_curve(points, max_distance, control_points, precision)         
+            results = insert_vessels_retina(curve, distance, array_maps_pickle,dir_maps_pickle,background,threshold,path_pickle)           
+            if results is not None:
+                vessel_without_artifacts, map_without_artifacts, mask_map, threshold = results  
+                background_with_vessels = insert_map(background_with_vessels,vessel_without_artifacts,map_without_artifacts,mask_map, threshold, has_maps)
+                background_with_vessels_bin = insert_binary_map(background_with_vessels_bin,vessel_without_artifacts,has_maps_bin)
+                counter +=1
+            else:
+                none_results += 1  
+                print(none_results)
+        clip_row = 188
+        clip_col = 198
+        rows, cols = background_with_vessels.shape
+        background_clipped = background_with_vessels[clip_row:(rows-clip_row-1),clip_col:(cols-clip_col)]
+        background_clipped_bin = background_with_vessels_bin[clip_row:(rows-clip_row-1),clip_col:(cols-clip_col)]           
+       
+        background_clipped[mask==False]=0
+        background_clipped_bin[mask==False]=0
+
+        array_out_dir_images = functions.read_directories(params['out_dir_images'])
+
+        name = f'{background_name}_with_{number_of_vessels}_vessels.tiff'
+        
+        if name in array_out_dir_images:
+            n_path = np.random.randint(0, 50)
+            img1 = Image.fromarray(background_clipped.astype(np.uint8))
+            path = f"{directory_out_images}/{background_name}_{n_path}_with_{number_of_vessels}_vessels.tiff"
+            img = img1.save(path)
+
+            img2 = Image.fromarray(background_clipped_bin.astype(np.bool_))
+            path = f"{directory_out_labels}/{background_name}_{n_path}_with_{number_of_vessels}_vessels.tiff"
+            img = img2.save(path)
+        else:
+            img1 = Image.fromarray(background_clipped.astype(np.uint8))
+            path = f"{directory_out_images}/{background_name}_with_{number_of_vessels}_vessels.tiff"
+            img = img1.save(path)
+
+            img2 = Image.fromarray(background_clipped_bin.astype(np.bool_))
+            path = f"{directory_out_labels}/{background_name}_with_{number_of_vessels}_vessels.tiff"
+            img = img2.save(path)
